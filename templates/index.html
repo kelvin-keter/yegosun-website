@@ -3,194 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yegosun Energy Limited | Solar Solutions Kenya</title>
-    <style>
-        /* --- CSS STYLES --- */
-        :root {
-            --primary-color: #f39c12; /* Solar Yellow */
-            --secondary-color: #27ae60; /* Eco Green */
-            --dark-color: #2c3e50; /* Dark Slate */
-            --light-color: #ecf0f1;
-            --text-color: #333;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            line-height: 1.6;
-            color: var(--text-color);
-        }
-
-        /* Navigation */
-        header {
-            background: var(--dark-color);
-            color: white;
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 1100px;
-            margin: auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-        }
-
-        nav ul li {
-            margin-left: 20px;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        nav a:hover {
-            color: var(--primary-color);
-        }
-
-        /* Hero Section */
-        .hero {
-            background-color: var(--secondary-color);
-            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-            background-size: cover;
-            background-position: center;
-            height: 80vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: white;
-        }
-
-        .hero-content h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .hero-content p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-        }
-
-        .btn {
-            display: inline-block;
-            background: var(--primary-color);
-            color: white;
-            padding: 10px 30px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        .btn:hover {
-            background: #d35400;
-        }
-
-        /* Services Section */
-        .section {
-            padding: 4rem 0;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 3rem;
-            color: var(--dark-color);
-        }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            max-width: 1100px;
-            margin: auto;
-            padding: 0 20px;
-        }
-
-        .card {
-            background: #fff;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            text-align: center;
-            border-top: 5px solid var(--primary-color);
-        }
-
-        .card h3 {
-            margin-bottom: 1rem;
-            color: var(--dark-color);
-        }
-
-        /* Contact Section */
-        .contact {
-            background: var(--light-color);
-            text-align: center;
-        }
-
-        .contact-info {
-            max-width: 600px;
-            margin: auto;
-        }
-
-        /* Footer */
-        footer {
-            background: var(--dark-color);
-            color: white;
-            text-align: center;
-            padding: 2rem 0;
-            margin-top: auto;
-        }
-
-        /* Mobile Responsiveness */
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-                text-align: center;
-            }
-            nav ul {
-                margin-top: 1rem;
-                flex-direction: column;
-            }
-            nav ul li {
-                margin: 5px 0;
-            }
-            .hero-content h1 {
-                font-size: 2rem;
-            }
-        }
-    </style>
+    <title>Yegosun Energy | Innovating Kenya's Power</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
     <header>
         <div class="container">
-            <div class="logo">Yegosun Energy Ltd.</div>
+            <div class="logo">Yegosun <span>Energy</span></div>
             <nav>
                 <ul>
                     <li><a href="#">Home</a></li>
-                    <li><a href="#services">Services</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#services">Solutions</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
             </nav>
@@ -198,48 +23,78 @@
     </header>
 
     <section class="hero">
-        <div class="hero-content">
-            <h1>Powering Kenya's Future</h1>
-            <p>Reliable, affordable, and sustainable solar energy solutions for homes and businesses.</p>
-            <a href="#contact" class="btn">Get a Quote</a>
-        </div>
-    </section>
-
-    <section id="services" class="section">
-        <h2 class="section-title">Our Solutions</h2>
-        <div class="services-grid">
-            <div class="card">
-                <h3>Residential Solar</h3>
-                <p>Complete home solar systems to reduce bills and ensure power availability during outages.</p>
-            </div>
-            <div class="card">
-                <h3>Commercial Solar</h3>
-                <p>Scalable energy solutions for offices, factories, and institutions to cut operational costs.</p>
-            </div>
-            <div class="card">
-                <h3>Solar Water Heating</h3>
-                <p>Efficient water heating systems tailored for Kenyan weather conditions.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="contact" class="section contact">
         <div class="container">
-            <h2 class="section-title">Contact Us</h2>
-            <div class="contact-info">
-                <p>Ready to switch to solar? Contact Yegosun Energy Limited today.</p>
+            <h1>Engineering Kenya's <br> Sustainable Future</h1>
+            <p>We are a new generation of Kenyan engineers delivering data-driven, efficient, and affordable solar energy solutions.</p>
+            <a href="#contact" class="btn">Start Your Project</a>
+        </div>
+    </section>
+
+    <section id="about" class="section">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Engineers working" style="width:100%; border-radius:15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                </div>
+                <div class="about-text">
+                    <div class="section-title" style="text-align: left;">
+                        <h2>Powered by Youth & Innovation</h2>
+                        <div class="line" style="margin: 0;"></div>
+                    </div>
+                    <br>
+                    <h3>More Than Just Solar Panels.</h3>
+                    <p>Yegosun Energy Limited isn't just a hardware supplier. We are a technology-first company led by youthful Kenyan talent with backgrounds in Computer Technology and Engineering.</p>
+                    <br>
+                    <p>We combine modern software with solar hardware to ensure your system is efficient, monitored, and built to last. We represent the new wave of Kenyan industrial leadership.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="section bg-light">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Solutions</h2>
+                <div class="line"></div>
+            </div>
+            <div class="services-grid">
+                <div class="card">
+                    <div class="card-icon">🏡</div>
+                    <h3>Smart Residential Solar</h3>
+                    <p>Power your home with systems designed to cut costs and keep the lights on during blackouts.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🏢</div>
+                    <h3>Commercial Engineering</h3>
+                    <p>Custom-designed energy grids for businesses, reducing operational expenses by up to 60%.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">💧</div>
+                    <h3>Advanced Water Heating</h3>
+                    <p>High-efficiency thermal systems perfectly calibrated for the Kenyan climate.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section">
+        <div class="container">
+            <div class="contact-box">
+                <h2>Ready to Innovate?</h2>
+                <p>Partner with the future of Kenyan Energy.</p>
                 <br>
                 <p><strong>Email:</strong> info@yegosun.com</p>
                 <p><strong>Phone:</strong> +254 727 113141</p>
-                <p><strong>Location:</strong> Nairobi, Kenya</p>
                 <br>
-                <a href="mailto:info@yegosun.com" class="btn">Email Us Now</a>
+                <a href="mailto:info@yegosun.com" class="btn">Request a Consultation</a>
             </div>
         </div>
     </section>
 
     <footer>
-        <p>&copy; 2025 Yegosun Energy Limited. All Rights Reserved.</p>
+        <div class="container" style="text-align: center; color: #aaa; font-size: 0.9rem;">
+            <p>&copy; 2025 Yegosun Energy Limited. Built by Kenyan Engineers.</p>
+        </div>
     </footer>
 
 </body>
