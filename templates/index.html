@@ -15,7 +15,7 @@
                 <ul>
                     <li><a href="#">Home</a></li>
                     <li><a href="#about">About</a></li>
-                    <li><a href="#services">Solutions</a></li>
+                    <li><a href="#services">Capabilities</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
             </nav>
@@ -25,7 +25,7 @@
     <section class="hero">
         <div class="container">
             <h1>Reliable Energy for <br> a Modern Kenya</h1>
-            <p>delivering high-efficiency solar power systems and smart energy infrastructure for homes, businesses, and industrial clients.</p>
+            <p>Delivering high-efficiency solar power systems and smart energy infrastructure for homes, businesses, and industrial clients.</p>
             <a href="#contact" class="btn">Get a Quote</a>
         </div>
     </section>
@@ -80,13 +80,33 @@
     <section id="contact" class="section">
         <div class="container">
             <div class="contact-box">
-                <h2>Start Your Project</h2>
-                <p>Contact our technical team for a consultation.</p>
+                <h2>Request a Quote</h2>
+                <p>Tell us about your energy needs, and our technical team will respond shortly.</p>
+                
+                <form action="/submit_quote" method="POST" class="contact-form">
+                    <input type="text" name="fullName" placeholder="Full Name" required>
+                    <input type="email" name="email" placeholder="Email Address" required>
+                    <input type="text" name="phone" placeholder="Phone Number (Optional)">
+                    
+                    <select name="serviceType" required>
+                        <option value="" disabled selected>Select Service Interest...</option>
+                        <option value="Residential Solar">Residential Solar System</option>
+                        <option value="Commercial Solar">Commercial / Industrial Power</option>
+                        <option value="Solar Water Heating">Solar Water Heating</option>
+                        <option value="Consultancy">Technical Consultancy / Audit</option>
+                        <option value="Other">Other Inquiry</option>
+                    </select>
+            
+                    <textarea name="message" rows="4" placeholder="Briefly describe your project requirements..." required></textarea>
+                    
+                    <button type="submit" class="btn">Send Request</button>
+                </form>
+                
                 <br>
-                <p><strong>Email:</strong> info@yegosun.com</p>
-                <p><strong>Phone:</strong> +254 727 113141</p>
-                <br>
-                <a href="mailto:info@yegosun.com" class="btn">Request Consultation</a>
+                <div style="margin-top: 20px; font-size: 0.9rem; opacity: 0.9;">
+                    <p><strong>Direct Inquiries:</strong> info@yegosun.com</p>
+                    <p><strong>Call Us:</strong> +254 727 113141</p>
+                </div>
             </div>
         </div>
     </section>
