@@ -1,56 +1,84 @@
 /* static/style.css */
 
-/* --- CORPORATE COLOR PALETTE (Sustainability Theme) --- */
+/* --- CORPORATE COLOR PALETTE --- */
 :root {
-    --primary-green: #2E7D32;  /* Deep Forest Green - Main Action */
-    --accent-amber: #F9A825;   /* Solar Amber - Highlights/Energy */
-    --corporate-slate: #263238;/* Dark Slate - Text/Footer */
-    --sky-light: #E3F2FD;      /* Light background */
+    --primary-green: #2E7D32;  /* Deep Forest Green */
+    --accent-amber: #F9A825;   /* Solar Amber */
+    --corporate-slate: #263238;/* Dark Slate */
+    --sky-light: #F4F6F8;      /* Very light grey-blue */
+    --blue-action: #0288D1;    /* Strong Blue for Buttons (Laptop Place Style) */
 }
 
 /* Override Bootstrap Colors */
 .text-success { color: var(--primary-green) !important; }
-.bg-success { background-color: var(--primary-green) !important; }
-
 .text-warning { color: var(--accent-amber) !important; }
-.bg-warning { background-color: var(--accent-amber) !important; }
-
 .text-dark { color: var(--corporate-slate) !important; }
-.bg-dark { background-color: var(--corporate-slate) !important; }
+.bg-light { background-color: var(--sky-light) !important; }
 
-/* Custom Buttons */
-.btn-success {
-    background-color: var(--primary-green);
-    border-color: var(--primary-green);
+/* --- STYLISH MENU BUTTONS --- */
+.btn-primary {
+    background-color: var(--blue-action);
+    border-color: var(--blue-action);
     color: #fff;
-    transition: all 0.3s ease;
+    border-radius: 4px; /* Slight roundness */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
-.btn-success:hover {
-    background-color: #1B5E20; /* Darker Green on Hover */
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(46, 125, 50, 0.4);
+.btn-primary:hover {
+    background-color: #01579B;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(2, 136, 209, 0.4);
 }
 
 .btn-warning {
     background-color: var(--accent-amber);
     border-color: var(--accent-amber);
     color: #000;
+    border-radius: 4px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 .btn-warning:hover {
-    background-color: #F57F17; /* Darker Orange */
-    transform: translateY(-2px);
+    background-color: #F57F17;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(249, 168, 37, 0.4);
 }
 
-/* Typography Overrides */
-h1, h2, h3, h4, h5, .navbar-brand {
+.btn-outline-light {
+    border-width: 2px;
+    transition: all 0.3s ease;
+}
+.btn-outline-light:hover {
+    background-color: #fff;
+    color: #000;
+    transform: translateY(-3px);
+}
+
+/* --- TOP BAR --- */
+.top-bar {
+    background-color: var(--corporate-slate);
+    font-size: 0.85rem;
+}
+
+/* --- NAVIGATION --- */
+.logo-text {
+    font-family: 'Montserrat', sans-serif; 
+    font-weight: 900; 
+    font-size: 1.6rem; 
+    letter-spacing: -1px;
+}
+
+.nav-link-custom {
+    color: var(--corporate-slate) !important;
     font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0 15px !important;
+    transition: color 0.3s;
 }
-body {
-    font-family: 'Open Sans', sans-serif;
-    color: #455a64; /* Soft dark grey for text */
+.nav-link-custom:hover {
+    color: var(--primary-green) !important;
 }
-
-.fw-extrabold { font-weight: 800 !important; }
 
 /* --- HERO SLIDER --- */
 .carousel-item {
@@ -60,37 +88,40 @@ body {
     position: relative;
 }
 
-/* Gradient Overlay - Now with a hint of Green/Blue */
+/* Clean Gradient Overlay for Readability */
 .carousel-overlay {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(to right, rgba(38, 50, 56, 0.9), rgba(46, 125, 50, 0.4), rgba(38, 50, 56, 0.2));
+    background: linear-gradient(to right, rgba(38, 50, 56, 0.9), rgba(46, 125, 50, 0.65), rgba(38, 50, 56, 0.1));
     z-index: 1;
 }
-.carousel-caption { z-index: 2; bottom: auto; }
 
-/* --- CARDS & INTERACTIVITY --- */
-.hover-card {
-    transition: all 0.3s ease;
-    border: 1px solid #eee;
-}
-.hover-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 1.5rem 3rem rgba(0,0,0,.1)!important;
-    border-color: var(--primary-green) !important;
-    background-color: #fff !important;
+.carousel-caption {
+    z-index: 2;
+    bottom: 0;
+    top: 0;
 }
 
-/* Form Styling */
-.form-control:focus, .form-select:focus {
-    box-shadow: none;
-    border: 1px solid var(--primary-green);
-    background-color: #fff;
+.hero-text {
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.6;
 }
 
-/* Footer Links */
-.hover-white:hover {
-    color: #fff !important;
-    padding-left: 5px;
-    transition: all 0.2s;
+.text-white-75 {
+    color: rgba(255, 255, 255, 0.85);
 }
+
+/* Typography Defaults */
+h1, h2, h3, h4, h5, .navbar-brand {
+    font-family: 'Montserrat', sans-serif;
+}
+body {
+    font-family: 'Open Sans', sans-serif;
+    color: #455a64;
+}
+.fw-extrabold { font-weight: 800 !important; }
+.tracking-wide { letter-spacing: 1.5px; }
+
+/* Interactive Elements */
+.hover-opacity-100:hover { opacity: 1 !important; }
