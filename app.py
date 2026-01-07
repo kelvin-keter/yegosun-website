@@ -138,5 +138,28 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
+# --- TEMPORARY SETUP ROUTE (DELETE AFTER USE) ---
+@app.route('/setup-admin')
+def setup_admin():
+    try:
+        # 1. Create Tables
+        db.create_all()
+        
+        # 2. Check/Create Admin
+        user = User.query.filter_by(username='admin').first()
+        if user:
+            user.set_password('password123')
+            db.session.commit()
+            return "Existing 'admin' password reset to 'password123'"
+        else:
+            new_user = User(username='admin')
+            new_user.set_password('password123')
+            db.session.add(new_user)
+            db.session.commit()
+            return "New 'admin' user created with password 'password123'"
+            
+    except Exception as e:
+        return f"An error occurred: {str(e)}"
+
 if __name__ == '__main__':
     app.run(debug=True)
