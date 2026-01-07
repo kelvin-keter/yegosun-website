@@ -1,61 +1,51 @@
 /* static/style.css */
 
-/* --- CORPORATE COLOR PALETTE --- */
+/* --- YEGOSUN BRAND THEME (Sustainability & Schools) --- */
 :root {
-    --primary-green: #2E7D32;  /* Deep Forest Green */
-    --accent-amber: #F9A825;   /* Solar Amber */
-    --corporate-slate: #263238;/* Dark Slate */
-    --sky-light: #F4F6F8;      /* Very light grey-blue */
-    --blue-action: #0288D1;    /* Strong Blue for Buttons (Laptop Place Style) */
+    --primary-green: #2E7D32;  /* Kenya Forest Green - Main Brand Color */
+    --solar-amber: #FFC107;    /* Sun Yellow - Accent */
+    --deep-slate: #1a252f;     /* Dark Engineering Color */
+    --light-bg: #F4F6F8;       /* Clean Background */
 }
 
-/* Override Bootstrap Colors */
+/* Color Overrides */
 .text-success { color: var(--primary-green) !important; }
-.text-warning { color: var(--accent-amber) !important; }
-.text-dark { color: var(--corporate-slate) !important; }
-.bg-light { background-color: var(--sky-light) !important; }
+.text-warning { color: var(--solar-amber) !important; }
+.bg-success { background-color: var(--primary-green) !important; }
+.bg-warning { background-color: var(--solar-amber) !important; }
 
-/* --- STYLISH MENU BUTTONS --- */
+/* --- BUTTONS (Yegosun Style) --- */
+/* Primary Action = Green (Sustainability) */
 .btn-primary {
-    background-color: var(--blue-action);
-    border-color: var(--blue-action);
+    background-color: var(--primary-green);
+    border-color: var(--primary-green);
     color: #fff;
-    border-radius: 4px; /* Slight roundness */
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-.btn-primary:hover {
-    background-color: #01579B;
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(2, 136, 209, 0.4);
-}
-
-.btn-warning {
-    background-color: var(--accent-amber);
-    border-color: var(--accent-amber);
-    color: #000;
     border-radius: 4px;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-.btn-warning:hover {
-    background-color: #F57F17;
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(249, 168, 37, 0.4);
-}
-
-.btn-outline-light {
-    border-width: 2px;
     transition: all 0.3s ease;
 }
-.btn-outline-light:hover {
-    background-color: #fff;
-    color: #000;
+.btn-primary:hover {
+    background-color: #1B5E20; /* Darker Green */
     transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(46, 125, 50, 0.4);
 }
 
-/* --- TOP BAR --- */
-.top-bar {
-    background-color: var(--corporate-slate);
-    font-size: 0.85rem;
+/* Secondary Action = Amber (Energy) */
+.btn-warning {
+    background-color: var(--solar-amber);
+    border-color: var(--solar-amber);
+    color: #000;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+.btn-warning:hover {
+    background-color: #FFB300;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+}
+
+.btn-outline-light:hover {
+    color: var(--primary-green);
+    background: #fff;
 }
 
 /* --- NAVIGATION --- */
@@ -67,7 +57,7 @@
 }
 
 .nav-link-custom {
-    color: var(--corporate-slate) !important;
+    color: var(--deep-slate) !important;
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     font-size: 0.85rem;
@@ -80,48 +70,51 @@
     color: var(--primary-green) !important;
 }
 
-/* --- HERO SLIDER --- */
+.top-bar { background-color: var(--deep-slate); font-size: 0.85rem; }
+.hover-accent:hover { color: var(--solar-amber) !important; }
+
+/* --- HERO SECTION --- */
 .carousel-item {
     height: 90vh;
     background-size: cover;
     background-position: center;
-    position: relative;
 }
-
-/* Clean Gradient Overlay for Readability */
+/* Green-tinted dark overlay for brand consistency */
 .carousel-overlay {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(to right, rgba(38, 50, 56, 0.9), rgba(46, 125, 50, 0.65), rgba(38, 50, 56, 0.1));
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(to right, rgba(26, 37, 47, 0.95), rgba(46, 125, 50, 0.5), rgba(26, 37, 47, 0.2));
     z-index: 1;
 }
+.carousel-caption { z-index: 2; bottom: 0; top: 0; }
+.hero-text { font-size: 1.25rem; font-weight: 400; line-height: 1.6; }
+.text-white-75 { color: rgba(255, 255, 255, 0.85); }
 
-.carousel-caption {
-    z-index: 2;
-    bottom: 0;
-    top: 0;
+/* --- PROJECT CARDS (New) --- */
+.project-card {
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+.project-card:hover { transform: translateY(-5px); }
+.project-card img { transition: transform 0.5s ease; }
+.project-card:hover img { transform: scale(1.05); }
+
+.project-overlay {
+    position: absolute; bottom: 0; left: 0; width: 100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
 }
 
-.hero-text {
-    font-size: 1.25rem;
-    font-weight: 400;
-    line-height: 1.6;
+/* --- BLOG CARDS (New) --- */
+.blog-card {
+    background: #fff;
+    transition: all 0.3s ease;
 }
-
-.text-white-75 {
-    color: rgba(255, 255, 255, 0.85);
+.blog-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 3rem rgba(0,0,0,.1)!important;
 }
 
 /* Typography Defaults */
-h1, h2, h3, h4, h5, .navbar-brand {
-    font-family: 'Montserrat', sans-serif;
-}
-body {
-    font-family: 'Open Sans', sans-serif;
-    color: #455a64;
-}
+h1, h2, h3, h4, h5, .navbar-brand { font-family: 'Montserrat', sans-serif; }
+body { font-family: 'Open Sans', sans-serif; color: #455a64; }
 .fw-extrabold { font-weight: 800 !important; }
 .tracking-wide { letter-spacing: 1.5px; }
-
-/* Interactive Elements */
-.hover-opacity-100:hover { opacity: 1 !important; }
