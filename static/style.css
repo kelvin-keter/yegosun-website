@@ -1,120 +1,112 @@
 /* static/style.css */
 
-/* --- YEGOSUN BRAND THEME (Sustainability & Schools) --- */
+/* --- PREMIUM CORPORATE PALETTE (Luxury Eco) --- */
 :root {
-    --primary-green: #2E7D32;  /* Kenya Forest Green - Main Brand Color */
-    --solar-amber: #FFC107;    /* Sun Yellow - Accent */
-    --deep-slate: #1a252f;     /* Dark Engineering Color */
-    --light-bg: #F4F6F8;       /* Clean Background */
+    --deep-green: #064E3B;     /* British Racing Green / Deep Emerald */
+    --rich-gold: #D4AF37;      /* Metallic Gold */
+    --dark-slate: #111827;     /* Almost Black */
+    --off-white: #F9FAFB;      /* Premium Paper White */
 }
 
-/* Color Overrides */
-.text-success { color: var(--primary-green) !important; }
-.text-warning { color: var(--solar-amber) !important; }
-.bg-success { background-color: var(--primary-green) !important; }
-.bg-warning { background-color: var(--solar-amber) !important; }
+/* --- TYPOGRAPHY --- */
+body {
+    font-family: 'Manrope', sans-serif;
+    color: #374151;
+    background-color: var(--off-white);
+}
 
-/* --- BUTTONS (Yegosun Style) --- */
-/* Primary Action = Green (Sustainability) */
-.btn-primary {
-    background-color: var(--primary-green);
-    border-color: var(--primary-green);
+.serif-font, .logo-serif, h1, h2, h3, h4, h5, .display-1, .display-2, .display-3, .display-4, .display-5, .display-6 {
+    font-family: 'Playfair Display', serif;
+}
+
+.tracking-widest { letter-spacing: 0.15em; }
+.uppercase-link { text-transform: uppercase; letter-spacing: 1px; font-size: 0.75rem; }
+
+/* --- COLORS & BUTTONS --- */
+.text-gold { color: var(--rich-gold) !important; }
+.text-green { color: var(--deep-green) !important; }
+.bg-gold { background-color: var(--rich-gold) !important; }
+.bg-dark { background-color: var(--dark-slate) !important; }
+
+/* Luxury Buttons (Sharp Corners) */
+.btn-gold {
+    background-color: var(--rich-gold);
+    border: 1px solid var(--rich-gold);
     color: #fff;
-    border-radius: 4px;
-    transition: all 0.3s ease;
+    border-radius: 0; /* Sharp corners = Classic Luxury */
+    transition: all 0.4s ease;
 }
-.btn-primary:hover {
-    background-color: #1B5E20; /* Darker Green */
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(46, 125, 50, 0.4);
-}
-
-/* Secondary Action = Amber (Energy) */
-.btn-warning {
-    background-color: var(--solar-amber);
-    border-color: var(--solar-amber);
-    color: #000;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-}
-.btn-warning:hover {
-    background-color: #FFB300;
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+.btn-gold:hover {
+    background-color: #B59325;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
 }
 
-.btn-outline-light:hover {
-    color: var(--primary-green);
-    background: #fff;
+.btn-outline-white {
+    border: 1px solid #fff;
+    color: #fff;
+    border-radius: 0;
+    transition: all 0.3s;
+}
+.btn-outline-white:hover {
+    background-color: #fff;
+    color: var(--deep-green);
+}
+
+/* --- HERO SECTION --- */
+.carousel-item { height: 95vh; background-size: cover; background-position: center; }
+
+/* Cinematic Dark Gradient */
+.carousel-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(to right, rgba(6, 78, 59, 0.9), rgba(6, 78, 59, 0.6), rgba(0,0,0,0.1));
+    z-index: 1;
+}
+.carousel-caption { z-index: 2; bottom: 0; top: 0; text-align: left; }
+.hero-title { font-weight: 700; letter-spacing: -1px; }
+
+/* Carousel Arrows */
+.carousel-arrow-box {
+    width: 50px; height: 50px;
+    border: 1px solid rgba(255,255,255,0.3);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s;
+}
+.carousel-arrow-box:hover { background-color: var(--rich-gold); border-color: var(--rich-gold); }
+
+/* --- GLASSMORPHISM CARD --- */
+.glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* --- FORMS (Clean & Modern) --- */
+.form-control, .form-select {
+    border-radius: 0;
+    border: 1px solid #e5e7eb;
+    padding: 1rem;
+}
+.form-control:focus, .form-select:focus {
+    box-shadow: none;
+    border-color: var(--rich-gold);
+    background-color: #fff;
 }
 
 /* --- NAVIGATION --- */
-.logo-text {
-    font-family: 'Montserrat', sans-serif; 
-    font-weight: 900; 
-    font-size: 1.6rem; 
-    letter-spacing: -1px;
-}
-
 .nav-link-custom {
-    color: var(--deep-slate) !important;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 700;
+    color: var(--dark-slate) !important;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600;
     font-size: 0.85rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
     padding: 0 15px !important;
     transition: color 0.3s;
 }
-.nav-link-custom:hover {
-    color: var(--primary-green) !important;
-}
+.nav-link-custom:hover { color: var(--rich-gold) !important; }
+.logo-serif { font-weight: 900; font-size: 1.8rem; letter-spacing: -1px; }
 
-.top-bar { background-color: var(--deep-slate); font-size: 0.85rem; }
-.hover-accent:hover { color: var(--solar-amber) !important; }
-
-/* --- HERO SECTION --- */
-.carousel-item {
-    height: 90vh;
-    background-size: cover;
-    background-position: center;
-}
-/* Green-tinted dark overlay for brand consistency */
-.carousel-overlay {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(to right, rgba(26, 37, 47, 0.95), rgba(46, 125, 50, 0.5), rgba(26, 37, 47, 0.2));
-    z-index: 1;
-}
-.carousel-caption { z-index: 2; bottom: 0; top: 0; }
-.hero-text { font-size: 1.25rem; font-weight: 400; line-height: 1.6; }
-.text-white-75 { color: rgba(255, 255, 255, 0.85); }
-
-/* --- PROJECT CARDS (New) --- */
-.project-card {
-    transition: transform 0.3s ease;
-    cursor: pointer;
-}
-.project-card:hover { transform: translateY(-5px); }
-.project-card img { transition: transform 0.5s ease; }
-.project-card:hover img { transform: scale(1.05); }
-
-.project-overlay {
-    position: absolute; bottom: 0; left: 0; width: 100%;
-    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-}
-
-/* --- BLOG CARDS (New) --- */
-.blog-card {
-    background: #fff;
-    transition: all 0.3s ease;
-}
-.blog-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 1rem 3rem rgba(0,0,0,.1)!important;
-}
-
-/* Typography Defaults */
-h1, h2, h3, h4, h5, .navbar-brand { font-family: 'Montserrat', sans-serif; }
-body { font-family: 'Open Sans', sans-serif; color: #455a64; }
-.fw-extrabold { font-weight: 800 !important; }
-.tracking-wide { letter-spacing: 1.5px; }
+/* Interactive Hover Links */
+.hover-gold:hover { color: var(--rich-gold) !important; transition: 0.3s; }
