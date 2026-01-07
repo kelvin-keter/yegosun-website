@@ -3,49 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yegosun Energy | Sustainable Power Solutions</title>
+    <title>Yegosun Energy | Premium Solar Solutions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
     <header>
         <div class="container">
-            <div class="logo">Yegosun <span>Energy</span></div>
+            <div class="logo">
+                <i class="fa-solid fa-solar-panel"></i> Yegosun<span>Energy</span>
+            </div>
             <nav>
                 <ul>
                     <li><a href="#">Home</a></li>
                     <li><a href="#about">About</a></li>
-                    <li><a href="#services">Capabilities</a></li>
-                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#services">Solutions</a></li>
+                    <li><a href="#contact" class="btn-nav">Get a Quote</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
     <section class="hero">
-        <div class="container">
-            <h1>Reliable Energy for <br> a Modern Kenya</h1>
-            <p>Delivering high-efficiency solar power systems and smart energy infrastructure for homes, businesses, and industrial clients.</p>
-            <a href="#contact" class="btn">Get a Quote</a>
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <h1>Engineering Kenya's <br> Sustainable Future</h1>
+            <p>We deliver industrial-grade solar infrastructure and smart energy systems designed for reliability, efficiency, and long-term ROI.</p>
+            <div class="hero-btns">
+                <a href="#contact" class="btn btn-primary">Start Your Project</a>
+                <a href="#services" class="btn btn-outline">Explore Solutions</a>
+            </div>
         </div>
     </section>
 
     <section id="about" class="section">
         <div class="container">
-            <div class="about-grid">
-                <div class="about-image">
-                    <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Solar Panels" style="width:100%; border-radius:15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-                </div>
-                <div class="about-text">
-                    <div class="section-title" style="text-align: left;">
-                        <h2>Smart Energy. Proven Results.</h2>
-                        <div class="line" style="margin: 0;"></div>
+            <div class="split-layout">
+                <div class="image-box">
+                    <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Solar Engineering">
+                    <div class="experience-badge">
+                        <span class="number">Est.</span>
+                        <span class="text">Premier<br>Quality</span>
                     </div>
-                    <br>
-                    <h3>Your Trusted Technical Partner.</h3>
-                    <p>Yegosun Energy Limited is a premier provider of renewable energy solutions in Kenya. We specialize in bridging the gap between hardware installation and long-term performance.</p>
-                    <br>
-                    <p>Our approach is data-driven and customer-focused. By utilizing top-tier components and adhering to strict engineering standards, we ensure that every watt of power generated translates into cost savings and operational stability for our clients.</p>
+                </div>
+                <div class="text-box">
+                    <h4 class="sub-heading">About Yegosun Energy</h4>
+                    <h2>Smart Energy. <br>Proven Engineering.</h2>
+                    <div class="line"></div>
+                    <p>Yegosun Energy Limited is not just a hardware supplier; we are a technical partner for Kenyan businesses and homeowners.</p>
+                    <p>Our approach is rooted in data and engineering precision. We bridge the gap between complex renewable technology and user-friendly, reliable power systems.</p>
+                    
+                    <ul class="feature-list">
+                        <li><i class="fa-solid fa-check-circle"></i> Certified Technical Experts</li>
+                        <li><i class="fa-solid fa-check-circle"></i> High-Efficiency Components</li>
+                        <li><i class="fa-solid fa-check-circle"></i> Post-Installation Support</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -53,67 +67,130 @@
 
     <section id="services" class="section bg-light">
         <div class="container">
-            <div class="section-title">
+            <div class="section-header">
                 <h2>Our Capabilities</h2>
-                <div class="line"></div>
+                <div class="line center-line"></div>
+                <p>End-to-end power solutions customized for your specific load requirements.</p>
             </div>
+            
             <div class="services-grid">
-                <div class="card">
-                    <div class="card-icon">🏡</div>
+                <div class="service-card">
+                    <div class="icon-circle">
+                        <i class="fa-solid fa-house-signal"></i>
+                    </div>
                     <h3>Residential Systems</h3>
-                    <p>Turnkey home solar solutions designed for energy independence and backup during grid outages.</p>
+                    <p>Turnkey home solar, hybrid inverters, and battery backup systems designed for total energy independence.</p>
                 </div>
-                <div class="card">
-                    <div class="card-icon">🏭</div>
-                    <h3>Industrial & Commercial</h3>
-                    <p>High-capacity power infrastructure customized to reduce overhead costs for businesses and factories.</p>
+                
+                <div class="service-card">
+                    <div class="icon-circle">
+                        <i class="fa-solid fa-industry"></i>
+                    </div>
+                    <h3>Commercial & Industrial</h3>
+                    <p>High-capacity 3-phase power infrastructure to reduce operational overheads for factories and offices.</p>
                 </div>
-                <div class="card">
-                    <div class="card-icon">⚙️</div>
+                
+                <div class="service-card">
+                    <div class="icon-circle">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
                     <h3>Technical Consultancy</h3>
-                    <p>Professional energy audits, system design, and maintenance services for existing installations.</p>
+                    <p>Professional energy audits, system sizing, and performance optimization for existing installations.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="contact" class="section">
+    <section id="contact" class="section dark-section">
         <div class="container">
-            <div class="contact-box">
-                <h2>Request a Quote</h2>
-                <p>Tell us about your energy needs, and our technical team will respond shortly.</p>
+            <div class="split-layout contact-layout">
                 
-                <form action="/submit_quote" method="POST" class="contact-form">
-                    <input type="text" name="fullName" placeholder="Full Name" required>
-                    <input type="email" name="email" placeholder="Email Address" required>
-                    <input type="text" name="phone" placeholder="Phone Number (Optional)">
+                <div class="contact-info">
+                    <h2>Let's Power Your Vision</h2>
+                    <p>Contact our technical team today for a free consultation or site survey.</p>
                     
-                    <select name="serviceType" required>
-                        <option value="" disabled selected>Select Service Interest...</option>
-                        <option value="Residential Solar">Residential Solar System</option>
-                        <option value="Commercial Solar">Commercial / Industrial Power</option>
-                        <option value="Solar Water Heating">Solar Water Heating</option>
-                        <option value="Consultancy">Technical Consultancy / Audit</option>
-                        <option value="Other">Other Inquiry</option>
-                    </select>
-            
-                    <textarea name="message" rows="4" placeholder="Briefly describe your project requirements..." required></textarea>
+                    <div class="info-item">
+                        <i class="fa-solid fa-envelope"></i>
+                        <div>
+                            <h5>Email Us</h5>
+                            <p>info@yegosun.com</p>
+                        </div>
+                    </div>
                     
-                    <button type="submit" class="btn">Send Request</button>
-                </form>
-                
-                <br>
-                <div style="margin-top: 20px; font-size: 0.9rem; opacity: 0.9;">
-                    <p><strong>Direct Inquiries:</strong> info@yegosun.com</p>
-                    <p><strong>Call Us:</strong> +254 727 113141</p>
+                    <div class="info-item">
+                        <i class="fa-solid fa-phone"></i>
+                        <div>
+                            <h5>Call Us</h5>
+                            <p>+254 727 113 141</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <div>
+                            <h5>Location</h5>
+                            <p>Nairobi, Kenya</p>
+                        </div>
+                    </div>
                 </div>
+
+                <div class="form-box">
+                    <h3>Request a Quote</h3>
+                    <form action="/submit_quote" method="POST">
+                        <div class="form-group">
+                            <input type="text" name="fullName" placeholder="Full Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" name="email" placeholder="Email Address" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="phone" placeholder="Phone Number">
+                        </div>
+                        <div class="form-group">
+                            <select name="serviceType" required>
+                                <option value="" disabled selected>Select Service Interest</option>
+                                <option value="Residential Solar">Residential Solar</option>
+                                <option value="Commercial Solar">Commercial / Industrial</option>
+                                <option value="Solar Water Heating">Solar Water Heating</option>
+                                <option value="Consultancy">Consultancy / Audit</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <textarea name="message" rows="4" placeholder="Project Details..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-full">Send Request</button>
+                    </form>
+                </div>
+
             </div>
         </div>
     </section>
 
     <footer>
-        <div class="container" style="text-align: center; color: #aaa; font-size: 0.9rem;">
-            <p>&copy; 2025 Yegosun Energy Limited. All Rights Reserved.</p>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>Yegosun<span>Energy</span></h3>
+                    <p>Empowering Kenya with sustainable, reliable, and affordable energy solutions.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contact</h4>
+                    <p>info@yegosun.com</p>
+                    <p>+254 727 113 141</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Yegosun Energy Limited. All Rights Reserved.</p>
+            </div>
         </div>
     </footer>
 
