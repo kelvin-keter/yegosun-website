@@ -15,12 +15,12 @@
 </head>
 <body>
 
-    <div class="top-bar bg-dark text-white py-2 d-none d-lg-block">
+    <div class="top-bar py-2 d-none d-lg-block text-white" style="background-color: #1a252f;">
         <div class="container d-flex justify-content-between align-items-center">
             <small><i class="fa-solid fa-envelope me-2 text-warning"></i> info@yegosun.com</small>
             <div>
-                <a href="#" class="text-white small text-decoration-none me-3"><i class="fa-solid fa-lock me-1"></i> Staff Portal</a>
-                <a href="#" class="text-white small text-decoration-none"><i class="fa-solid fa-headset me-1"></i> Support</a>
+                <a href="#" class="text-white small text-decoration-none me-4 opacity-75 hover-opacity-100"><i class="fa-solid fa-lock me-1"></i> Staff Portal</a>
+                <a href="#" class="text-white small text-decoration-none opacity-75 hover-opacity-100"><i class="fa-solid fa-headset me-1"></i> Support</a>
             </div>
         </div>
     </div>
@@ -28,11 +28,12 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-3">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="#">
-                <span class="text-dark" style="font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.6rem; letter-spacing: -1px;">YEGO</span>
-                <span class="text-warning" style="font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.6rem; letter-spacing: -1px;">SUN</span>
-                <span class="ms-2 ps-2 text-success border-start border-2 border-secondary" style="font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.75rem; letter-spacing: 2px; line-height: 1;">
-                    GREEN<br>ENERGY
-                </span>
+                <span class="text-dark logo-text">YEGO</span>
+                <span class="text-warning logo-text">SUN</span>
+                <div class="ms-2 ps-2 border-start border-2 border-secondary lh-1">
+                    <span class="d-block text-success fw-bold" style="font-size: 0.65rem; letter-spacing: 2px;">GREEN</span>
+                    <span class="d-block text-secondary fw-bold" style="font-size: 0.65rem; letter-spacing: 2px;">ENERGY</span>
+                </div>
             </a>
             
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -41,11 +42,11 @@
             
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item"><a class="nav-link text-uppercase fw-bold text-dark px-3" href="#">Home</a></li>
-                    <li class="nav-item"><a class="nav-link text-uppercase fw-bold text-dark px-3" href="#about">About</a></li>
-                    <li class="nav-item"><a class="nav-link text-uppercase fw-bold text-dark px-3" href="#services">Solutions</a></li>
+                    <li class="nav-item"><a class="nav-link nav-link-custom active" href="#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link nav-link-custom" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link nav-link-custom" href="#services">Solutions</a></li>
                     <li class="nav-item ms-lg-4">
-                        <a href="#contact" class="btn btn-success px-4 py-2 rounded-1 fw-bold shadow-sm text-uppercase" style="letter-spacing: 1px;">Get a Quote</a>
+                        <a href="#contact" class="btn btn-primary px-4 py-2 fw-bold shadow-sm text-uppercase btn-cta">Get a Quote</a>
                     </li>
                 </ul>
             </div>
@@ -60,41 +61,41 @@
         </div>
         
         <div class="carousel-inner">
-            <div class="carousel-item active" style="background-image: url('https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');">
+            <div class="carousel-item active" style="background-image: url('https://images.unsplash.com/photo-1545208942-e46377953259?q=80&w=1950&auto=format&fit=crop');">
                 <div class="carousel-overlay"></div>
-                <div class="carousel-caption d-flex flex-column justify-content-center h-100">
-                    <div class="container text-start">
-                        <span class="badge bg-warning text-dark mb-3 px-3 py-2 text-uppercase fw-bold">Sustainable Innovation</span>
-                        <h1 class="display-3 fw-extrabold text-white mb-4">Powering Kenya <br>With Clean Energy</h1>
-                        <p class="lead text-white-50 mb-5 d-none d-md-block" style="max-width: 600px;">We design, build, and maintain industrial-grade solar systems that reduce carbon footprints and operational costs.</p>
+                <div class="carousel-caption d-flex flex-column justify-content-center h-100 text-start">
+                    <div class="container">
+                        <span class="badge bg-primary text-white mb-3 px-3 py-2 text-uppercase fw-bold tracking-wide">Premier Tech Partner</span>
+                        <h1 class="display-3 fw-extrabold text-white mb-3">Nairobi's Source for <br>Sustainable Power</h1>
+                        <p class="lead text-white-75 mb-5 d-none d-md-block hero-text">Empowering Kenya's businesses and homes with certified,<br> high-quality solar machines you can trust.</p>
                         <div class="d-flex gap-3">
-                            <a href="#contact" class="btn btn-success btn-lg px-5 shadow-lg fw-bold">Start Project</a>
-                            <a href="#services" class="btn btn-outline-light btn-lg px-5 fw-bold">Our Solutions</a>
+                            <a href="#services" class="btn btn-warning btn-lg px-5 fw-bold shadow-lg text-uppercase">Explore Collection</a>
+                            <a href="#contact" class="btn btn-outline-light btn-lg px-5 fw-bold text-uppercase">Contact Us</a>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1592833159057-65a284572bce?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');">
+            <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1950&auto=format&fit=crop');">
                 <div class="carousel-overlay"></div>
-                <div class="carousel-caption d-flex flex-column justify-content-center h-100">
-                    <div class="container text-start">
-                        <span class="badge bg-success mb-3 px-3 py-2 text-uppercase fw-bold">Energy Independence</span>
-                        <h1 class="display-3 fw-extrabold text-white mb-4">Smart Homes <br>Run on Yegosun</h1>
-                        <p class="lead text-white-50 mb-5 d-none d-md-block" style="max-width: 600px;">Say goodbye to blackouts. Our hybrid inverter systems keep your lights on when the grid goes off.</p>
-                        <a href="#contact" class="btn btn-warning text-dark btn-lg px-5 shadow-lg fw-bold">Go Solar Today</a>
+                <div class="carousel-caption d-flex flex-column justify-content-center h-100 text-start">
+                    <div class="container">
+                        <span class="badge bg-warning text-dark mb-3 px-3 py-2 text-uppercase fw-bold tracking-wide">Residential Solutions</span>
+                        <h1 class="display-3 fw-extrabold text-white mb-3">Energy Independence <br>For Your Home</h1>
+                        <p class="lead text-white-75 mb-5 d-none d-md-block hero-text">Say goodbye to blackouts. Our hybrid systems keep <br>your lights on when the grid goes off.</p>
+                        <a href="#contact" class="btn btn-primary btn-lg px-5 fw-bold shadow-lg text-uppercase">Go Solar Today</a>
                     </div>
                 </div>
             </div>
             
-             <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1566093097221-8560d9794952?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');">
+             <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=1950&auto=format&fit=crop');">
                 <div class="carousel-overlay"></div>
-                <div class="carousel-caption d-flex flex-column justify-content-center h-100">
-                    <div class="container text-start">
-                        <span class="badge bg-white text-dark mb-3 px-3 py-2 text-uppercase fw-bold">Commercial Grade</span>
-                        <h1 class="display-3 fw-extrabold text-white mb-4">Industrial Power <br>Infrastructure</h1>
-                        <p class="lead text-white-50 mb-5 d-none d-md-block" style="max-width: 600px;">Heavy-duty 3-phase solutions for factories, hospitals, and schools.</p>
-                        <a href="#contact" class="btn btn-success btn-lg px-5 shadow-lg fw-bold">Get Corporate Quote</a>
+                <div class="carousel-caption d-flex flex-column justify-content-center h-100 text-start">
+                    <div class="container">
+                        <span class="badge bg-white text-dark mb-3 px-3 py-2 text-uppercase fw-bold tracking-wide">Engineering Excellence</span>
+                        <h1 class="display-3 fw-extrabold text-white mb-3">Industrial Power <br>Infrastructure</h1>
+                        <p class="lead text-white-75 mb-5 d-none d-md-block hero-text">Heavy-duty 3-phase solutions for factories, hospitals, <br>and schools across East Africa.</p>
+                        <a href="#contact" class="btn btn-warning btn-lg px-5 fw-bold shadow-lg text-uppercase">Get Corporate Quote</a>
                     </div>
                 </div>
             </div>
@@ -107,7 +108,6 @@
                 <div class="col-lg-6 mb-5 mb-lg-0">
                     <div class="position-relative">
                         <img src="https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="img-fluid rounded-4 shadow-lg w-100" alt="Engineers working">
-                        
                         <div class="bg-white p-4 rounded-3 position-absolute bottom-0 start-0 mb-4 ms-4 shadow-lg border-start border-5 border-success" style="max-width: 280px;">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="fa-solid fa-certificate text-warning fa-2x me-3"></i>
@@ -138,7 +138,7 @@
                                 </div>
                                 <div class="flex-grow-1 ms-3">
                                     <h5 class="fw-bold text-dark mb-1">Eco-Focused</h5>
-                                    <p class="small text-muted mb-0">Reducing carbon footprints with clean tech.</p>
+                                    <p class="small text-muted mb-0">Reducing carbon footprints.</p>
                                 </div>
                             </div>
                         </div>
@@ -151,11 +151,11 @@
                                 </div>
                                 <div class="flex-grow-1 ms-3">
                                     <h5 class="fw-bold text-dark mb-1">Smart Systems</h5>
-                                    <p class="small text-muted mb-0">IoT-enabled monitoring for efficiency.</p>
+                                    <p class="small text-muted mb-0">IoT-enabled monitoring.</p>
                                 </div>
                             </div>
                         </div>
-                         <div class="col-md-6">
+                        <div class="col-md-6">
                             <div class="d-flex">
                                 <div class="flex-shrink-0">
                                     <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
@@ -164,7 +164,7 @@
                                 </div>
                                 <div class="flex-grow-1 ms-3">
                                     <h5 class="fw-bold text-dark mb-1">Maintenance</h5>
-                                    <p class="small text-muted mb-0">24/7 support and system servicing.</p>
+                                    <p class="small text-muted mb-0">24/7 support servicing.</p>
                                 </div>
                             </div>
                         </div>
@@ -177,7 +177,7 @@
                                 </div>
                                 <div class="flex-grow-1 ms-3">
                                     <h5 class="fw-bold text-dark mb-1">Warranty</h5>
-                                    <p class="small text-muted mb-0">Guaranteed performance on all parts.</p>
+                                    <p class="small text-muted mb-0">Guaranteed performance.</p>
                                 </div>
                             </div>
                         </div>
@@ -192,6 +192,7 @@
             <div class="text-center mb-5" style="max-width: 700px; margin: auto;">
                 <h6 class="text-success fw-bold text-uppercase">Our Capabilities</h6>
                 <h2 class="fw-extrabold text-dark">Holistic Energy Solutions</h2>
+                <div class="bg-warning mx-auto my-3" style="width: 60px; height: 4px;"></div>
             </div>
             
             <div class="row g-4">
@@ -264,7 +265,7 @@
 
                 <div class="col-lg-6">
                     <div class="bg-white p-4 p-md-5 rounded-4 text-dark shadow-lg">
-                        <h4 class="fw-bold mb-4">Request a Quote</h4>
+                        <h4 class="fw-bold mb-4 text-dark">Request a Quote</h4>
                         <form action="/submit_quote" method="POST">
                             <div class="mb-3">
                                 <input type="text" name="fullName" class="form-control bg-light border-0 py-3" placeholder="Your Name" required>
@@ -289,7 +290,7 @@
                             <div class="mb-4">
                                 <textarea name="message" rows="3" class="form-control bg-light border-0" placeholder="Tell us about your project..." required></textarea>
                             </div>
-                            <button type="submit" class="btn btn-success w-100 py-3 fw-bold shadow">Submit Request</button>
+                            <button type="submit" class="btn btn-primary w-100 py-3 fw-bold shadow text-uppercase">Submit Request</button>
                         </form>
                     </div>
                 </div>
