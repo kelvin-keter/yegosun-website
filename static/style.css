@@ -22,7 +22,7 @@
     transition: all 0.3s ease;
 }
 .btn-primary:hover {
-    background-color: #1B5E20; /* Darker Green */
+    background-color: #1B5E20;
     transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(46, 125, 50, 0.4);
 }
@@ -71,7 +71,7 @@
 
 /* --- HERO SLIDER --- */
 .carousel-item {
-    height: 85vh; /* Adjusted height */
+    height: 85vh;
     background-size: cover;
     background-position: center;
 }
@@ -96,19 +96,19 @@
 }
 .carousel-arrow-box:hover { background: #fff; color: var(--primary-green); }
 
-/* --- FEATURED PROJECTS (FIXED) --- */
+/* --- FEATURED PROJECTS (FIXED LAYOUT) --- */
 .project-card { transition: transform 0.3s ease; overflow: hidden; }
 .project-card:hover { transform: translateY(-5px); }
 
 .project-img-wrapper {
     position: relative;
-    height: 250px; /* Fixed height for uniformity */
+    height: 250px; /* Forces all project images to same height */
     overflow: hidden;
 }
 .project-img-wrapper img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Ensures image fills the box without stretching */
+    object-fit: cover; /* Ensures image fills box without distortion */
     transition: transform 0.5s ease;
 }
 .project-card:hover img { transform: scale(1.05); }
@@ -123,10 +123,19 @@
     text-transform: uppercase;
 }
 
-/* --- FOOTER --- */
+/* --- FOOTER VISIBILITY --- */
 .hover-white:hover { color: #fff !important; padding-left: 5px; transition: 0.2s; }
 
 /* Typography Defaults */
 h1, h2, h3, h4, h5, .navbar-brand { font-family: 'Montserrat', sans-serif; }
 body { font-family: 'Open Sans', sans-serif; color: #455a64; }
 .fw-extrabold { font-weight: 800 !important; }
+
+/* Floating Labels Fix for Bootstrap */
+.form-floating > .form-control:focus ~ label {
+    color: var(--primary-green);
+}
+.form-floating > .form-control:focus {
+    border-color: var(--primary-green);
+    box-shadow: none;
+}
