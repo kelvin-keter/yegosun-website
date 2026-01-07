@@ -6,19 +6,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from sqlalchemy import text  # Required for the database fix
 
 app = Flask(__name__)
 
-# --- 1. PRODUCTION CONFIGURATION ---
-# Use the Environment Variable if available (Render), else fallback to 'secret' (Local)
+# --- 1. CONFIGURATION ---
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'yegosun-master-key-2026')
 
-# INTELLIGENT DATABASE SWITCHING
-# If running on Render, use the 'DATABASE_URL' environment variable.
-# If running locally, use 'sqlite:///yegosun.db'.
 database_url = os.environ.get('DATABASE_URL', 'sqlite:///yegosun.db')
-
-# Fix for Render's Postgres URL format (postgres:// -> postgresql://)
 if database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
 
@@ -32,7 +27,6 @@ cloudinary.config(
     api_secret = 'JcI3yNuHDxlAlXMbLG1uaXF3gYw' 
 )
 
-# --- INIT EXTENSIONS ---
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -41,7 +35,8 @@ login_manager.login_view = 'login'
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128))
+    # FIX: Increased size from 128 to 256 to fit the long hash
+    password_hash = db.Column(db.String(256)) 
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -61,14 +56,12 @@ class BlogPost(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Create Tables (Safe to run on every deploy)
 with app.app_context():
     db.create_all()
 
 # --- 3. PUBLIC ROUTES ---
 @app.route('/')
 def home():
-    # Only try to fetch blogs if table exists
     try:
         latest_blogs = BlogPost.query.order_by(BlogPost.date_posted.desc()).limit(3).all()
     except:
@@ -77,7 +70,6 @@ def home():
 
 @app.route('/submit_quote', methods=['POST'])
 def submit_quote():
-    print(f"Quote received: {request.form.get('fullName')}")
     return redirect(url_for('home'))
 
 @app.route('/blog/<int:post_id>')
@@ -138,28 +130,35 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
-# --- TEMPORARY SETUP ROUTE (DELETE AFTER USE) ---
+# --- 5. THE FIX ROUTE ---
 @app.route('/setup-admin')
 def setup_admin():
     try:
-        # 1. Create Tables
-        db.create_all()
-        
-        # 2. Check/Create Admin
+        # STEP A: Force the database to expand the column size
+        # This prevents the "value too long" error
+        with db.engine.connect() as conn:
+            conn.execute(text('ALTER TABLE "user" ALTER COLUMN password_hash TYPE VARCHAR(256);'))
+            conn.commit()
+            print("Database column resized successfully.")
+    except Exception as e:
+        print(f"Column resize warning (might already be done): {e}")
+
+    try:
+        # STEP B: Create/Reset the Admin User
         user = User.query.filter_by(username='admin').first()
         if user:
             user.set_password('password123')
             db.session.commit()
-            return "Existing 'admin' password reset to 'password123'"
+            return "SUCCESS: Existing 'admin' password reset to 'password123'. Database fixed."
         else:
             new_user = User(username='admin')
             new_user.set_password('password123')
             db.session.add(new_user)
             db.session.commit()
-            return "New 'admin' user created with password 'password123'"
+            return "SUCCESS: New 'admin' user created. Database fixed."
             
     except Exception as e:
-        return f"An error occurred: {str(e)}"
+        return f"Final Error: {str(e)}"
 
 if __name__ == '__main__':
     app.run(debug=True)
