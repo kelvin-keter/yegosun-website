@@ -9,12 +9,23 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# --- 1. CONFIGURATION ---
-app.config['SECRET_KEY'] = 'yegosun-master-key-2026' 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///yegosun.db'
+# --- 1. PRODUCTION CONFIGURATION ---
+# Use the Environment Variable if available (Render), else fallback to 'secret' (Local)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'yegosun-master-key-2026')
+
+# INTELLIGENT DATABASE SWITCHING
+# If running on Render, use the 'DATABASE_URL' environment variable.
+# If running locally, use 'sqlite:///yegosun.db'.
+database_url = os.environ.get('DATABASE_URL', 'sqlite:///yegosun.db')
+
+# Fix for Render's Postgres URL format (postgres:// -> postgresql://)
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# --- CLOUDINARY CONFIG (Your Keys) ---
+# --- CLOUDINARY CONFIG ---
 cloudinary.config(
     cloud_name = 'dlwyo4bho', 
     api_key = '547698432919746', 
@@ -27,7 +38,6 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
 # --- 2. DATABASE MODELS ---
-
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -42,7 +52,6 @@ class User(UserMixin, db.Model):
 class BlogPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    # Stores the full Cloudinary URL (e.g., https://res.cloudinary.com/...)
     image_url = db.Column(db.String(300), nullable=False) 
     content = db.Column(db.Text, nullable=False)
     category = db.Column(db.String(50), nullable=False)
@@ -52,16 +61,18 @@ class BlogPost(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Create Tables
+# Create Tables (Safe to run on every deploy)
 with app.app_context():
     db.create_all()
 
 # --- 3. PUBLIC ROUTES ---
-
 @app.route('/')
 def home():
-    # Fetch 3 most recent blogs
-    latest_blogs = BlogPost.query.order_by(BlogPost.date_posted.desc()).limit(3).all()
+    # Only try to fetch blogs if table exists
+    try:
+        latest_blogs = BlogPost.query.order_by(BlogPost.date_posted.desc()).limit(3).all()
+    except:
+        latest_blogs = []
     return render_template('index.html', blogs=latest_blogs)
 
 @app.route('/submit_quote', methods=['POST'])
@@ -69,27 +80,23 @@ def submit_quote():
     print(f"Quote received: {request.form.get('fullName')}")
     return redirect(url_for('home'))
 
-# Placeholder for blog details
 @app.route('/blog/<int:post_id>')
 def blog_detail(post_id):
     post = BlogPost.query.get_or_404(post_id)
-    return f"<h1>{post.title}</h1><img src='{post.image_url}' width='500'><p>{post.content}</p>"
+    return render_template('blog_detail.html', post=post)
 
-# --- 4. ADMIN DASHBOARD ROUTES ---
-
+# --- 4. ADMIN ROUTES ---
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
         user = User.query.filter_by(username=username).first()
-        
         if user and user.check_password(password):
             login_user(user)
             return redirect(url_for('dashboard'))
         else:
-            flash('Invalid username or password')
-            
+            flash('Invalid credentials')
     return render_template('login.html')
 
 @app.route('/dashboard')
@@ -105,24 +112,16 @@ def new_post():
         title = request.form.get('title')
         content = request.form.get('content')
         category = request.form.get('category')
-        file_to_upload = request.files['image']
-
-        if file_to_upload:
+        file = request.files['image']
+        if file:
             try:
-                # 1. Upload to Cloudinary
-                upload_result = cloudinary.uploader.upload(file_to_upload)
-                # 2. Get the Secure URL
-                image_url = upload_result['secure_url']
-                
-                # 3. Save to Database
-                new_post = BlogPost(title=title, content=content, category=category, image_url=image_url)
+                res = cloudinary.uploader.upload(file)
+                new_post = BlogPost(title=title, content=content, category=category, image_url=res['secure_url'])
                 db.session.add(new_post)
                 db.session.commit()
                 return redirect(url_for('dashboard'))
             except Exception as e:
-                print(f"Error uploading: {e}")
-                return "Error uploading image", 500
-
+                print(e)
     return render_template('create_post.html')
 
 @app.route('/post/<int:post_id>/delete')
