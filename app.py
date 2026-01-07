@@ -1,19 +1,17 @@
 import os
 import cloudinary
 import cloudinary.uploader
-from flask import Flask, render_template, request, redirect, url_for, flash, abort
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from sqlalchemy import text
 
 app = Flask(__name__)
 
-# --- 1. CONFIGURATION ---
+# --- CONFIGURATION ---
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'yegosun-master-key-2026')
 
-# Database Logic: Switch between Local SQLite and Render PostgreSQL
 database_url = os.environ.get('DATABASE_URL', 'sqlite:///yegosun.db')
 if database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
@@ -21,23 +19,22 @@ if database_url.startswith("postgres://"):
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# --- CLOUDINARY CONFIG ---
+# --- CLOUDINARY ---
 cloudinary.config(
     cloud_name = 'dlwyo4bho', 
     api_key = '547698432919746', 
     api_secret = 'JcI3yNuHDxlAlXMbLG1uaXF3gYw' 
 )
 
-# --- INIT EXTENSIONS ---
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-# --- 2. DATABASE MODELS ---
+# --- MODELS ---
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
-    password_hash = db.Column(db.String(256)) # Increased size for security
+    password_hash = db.Column(db.String(256))
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -57,11 +54,10 @@ class BlogPost(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Ensure tables exist
 with app.app_context():
     db.create_all()
 
-# --- 3. PUBLIC ROUTES ---
+# --- ROUTES ---
 
 @app.route('/')
 def home():
@@ -85,9 +81,7 @@ def contact():
 
 @app.route('/submit_quote', methods=['POST'])
 def submit_quote():
-    # Future: Add Email Logic Here
-    print(f"Quote received: {request.form.get('fullName')}")
-    flash('Thank you! We have received your request.', 'success')
+    flash('Thank you! We have received your message.', 'success')
     return redirect(url_for('home'))
 
 @app.route('/blog/<int:post_id>')
@@ -95,7 +89,7 @@ def blog_detail(post_id):
     post = BlogPost.query.get_or_404(post_id)
     return render_template('blog_detail.html', post=post)
 
-# --- 4. ADMIN ROUTES ---
+# --- ADMIN ---
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -103,13 +97,11 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         user = User.query.filter_by(username=username).first()
-        
         if user and user.check_password(password):
             login_user(user)
             return redirect(url_for('dashboard'))
         else:
             flash('Invalid username or password', 'danger')
-            
     return render_template('login.html')
 
 @app.route('/dashboard')
@@ -126,20 +118,15 @@ def new_post():
         content = request.form.get('content')
         category = request.form.get('category')
         file = request.files['image']
-        
         if file:
             try:
-                # Upload to Cloudinary
                 res = cloudinary.uploader.upload(file)
-                # Save to DB
                 new_post = BlogPost(title=title, content=content, category=category, image_url=res['secure_url'])
                 db.session.add(new_post)
                 db.session.commit()
                 return redirect(url_for('dashboard'))
             except Exception as e:
                 print(e)
-                flash('Error uploading image', 'danger')
-                
     return render_template('create_post.html')
 
 @app.route('/post/<int:post_id>/delete')
