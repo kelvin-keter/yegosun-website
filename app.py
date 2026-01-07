@@ -144,21 +144,6 @@ def setup_admin():
         print(f"Column resize warning (might already be done): {e}")
 
     try:
-        # STEP B: Create/Reset the Admin User
-        user = User.query.filter_by(username='admin').first()
-        if user:
-            user.set_password('password123')
-            db.session.commit()
-            return "SUCCESS: Existing 'admin' password reset to 'password123'. Database fixed."
-        else:
-            new_user = User(username='admin')
-            new_user.set_password('password123')
-            db.session.add(new_user)
-            db.session.commit()
-            return "SUCCESS: New 'admin' user created. Database fixed."
-            
-    except Exception as e:
-        return f"Final Error: {str(e)}"
-
+        
 if __name__ == '__main__':
     app.run(debug=True)
