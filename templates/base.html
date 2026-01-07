@@ -18,7 +18,7 @@
             <small><i class="fa-solid fa-envelope me-2 text-warning"></i> info@yegosun.com</small>
             <div>
                 <a href="{{ url_for('login') }}" class="text-white small text-decoration-none me-4 hover-accent"><i class="fa-solid fa-lock me-1"></i> Staff Portal</a>
-                <a href="#" class="text-white small text-decoration-none hover-accent"><i class="fa-solid fa-phone me-1"></i> +254 727 113 141</a>
+                <a href="#" class="text-white small text-decoration-none hover-accent"><i class="fa-solid fa-phone me-1"></i> +254 020 200 0700</a>
             </div>
         </div>
     </div>
@@ -43,8 +43,8 @@
                     <li class="nav-item"><a class="nav-link nav-link-custom" href="{{ url_for('home') }}">Home</a></li>
                     <li class="nav-item"><a class="nav-link nav-link-custom" href="{{ url_for('about') }}">About</a></li>
                     <li class="nav-item"><a class="nav-link nav-link-custom" href="{{ url_for('services') }}">Solutions</a></li>
-                    <li class="nav-item"><a class="nav-link nav-link-custom" href="#projects">Projects</a></li>
-                    <li class="nav-item"><a class="nav-link nav-link-custom" href="#blogs">Blogs</a></li>
+                    <li class="nav-item"><a class="nav-link nav-link-custom" href="{{ url_for('home') }}#projects">Projects</a></li>
+                    <li class="nav-item"><a class="nav-link nav-link-custom" href="{{ url_for('home') }}#blogs">Blogs</a></li>
                     
                     <li class="nav-item ms-lg-4">
                         <a href="{{ url_for('contact') }}" class="btn btn-primary px-4 py-2 fw-bold shadow-sm text-uppercase btn-cta">Get a Quote</a>
@@ -74,10 +74,11 @@
                     </ul>
                 </div>
                 <div class="col-md-2">
-                    <h5 class="text-white mb-3 fw-bold text-uppercase small">Support</h5>
+                    <h5 class="text-white mb-3 fw-bold text-uppercase small">Contact</h5>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="{{ url_for('contact') }}" class="text-white-75 text-decoration-none hover-white">Contact Us</a></li>
-                        <li class="mb-2"><a href="{{ url_for('login') }}" class="text-white-75 text-decoration-none hover-white">Staff Portal</a></li>
+                        <li class="mb-2 text-white-75 small">Garden City, Mbuni Drive</li>
+                        <li class="mb-2 text-white-75 small">P.O Box 9765-00100</li>
+                        <li class="mb-2 text-white-75 small">+254 020 200 0700</li>
                     </ul>
                 </div>
                 <div class="col-md-4">
@@ -89,7 +90,7 @@
                 </div>
             </div>
             <div class="text-center mt-5 pt-4 border-top border-secondary">
-                <p class="text-white-50 mb-0 small">&copy; 2026 Yegosun Energy Limited.</p>
+                <p class="text-white-50 mb-0 small">&copy; 2026 Yegosun Energy Limited. Nairobi, Kenya. All Rights Reserved.</p>
             </div>
         </div>
     </footer>
