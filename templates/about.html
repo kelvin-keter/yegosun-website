@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}About Us{% endblock %}
+
+{% block content %}
+<div class="bg-dark text-white py-5" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('{{ url_for('static', filename='images/hero-2.jpg') }}') center/cover;">
+    <div class="container py-5 text-center">
+        <h1 class="display-4 fw-extrabold">Who We Are</h1>
+        <p class="lead text-white-50">Building a Sustainable Future for Kenya.</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-5 align-items-center">
+        <div class="col-lg-6">
+            <img src="{{ url_for('static', filename='images/hero-1.jpg') }}" class="img-fluid rounded-4 shadow" alt="About Yegosun">
+        </div>
+        <div class="col-lg-6">
+            <h6 class="text-success fw-bold text-uppercase">Our Story</h6>
+            <h2 class="fw-bold mb-4">Leading the Green Revolution</h2>
+            <p class="text-muted mb-4">Founded with a vision to make clean energy accessible, Yegosun Energy has grown into Kenya's most trusted solar partner. We specialize in engineering robust power systems for institutions that cannot afford downtime.</p>
+            
+            <div class="row g-4 mb-4">
+                <div class="col-6">
+                    <div class="border-start border-4 border-warning ps-3">
+                        <h4 class="fw-bold mb-0">8+</h4>
+                        <small class="text-muted">Years Experience</small>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="border-start border-4 border-success ps-3">
+                        <h4 class="fw-bold mb-0">150+</h4>
+                        <small class="text-muted">Projects Completed</small>
+                    </div>
+                </div>
+            </div>
+            <a href="{{ url_for('contact') }}" class="btn btn-outline-dark rounded-pill px-4">Meet Our Team</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -77,6 +77,18 @@ def blog_detail(post_id):
     post = BlogPost.query.get_or_404(post_id)
     return render_template('blog_detail.html', post=post)
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/services')
+def services():
+    return render_template('services.html')
+
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
+
 # --- 4. ADMIN ROUTES ---
 @app.route('/login', methods=['GET', 'POST'])
 def login():

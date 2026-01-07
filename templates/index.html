@@ -1,61 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yegosun Energy | Powering Kenya's Future</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
 
-    <div class="top-bar py-2 d-none d-lg-block text-white" style="background-color: #1a252f;">
-        <div class="container d-flex justify-content-between align-items-center">
-            <small><i class="fa-solid fa-envelope me-2 text-warning"></i> info@yegosun.com</small>
-            <div>
-                <a href="#" class="text-white small text-decoration-none me-4 hover-accent"><i class="fa-solid fa-lock me-1"></i> Staff Portal</a>
-                <a href="#" class="text-white small text-decoration-none hover-accent"><i class="fa-solid fa-phone me-1"></i> +254 727 113 141</a>
-            </div>
-        </div>
-    </div>
-
-    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-3">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <span class="text-dark logo-text">YEGO</span>
-                <span class="text-warning logo-text">SUN</span>
-                <div class="ms-2 ps-2 border-start border-3 border-success lh-1">
-                    <span class="d-block text-success fw-bold" style="font-size: 0.7rem; letter-spacing: 2px;">GREEN</span>
-                    <span class="d-block text-secondary fw-bold" style="font-size: 0.7rem; letter-spacing: 2px;">ENERGY</span>
-                </div>
-            </a>
-            
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item"><a class="nav-link nav-link-custom active" href="#">Home</a></li>
-                    <li class="nav-item"><a class="nav-link nav-link-custom" href="#about">About</a></li>
-                    <li class="nav-item"><a class="nav-link nav-link-custom" href="#services">Solutions</a></li>
-                    <li class="nav-item"><a class="nav-link nav-link-custom" href="#projects">Projects</a></li>
-                    <li class="nav-item"><a class="nav-link nav-link-custom" href="#blogs">Blogs</a></li>
-                    
-                    <li class="nav-item ms-lg-4">
-                        <a href="#contact" class="btn btn-primary px-4 py-2 fw-bold shadow-sm text-uppercase btn-cta">Get a Quote</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
+{% block content %}
     <header id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="6000">
         <div class="carousel-indicators mb-5">
             <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
@@ -73,7 +18,7 @@
                         <p class="lead text-white-90 mb-5 d-none d-md-block hero-text">Reliable, renewable power to ensure learning never stops.<br> Lighting up classrooms across the country.</p>
                         <div class="d-flex gap-3">
                             <a href="#projects" class="btn btn-warning btn-lg px-5 fw-bold shadow-lg text-uppercase">View Our Work</a>
-                            <a href="#contact" class="btn btn-outline-light btn-lg px-5 fw-bold text-uppercase">Partner With Us</a>
+                            <a href="{{ url_for('contact') }}" class="btn btn-outline-light btn-lg px-5 fw-bold text-uppercase">Partner With Us</a>
                         </div>
                     </div>
                 </div>
@@ -86,7 +31,7 @@
                         <span class="badge bg-warning text-dark mb-3 px-3 py-2 text-uppercase fw-bold tracking-wide">Green Revolution</span>
                         <h1 class="display-3 fw-extrabold text-white mb-3">Sustainable Power <br>For a Clean Future</h1>
                         <p class="lead text-white-90 mb-5 d-none d-md-block hero-text">Reducing carbon footprints for businesses and institutions<br> through advanced solar engineering.</p>
-                        <a href="#contact" class="btn btn-primary btn-lg px-5 fw-bold shadow-lg text-uppercase">Go Green Today</a>
+                        <a href="{{ url_for('contact') }}" class="btn btn-primary btn-lg px-5 fw-bold shadow-lg text-uppercase">Go Green Today</a>
                     </div>
                 </div>
             </div>
@@ -98,7 +43,7 @@
                         <span class="badge bg-white text-dark mb-3 px-3 py-2 text-uppercase fw-bold tracking-wide">Technical Excellence</span>
                         <h1 class="display-3 fw-extrabold text-white mb-3">Industrial Grade <br>Solar Infrastructure</h1>
                         <p class="lead text-white-90 mb-5 d-none d-md-block hero-text">High-capacity solutions designed for longevity<br> and maximum Return on Investment.</p>
-                        <a href="#services" class="btn btn-warning btn-lg px-5 fw-bold shadow-lg text-uppercase">Our Solutions</a>
+                        <a href="{{ url_for('services') }}" class="btn btn-warning btn-lg px-5 fw-bold shadow-lg text-uppercase">Our Solutions</a>
                     </div>
                 </div>
             </div>
@@ -211,136 +156,10 @@
 
     <section id="contact" class="py-5 bg-dark text-white position-relative overflow-hidden">
         <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, #1b5e20 0%, #004d40 100%); z-index: 0;"></div>
-        
-        <div class="container py-5 position-relative" style="z-index: 1;">
-            <div class="row g-5 align-items-center">
-                
-                <div class="col-lg-5">
-                    <span class="text-warning fw-bold text-uppercase mb-2 d-block tracking-wide">Get in Touch</span>
-                    <h2 class="fw-extrabold mb-4 display-5 text-white">Let's Build Your <br>Solar Future.</h2>
-                    <p class="text-white-90 mb-5 lead">Our engineers are ready to design a custom solution for your school, business, or home.</p>
-                    
-                    <div class="d-flex align-items-center mb-4 p-3 rounded-3" style="background: rgba(255,255,255,0.1);">
-                        <div class="bg-success rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
-                            <i class="fa-solid fa-envelope text-white fa-lg"></i>
-                        </div>
-                        <div>
-                            <small class="text-white-50 text-uppercase fw-bold">Email Us</small>
-                            <h5 class="fw-bold mb-0 text-white">info@yegosun.com</h5>
-                        </div>
-                    </div>
-                    
-                    <div class="d-flex align-items-center mb-4 p-3 rounded-3" style="background: rgba(255,255,255,0.1);">
-                         <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
-                            <i class="fa-solid fa-phone text-dark fa-lg"></i>
-                        </div>
-                        <div>
-                            <small class="text-white-50 text-uppercase fw-bold">Call Us</small>
-                            <h5 class="fw-bold mb-0 text-white">+254 727 113 141</h5>
-                        </div>
-                    </div>
-
-                    <div class="mt-4">
-                        <p class="small text-white-50 mb-2">Why Choose Yegosun?</p>
-                        <div class="d-flex gap-2">
-                            <span class="badge bg-white text-dark border border-white">✔ EPRA Certified</span>
-                            <span class="badge bg-white text-dark border border-white">✔ 25-Year Warranty</span>
-                            <span class="badge bg-white text-dark border border-white">✔ 24/7 Support</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-7">
-                    <div class="bg-white p-5 rounded-4 shadow-lg">
-                        <h3 class="fw-bold mb-4 text-dark">Request a Free Consultation</h3>
-                        <form action="/submit_quote" method="POST">
-                            
-                            <div class="form-floating mb-3">
-                                <input type="text" name="fullName" class="form-control bg-light border-0" id="floatingName" placeholder="Name" required>
-                                <label for="floatingName">Full Name</label>
-                            </div>
-
-                            <div class="row g-3 mb-3">
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="email" name="email" class="form-control bg-light border-0" id="floatingEmail" placeholder="name@example.com" required>
-                                        <label for="floatingEmail">Email Address</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" name="phone" class="form-control bg-light border-0" id="floatingPhone" placeholder="Phone">
-                                        <label for="floatingPhone">Phone Number</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-floating mb-3">
-                                <select name="serviceType" class="form-select bg-light border-0" id="floatingSelect" required>
-                                    <option value="" disabled selected>Select Service Interest</option>
-                                    <option value="School Installation">School Installation</option>
-                                    <option value="Residential Solar">Residential Solar</option>
-                                    <option value="Commercial Solar">Commercial / Industrial</option>
-                                    <option value="Solar Water Heating">Solar Water Heating</option>
-                                    <option value="Consultancy">Consultancy / Audit</option>
-                                </select>
-                                <label for="floatingSelect">I am interested in...</label>
-                            </div>
-
-                            <div class="form-floating mb-4">
-                                <textarea name="message" class="form-control bg-light border-0" placeholder="Leave a comment here" id="floatingTextarea" style="height: 100px" required></textarea>
-                                <label for="floatingTextarea">Project Details</label>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary w-100 py-3 fw-bold shadow text-uppercase" style="letter-spacing: 1px;">
-                                Submit Request <i class="fa-solid fa-paper-plane ms-2"></i>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+        <div class="container py-5 text-center position-relative" style="z-index: 1;">
+            <h2 class="fw-extrabold mb-4 display-5 text-white">Let's Build Your Solar Future.</h2>
+            <p class="text-white-90 mb-5 lead">Our engineers are ready to design a custom solution for your school, business, or home.</p>
+            <a href="{{ url_for('contact') }}" class="btn btn-warning btn-lg px-5 fw-bold shadow-lg">Get a Free Quote</a>
         </div>
     </section>
-
-    <footer class="py-5" style="background-color: #212529; border-top: 5px solid #2E7D32;">
-        <div class="container">
-            <div class="row g-4 text-white">
-                <div class="col-md-4">
-                     <h3 class="mb-3 fw-extrabold" style="font-family: 'Montserrat'; letter-spacing: -1px;">YEGO<span class="text-warning">SUN</span></h3>
-                     <p class="text-white-75" style="font-size: 0.95rem;">We are Kenya's premier renewable energy partner. We empower schools, businesses, and homes with sustainable, reliable, and cost-effective solar solutions.</p>
-                </div>
-                <div class="col-md-2">
-                    <h5 class="text-white mb-3 fw-bold text-uppercase small tracking-wide">Company</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-white-75 text-decoration-none hover-white">Home</a></li>
-                        <li class="mb-2"><a href="#about" class="text-white-75 text-decoration-none hover-white">About Us</a></li>
-                        <li class="mb-2"><a href="#projects" class="text-white-75 text-decoration-none hover-white">Our Projects</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-2">
-                    <h5 class="text-white mb-3 fw-bold text-uppercase small tracking-wide">Support</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#contact" class="text-white-75 text-decoration-none hover-white">Contact Us</a></li>
-                        <li class="mb-2"><a href="/login" class="text-white-75 text-decoration-none hover-white">Staff Portal</a></li>
-                        <li class="mb-2"><a href="#" class="text-white-75 text-decoration-none hover-white">Privacy Policy</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <h5 class="text-white mb-3 fw-bold text-uppercase small tracking-wide">Newsletter</h5>
-                    <p class="text-white-75 small">Subscribe to get the latest green energy news.</p>
-                    <div class="input-group">
-                        <input type="text" class="form-control bg-dark border-secondary text-white" placeholder="Email Address">
-                        <button class="btn btn-warning fw-bold text-dark" type="button">SUBSCRIBE</button>
-                    </div>
-                </div>
-            </div>
-            <div class="text-center mt-5 pt-4 border-top border-secondary">
-                <p class="text-white-50 mb-0 small">&copy; 2026 Yegosun Energy Limited. Nairobi, Kenya. All Rights Reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-</body>
-</html>
+{% endblock %}
