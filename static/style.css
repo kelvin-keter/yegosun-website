@@ -1,101 +1,44 @@
 /* static/style.css */
 
-/* --- BRANDING & TYPOGRAPHY --- */
+/* --- CORPORATE COLOR PALETTE (Sustainability Theme) --- */
 :root {
-    --primary: #f39c12;    /* Solar Yellow */
-    --primary-dark: #d35400;
-    --dark: #2c3e50;       /* Corporate Slate */
-    --black: #1a1a1a;
+    --primary-green: #2E7D32;  /* Deep Forest Green - Main Action */
+    --accent-amber: #F9A825;   /* Solar Amber - Highlights/Energy */
+    --corporate-slate: #263238;/* Dark Slate - Text/Footer */
+    --sky-light: #E3F2FD;      /* Light background */
 }
 
-/* Override Bootstrap Primary Color */
-.text-primary { color: var(--primary) !important; }
-.bg-primary { background-color: var(--primary) !important; }
+/* Override Bootstrap Colors */
+.text-success { color: var(--primary-green) !important; }
+.bg-success { background-color: var(--primary-green) !important; }
 
-/* --- LOGOTYPE STYLING (The New Text Logo) --- */
-.logo-type {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 900;       /* Maximum weight for impact */
-    font-size: 1.6rem;
-    color: var(--dark) !important;
-    letter-spacing: -1px;   /* Tight letter spacing for modern look */
-    display: flex;
-    align-items: center;
-}
+.text-warning { color: var(--accent-amber) !important; }
+.bg-warning { background-color: var(--accent-amber) !important; }
 
-.logo-subtitle {
-    font-weight: 400;
-    color: #888;
-    font-size: 0.9rem;
-    margin-left: 6px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    border-left: 1px solid #ccc;
-    padding-left: 8px;
-    height: 20px;
-    line-height: 20px;
-}
+.text-dark { color: var(--corporate-slate) !important; }
+.bg-dark { background-color: var(--corporate-slate) !important; }
 
-/* --- MENU BUTTONS & LINKS --- */
-.menu-link {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 1px;
-    color: var(--dark) !important;
-    padding: 0.5rem 1rem !important;
-    transition: color 0.3s;
-}
-
-.menu-link:hover, .menu-link.active {
-    color: var(--primary) !important;
-}
-
-/* The "Get a Quote" Button in Navbar */
-.btn-nav {
-    background-color: var(--primary);
-    border: none;
-    padding: 10px 25px;
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 1px;
-    border-radius: 4px; /* Slight round, not full pill for corporate feel */
-    transition: all 0.3s;
-}
-
-.btn-nav:hover {
-    background-color: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
-}
-
-/* --- GENERAL BUTTONS --- */
-.btn-primary {
-    background-color: var(--primary);
-    border-color: var(--primary);
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    padding-top: 12px;
-    padding-bottom: 12px;
+/* Custom Buttons */
+.btn-success {
+    background-color: var(--primary-green);
+    border-color: var(--primary-green);
+    color: #fff;
     transition: all 0.3s ease;
 }
-.btn-primary:hover {
-    background-color: var(--primary-dark);
-    border-color: var(--primary-dark);
+.btn-success:hover {
+    background-color: #1B5E20; /* Darker Green on Hover */
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(46, 125, 50, 0.4);
 }
 
-.btn-outline-light {
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    padding-top: 12px;
-    padding-bottom: 12px;
-    border-width: 2px;
+.btn-warning {
+    background-color: var(--accent-amber);
+    border-color: var(--accent-amber);
+    color: #000;
 }
-.btn-outline-light:hover {
-    background-color: #fff;
-    color: var(--dark);
+.btn-warning:hover {
+    background-color: #F57F17; /* Darker Orange */
+    transform: translateY(-2px);
 }
 
 /* Typography Overrides */
@@ -104,46 +47,50 @@ h1, h2, h3, h4, h5, .navbar-brand {
 }
 body {
     font-family: 'Open Sans', sans-serif;
+    color: #455a64; /* Soft dark grey for text */
 }
+
 .fw-extrabold { font-weight: 800 !important; }
 
 /* --- HERO SLIDER --- */
 .carousel-item {
-    height: 100vh;
+    height: 90vh;
     background-size: cover;
     background-position: center;
     position: relative;
 }
 
+/* Gradient Overlay - Now with a hint of Green/Blue */
 .carousel-overlay {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    /* Gradient Overlay */
-    background: linear-gradient(to right, rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.5), rgba(44, 62, 80, 0.2));
+    background: linear-gradient(to right, rgba(38, 50, 56, 0.9), rgba(46, 125, 50, 0.4), rgba(38, 50, 56, 0.2));
     z-index: 1;
 }
+.carousel-caption { z-index: 2; bottom: auto; }
 
-.carousel-caption {
-    z-index: 2;
-    bottom: auto;
+/* --- CARDS & INTERACTIVITY --- */
+.hover-card {
+    transition: all 0.3s ease;
+    border: 1px solid #eee;
 }
-.tracking-wide { letter-spacing: 3px; }
-
-/* --- INTERACTIVE ELEMENTS --- */
-.hover-card { transition: all 0.3s ease; }
 .hover-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 1.5rem 4rem rgba(0,0,0,.15)!important;
-    border-color: var(--primary) !important;
+    box-shadow: 0 1.5rem 3rem rgba(0,0,0,.1)!important;
+    border-color: var(--primary-green) !important;
+    background-color: #fff !important;
 }
 
 /* Form Styling */
-.form-control, .form-select {
-    padding: 1rem 1.25rem;
-    font-size: 1rem;
-}
 .form-control:focus, .form-select:focus {
     box-shadow: none;
-    border: 1px solid var(--primary);
+    border: 1px solid var(--primary-green);
     background-color: #fff;
+}
+
+/* Footer Links */
+.hover-white:hover {
+    color: #fff !important;
+    padding-left: 5px;
+    transition: all 0.2s;
 }
