@@ -5,13 +5,73 @@
     --primary: #f39c12;    /* Solar Yellow */
     --primary-dark: #d35400;
     --dark: #2c3e50;       /* Corporate Slate */
+    --black: #1a1a1a;
 }
 
 /* Override Bootstrap Primary Color */
 .text-primary { color: var(--primary) !important; }
 .bg-primary { background-color: var(--primary) !important; }
 
-/* Custom Buttons - Making them feel more substantial */
+/* --- LOGOTYPE STYLING (The New Text Logo) --- */
+.logo-type {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;       /* Maximum weight for impact */
+    font-size: 1.6rem;
+    color: var(--dark) !important;
+    letter-spacing: -1px;   /* Tight letter spacing for modern look */
+    display: flex;
+    align-items: center;
+}
+
+.logo-subtitle {
+    font-weight: 400;
+    color: #888;
+    font-size: 0.9rem;
+    margin-left: 6px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-left: 1px solid #ccc;
+    padding-left: 8px;
+    height: 20px;
+    line-height: 20px;
+}
+
+/* --- MENU BUTTONS & LINKS --- */
+.menu-link {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    color: var(--dark) !important;
+    padding: 0.5rem 1rem !important;
+    transition: color 0.3s;
+}
+
+.menu-link:hover, .menu-link.active {
+    color: var(--primary) !important;
+}
+
+/* The "Get a Quote" Button in Navbar */
+.btn-nav {
+    background-color: var(--primary);
+    border: none;
+    padding: 10px 25px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    border-radius: 4px; /* Slight round, not full pill for corporate feel */
+    transition: all 0.3s;
+}
+
+.btn-nav:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
+}
+
+/* --- GENERAL BUTTONS --- */
 .btn-primary {
     background-color: var(--primary);
     border-color: var(--primary);
@@ -24,8 +84,6 @@
 .btn-primary:hover {
     background-color: var(--primary-dark);
     border-color: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(243, 156, 18, 0.3) !important;
 }
 
 .btn-outline-light {
@@ -38,7 +96,6 @@
 .btn-outline-light:hover {
     background-color: #fff;
     color: var(--dark);
-    transform: translateY(-2px);
 }
 
 /* Typography Overrides */
@@ -48,42 +105,20 @@ h1, h2, h3, h4, h5, .navbar-brand {
 body {
     font-family: 'Open Sans', sans-serif;
 }
+.fw-extrabold { font-weight: 800 !important; }
 
-/* NEW: Extra Bold class for that "Heavy" corporate look */
-.fw-extrabold {
-    font-weight: 800 !important;
-}
-
-/* --- NAVIGATION --- */
-.navbar-brand {
-    font-size: 1.75rem;
-}
-
-.nav-link {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 600;
-    color: var(--dark) !important;
-    font-size: 0.95rem;
-    transition: color 0.3s;
-}
-
-.nav-link:hover, .nav-link.active {
-    color: var(--primary) !important;
-}
-
-/* --- HERO SLIDER / CAROUSEL --- */
+/* --- HERO SLIDER --- */
 .carousel-item {
-    height: 100vh; /* Full-screen height for maximum impact */
+    height: 100vh;
     background-size: cover;
     background-position: center;
     position: relative;
 }
 
-/* THE FIX: Gradient Overlay instead of flat color */
-/* This ensures text readability while keeping the image vibrant */
 .carousel-overlay {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
+    /* Gradient Overlay */
     background: linear-gradient(to right, rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.5), rgba(44, 62, 80, 0.2));
     z-index: 1;
 }
@@ -92,17 +127,10 @@ body {
     z-index: 2;
     bottom: auto;
 }
-
-/* Tracking for small headers */
-.tracking-wide {
-    letter-spacing: 3px;
-}
+.tracking-wide { letter-spacing: 3px; }
 
 /* --- INTERACTIVE ELEMENTS --- */
-.hover-card {
-    transition: all 0.3s ease;
-}
-
+.hover-card { transition: all 0.3s ease; }
 .hover-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 1.5rem 4rem rgba(0,0,0,.15)!important;
@@ -114,7 +142,6 @@ body {
     padding: 1rem 1.25rem;
     font-size: 1rem;
 }
-
 .form-control:focus, .form-select:focus {
     box-shadow: none;
     border: 1px solid var(--primary);
