@@ -9,7 +9,7 @@
         </div>
         
         <div class="carousel-inner">
-            <div class="carousel-item active" style="background-image: url('https://images.unsplash.com/photo-1569012871812-f38ee64cd54c?q=80&w=1600&auto=format&fit=crop');">
+            <div class="carousel-item active" style="background-image: url('{{ url_for('static', filename='images/hero-1.jpg') }}');">
                 <div class="carousel-overlay"></div>
                 <div class="carousel-caption d-flex flex-column justify-content-center h-100 text-start">
                     <div class="container">
@@ -24,7 +24,7 @@
                 </div>
             </div>
             
-            <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=1600&auto=format&fit=crop');">
+            <div class="carousel-item" style="background-image: url('{{ url_for('static', filename='images/hero-2.jpg') }}');">
                 <div class="carousel-overlay"></div>
                 <div class="carousel-caption d-flex flex-column justify-content-center h-100 text-start">
                     <div class="container">
@@ -36,7 +36,7 @@
                 </div>
             </div>
             
-             <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1545208942-e204063e2059?q=80&w=1600&auto=format&fit=crop');">
+             <div class="carousel-item" style="background-image: url('{{ url_for('static', filename='images/hero-3.jpg') }}');">
                 <div class="carousel-overlay"></div>
                 <div class="carousel-caption d-flex flex-column justify-content-center h-100 text-start">
                     <div class="container">
@@ -61,29 +61,24 @@
         <div class="container">
             <p class="text-center small text-muted fw-bold text-uppercase tracking-wide mb-4" style="font-size: 0.75rem; letter-spacing: 2px;">Accredited & Trusted By Industry Leaders</p>
             <div class="row align-items-center justify-content-center opacity-75 grayscale-wrapper">
-                
                 <div class="col-6 col-md-2 text-center mb-3 mb-md-0">
                     <div class="d-flex align-items-center justify-content-center gap-2">
                         <i class="fa-solid fa-certificate fa-2x text-success"></i>
                         <span class="fw-extrabold text-dark h5 mb-0">EPRA</span>
                     </div>
                 </div>
-                
                 <div class="col-6 col-md-2 text-center mb-3 mb-md-0">
                     <div class="d-flex align-items-center justify-content-center gap-2">
                         <i class="fa-solid fa-hard-hat fa-2x text-warning"></i>
                         <span class="fw-extrabold text-dark h5 mb-0">NCA</span>
                     </div>
                 </div>
-                
                 <div class="col-6 col-md-2 text-center">
                     <span class="fw-bold text-muted h4 mb-0" style="font-family: sans-serif; letter-spacing: -1px;">Jinko<span class="text-secondary">Solar</span></span>
                 </div>
-                
                 <div class="col-6 col-md-2 text-center">
                     <span class="fw-bold text-primary h4 mb-0" style="font-family: sans-serif;">Victron</span>
                 </div>
-
                 <div class="col-6 col-md-2 text-center">
                     <span class="fw-bold text-danger h4 mb-0" style="font-family: sans-serif;">HUAWEI</span>
                 </div>
@@ -104,7 +99,7 @@
                 <div class="col-md-4">
                     <div class="card h-100 border-0 shadow-sm project-card hover-up">
                         <div class="project-img-wrapper position-relative">
-                            <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=800&auto=format&fit=crop" class="card-img-top" alt="School Solar Project" style="height: 250px; object-fit: cover;">
+                            <img src="{{ url_for('static', filename='images/project-school.avif') }}" class="card-img-top" alt="School Solar Project" style="height: 250px; object-fit: cover;">
                             <div class="category-badge bg-warning text-dark position-absolute top-0 end-0 m-3 px-3 py-1 fw-bold rounded-pill">Education</div>
                         </div>
                         <div class="card-body p-4">
@@ -121,7 +116,7 @@
                 <div class="col-md-4">
                     <div class="card h-100 border-0 shadow-sm project-card hover-up">
                         <div class="project-img-wrapper position-relative">
-                            <img src="https://images.unsplash.com/photo-1565128938229-450f61202861?q=80&w=800&auto=format&fit=crop" class="card-img-top" alt="Industrial Solar Project" style="height: 250px; object-fit: cover;">
+                            <img src="{{ url_for('static', filename='images/project-industry.jpg') }}" class="card-img-top" alt="Industrial Solar Project" style="height: 250px; object-fit: cover;">
                             <div class="category-badge bg-success text-white position-absolute top-0 end-0 m-3 px-3 py-1 fw-bold rounded-pill">Industrial</div>
                         </div>
                         <div class="card-body p-4">
@@ -138,7 +133,7 @@
                 <div class="col-md-4">
                     <div class="card h-100 border-0 shadow-sm project-card hover-up">
                         <div class="project-img-wrapper position-relative">
-                            <img src="https://images.unsplash.com/photo-1581452906859-906cb87b8d78?q=80&w=800&auto=format&fit=crop" class="card-img-top" alt="Solar Water Project" style="height: 250px; object-fit: cover;">
+                            <img src="{{ url_for('static', filename='images/project-water.jpg') }}" class="card-img-top" alt="Solar Water Project" style="height: 250px; object-fit: cover;">
                             <div class="category-badge bg-primary text-white position-absolute top-0 end-0 m-3 px-3 py-1 fw-bold rounded-pill">Community</div>
                         </div>
                         <div class="card-body p-4">
@@ -165,7 +160,6 @@
                 <h6 class="text-success fw-bold text-uppercase">Client Stories</h6>
                 <h2 class="fw-extrabold text-dark">What Our Partners Say</h2>
             </div>
-            
             <div class="row g-4">
                 <div class="col-md-4">
                     <div class="card h-100 border-0 shadow-sm p-4 bg-light">
@@ -182,7 +176,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-md-4">
                     <div class="card h-100 border-0 shadow-sm p-4 bg-light">
                         <div class="mb-3 text-warning">
@@ -198,7 +191,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-md-4">
                     <div class="card h-100 border-0 shadow-sm p-4 bg-light">
                         <div class="mb-3 text-warning">
@@ -227,7 +219,6 @@
                 </div>
                 <button class="btn btn-outline-success fw-bold">View All Posts <i class="fa-solid fa-arrow-right ms-2"></i></button>
             </div>
-
             <div class="row g-4">
                 {% if blogs %}
                     {% for post in blogs %}
