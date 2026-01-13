@@ -2,40 +2,139 @@
 {% block title %}About Us{% endblock %}
 
 {% block content %}
-<div class="position-relative py-5 bg-dark text-white" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('{{ url_for('static', filename='images/hero-2.jpg') }}'); background-size: cover; background-position: center;">
-    <div class="container py-5 text-center position-relative" style="z-index: 2;">
-        <h6 class="text-warning fw-bold text-uppercase tracking-wide mb-3">Our Story</h6>
-        <h1 class="display-3 fw-extrabold mb-0">Powering Kenya Since 2018</h1>
-        <p class="lead text-white-50 mt-3">Building a Sustainable Future for Kenya.</p>
+<div class="position-relative py-5" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1605000797499-95a059cce14d?q=80&w=1600&auto=format&fit=crop'); background-size: cover; background-position: center; padding-bottom: 6rem !important;">
+    <div class="container py-5 text-center text-white">
+        <h6 class="text-warning fw-bold text-uppercase tracking-wide mb-2">Who We Are</h6>
+        <h1 class="display-4 fw-extrabold mb-3">Powering Africa's Future</h1>
+        <p class="lead text-white-50 mx-auto" style="max-width: 700px;">We are more than an energy company. We are engineers, innovators, and partners in Kenya's sustainable growth.</p>
+    </div>
+</div>
+
+<div class="container" style="margin-top: -60px; position: relative; z-index: 10;">
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg h-100 p-4 text-center" style="background: white;">
+                <div class="icon-box mx-auto bg-success text-white rounded-circle d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <i class="fa-solid fa-bullseye fa-xl"></i>
+                </div>
+                <h3 class="fw-bold mb-3">Our Mission</h3>
+                <p class="text-muted">To accelerate the adoption of renewable energy in East Africa by providing affordable, reliable, and high-quality solar engineering solutions for schools, businesses, and communities.</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg h-100 p-4 text-center" style="background: #1a252f; color: white;">
+                <div class="icon-box mx-auto bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <i class="fa-solid fa-lightbulb fa-xl"></i>
+                </div>
+                <h3 class="fw-bold mb-3 text-white">Our Vision</h3>
+                <p class="text-white-50">To be the undisputed leader in green energy infrastructure, creating a future where every Kenyan institution has access to clean, uninterrupted power.</p>
+            </div>
+        </div>
     </div>
 </div>
 
 <section class="py-5">
     <div class="container py-5">
-        <div class="row g-5 align-items-center">
-            <div class="col-lg-6">
-                 <img src="{{ url_for('static', filename='images/hero-1.jpg') }}" class="img-fluid rounded-4 shadow-lg" alt="About Yegosun">
+        <div class="text-center mb-5">
+            <h6 class="text-success fw-bold text-uppercase">Our History</h6>
+            <h2 class="fw-extrabold">A Legacy of Innovation</h2>
+            <div class="bg-warning mx-auto my-3" style="width: 60px; height: 4px;"></div>
+        </div>
+
+        <div class="timeline">
+            <div class="row g-0 justify-content-center mb-5">
+                <div class="col-md-5 text-end pe-md-5">
+                    <h4 class="fw-bold text-success">2018</h4>
+                    <h5 class="fw-bold">The Foundation</h5>
+                    <p class="text-muted small">Started as an initiative under Oletai Centre to empower youth in agribusiness through technology and sustainable practices.</p>
+                </div>
+                <div class="col-md-2 text-center position-relative">
+                    <div class="timeline-dot bg-warning border border-4 border-white shadow"></div>
+                    <div class="timeline-line bg-secondary opacity-25"></div>
+                </div>
+                <div class="col-md-5 ps-md-5"></div>
             </div>
-            
-            <div class="col-lg-6">
-                <div class="ps-lg-4">
-                    <h6 class="text-success fw-bold text-uppercase">Who We Are</h6>
-                    <h2 class="fw-bold mb-4 text-dark">We don't just sell solar panels. <br>We engineer energy independence.</h2>
-                    <p class="text-muted lead mb-4">Yegosun Energy Limited was founded to bridge the gap between "expensive grid power" and "unreliable backup systems."</p>
-                    <p class="text-muted mb-4">Headquartered at <strong>Garden City, Nairobi</strong>, we have grown from a small consultancy to a premier EPRA-certified contractor. We specialize in engineering robust power systems for institutions that cannot afford downtime.</p>
-                    
-                    <div class="row g-4 mb-4">
-                        <div class="col-6">
-                            <div class="border-start border-4 border-warning ps-3">
-                                <h4 class="fw-bold mb-0">8+</h4>
-                                <small class="text-muted text-uppercase fw-bold">Years Experience</small>
-                            </div>
+
+            <div class="row g-0 justify-content-center mb-5">
+                <div class="col-md-5 text-end pe-md-5"></div>
+                <div class="col-md-2 text-center position-relative">
+                    <div class="timeline-dot bg-success border border-4 border-white shadow"></div>
+                    <div class="timeline-line bg-secondary opacity-25"></div>
+                </div>
+                <div class="col-md-5 ps-md-5">
+                    <h4 class="fw-bold text-success">2021</h4>
+                    <h5 class="fw-bold">Expanding Horizons</h5>
+                    <p class="text-muted small">Diversified into technical infrastructure, launching pilot solar projects for local community water pumps in Juja.</p>
+                </div>
+            </div>
+
+            <div class="row g-0 justify-content-center">
+                <div class="col-md-5 text-end pe-md-5">
+                    <h4 class="fw-bold text-success">2026</h4>
+                    <h5 class="fw-bold">Yegosun Energy Limited</h5>
+                    <p class="text-muted small">Officially incorporated as a premier energy partner, headquartered at Garden City, serving commercial and industrial clients nationwide.</p>
+                </div>
+                <div class="col-md-2 text-center position-relative">
+                    <div class="timeline-dot bg-dark border border-4 border-white shadow"></div>
+                </div>
+                <div class="col-md-5 ps-md-5"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light border-top">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h6 class="text-success fw-bold text-uppercase">The Experts</h6>
+            <h2 class="fw-extrabold">Meet Our Leadership</h2>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 overflow-hidden text-center">
+                    <div class="pt-4 px-4">
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400&auto=format&fit=crop" class="rounded-circle shadow" width="150" height="150" style="object-fit: cover;">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-1">Your Name Here</h5>
+                        <p class="text-success fw-bold small text-uppercase mb-3">Managing Director</p>
+                        <p class="text-muted small">With a background in software engineering and 8+ years in project management, leading the strategic vision of Yegosun.</p>
+                        <div class="mt-3">
+                            <a href="#" class="text-secondary me-2"><i class="fa-brands fa-linkedin fa-lg"></i></a>
+                            <a href="#" class="text-secondary"><i class="fa-brands fa-twitter fa-lg"></i></a>
                         </div>
-                        <div class="col-6">
-                            <div class="border-start border-4 border-success ps-3">
-                                <h4 class="fw-bold mb-0">150+</h4>
-                                <small class="text-muted text-uppercase fw-bold">Projects Completed</small>
-                            </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 overflow-hidden text-center">
+                    <div class="pt-4 px-4">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop" class="rounded-circle shadow" width="150" height="150" style="object-fit: cover;">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-1">Sarah Mwangi</h5>
+                        <p class="text-success fw-bold small text-uppercase mb-3">Lead Engineer</p>
+                        <p class="text-muted small">EPRA Class T3 licensed engineer with a decade of experience designing grid-tie and hybrid systems for heavy industry.</p>
+                        <div class="mt-3">
+                            <a href="#" class="text-secondary me-2"><i class="fa-brands fa-linkedin fa-lg"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 overflow-hidden text-center">
+                    <div class="pt-4 px-4">
+                        <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=400&auto=format&fit=crop" class="rounded-circle shadow" width="150" height="150" style="object-fit: cover;">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-1">David Ochieng</h5>
+                        <p class="text-success fw-bold small text-uppercase mb-3">Operations Director</p>
+                        <p class="text-muted small">Expert in logistics and supply chain, ensuring that every solar panel arrives on site safely and on schedule.</p>
+                        <div class="mt-3">
+                            <a href="#" class="text-secondary me-2"><i class="fa-brands fa-linkedin fa-lg"></i></a>
                         </div>
                     </div>
                 </div>
@@ -44,45 +143,14 @@
     </div>
 </section>
 
-<section class="py-5 bg-light">
-    <div class="container py-5">
-        <div class="text-center mb-5">
-            <h6 class="text-success fw-bold text-uppercase">Why Choose Us</h6>
-            <h2 class="fw-extrabold">The Yegosun Standard</h2>
-            <div class="bg-warning mx-auto my-3" style="width: 60px; height: 4px;"></div>
-        </div>
-        
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm p-4 hover-up">
-                    <div class="mb-3 text-primary"><i class="fa-solid fa-shield-halved fa-3x"></i></div>
-                    <h4 class="fw-bold">Safety First</h4>
-                    <p class="text-muted">We strictly adhere to EPRA and international safety regulations. We prioritize the safety of your property and our team above all else.</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm p-4 hover-up">
-                    <div class="mb-3 text-warning"><i class="fa-solid fa-certificate fa-3x"></i></div>
-                    <h4 class="fw-bold">Quality Guarantee</h4>
-                    <p class="text-muted">We only use Tier-1 solar panels and inverters backed by manufacturer warranties of up to 25 years. No counterfeits.</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm p-4 hover-up">
-                    <div class="mb-3 text-success"><i class="fa-solid fa-headset fa-3x"></i></div>
-                    <h4 class="fw-bold">Lifetime Support</h4>
-                    <p class="text-muted">Our relationship doesn't end at installation. We offer 24/7 monitoring, maintenance support, and system audits.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="py-5 bg-success text-white text-center">
-    <div class="container py-4">
-        <h2 class="fw-bold mb-3">Meet the Team Behind the Power</h2>
-        <p class="lead mb-4 opacity-75">Expert engineers ready to tackle your energy challenges.</p>
-        <a href="{{ url_for('contact') }}" class="btn btn-warning btn-lg px-5 fw-bold shadow">Contact Our Engineers</a>
-    </div>
-</section>
+<style>
+    .timeline { position: relative; }
+    .timeline-dot { width: 20px; height: 20px; border-radius: 50%; display: inline-block; position: relative; z-index: 2; }
+    .timeline-line { position: absolute; top: 20px; bottom: -50px; left: 50%; width: 2px; transform: translateX(-50%); z-index: 1; }
+    @media (max-width: 768px) {
+        .timeline-line { display: none; }
+        .text-end { text-align: center !important; }
+        .ps-md-5 { text-align: center !important; }
+    }
+</style>
 {% endblock %}
