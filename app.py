@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from xhtml2pdf import pisa # NEW LIBRARY for PDF
+from xhtml2pdf import pisa
 
 app = Flask(__name__)
 
@@ -52,6 +52,17 @@ class BlogPost(db.Model):
     category = db.Column(db.String(50), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
+# NEW MODEL: To track Quotes/Leads
+class Quote(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    full_name = db.Column(db.String(100), nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    email = db.Column(db.String(100), nullable=False)
+    project_type = db.Column(db.String(100), nullable=False)
+    location = db.Column(db.String(100), nullable=True) # New field
+    message = db.Column(db.Text, nullable=True)
+    date_submitted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -89,7 +100,7 @@ def calculator():
 def contact():
     return render_template('contact.html')
 
-# --- PDF GENERATION ROUTE ---
+# --- SUBMIT QUOTE (Save to DB + Generate PDF) ---
 @app.route('/submit_quote', methods=['POST'])
 def submit_quote():
     # 1. Get Data
@@ -97,8 +108,25 @@ def submit_quote():
     email = request.form.get('email')
     phone = request.form.get('phone')
     project_type = request.form.get('projectType')
-    
-    # 2. Render HTML for PDF
+    location = request.form.get('location') # New field
+    message = request.form.get('message')
+
+    # 2. SAVE TO DATABASE (The "Lead Capture" Step)
+    try:
+        new_quote = Quote(
+            full_name=full_name,
+            email=email,
+            phone=phone,
+            project_type=project_type,
+            location=location,
+            message=message
+        )
+        db.session.add(new_quote)
+        db.session.commit()
+    except Exception as e:
+        print(f"Error saving quote: {e}")
+
+    # 3. Render HTML for PDF
     rendered_html = render_template('pdf_quote.html', 
                                   name=full_name, 
                                   email=email, 
@@ -106,14 +134,14 @@ def submit_quote():
                                   service=project_type,
                                   date=datetime.now().strftime("%Y-%m-%d"))
     
-    # 3. Create PDF in Memory
+    # 4. Create PDF in Memory
     pdf_file = io.BytesIO()
     pisa_status = pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf_file)
     
     if pisa_status.err:
         return 'We had some errors creating the PDF', 500
     
-    # 4. Return PDF as Download
+    # 5. Return PDF
     pdf_file.seek(0)
     response = make_response(pdf_file.read())
     response.headers['Content-Type'] = 'application/pdf'
@@ -127,7 +155,7 @@ def blog_detail(post_id):
     post = BlogPost.query.get_or_404(post_id)
     return render_template('blog_detail.html', post=post)
 
-# --- ADMIN ---
+# --- ADMIN DASHBOARD ---
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -145,8 +173,12 @@ def login():
 @app.route('/dashboard')
 @login_required
 def dashboard():
+    # Fetch Blogs
     all_posts = BlogPost.query.order_by(BlogPost.date_posted.desc()).all()
-    return render_template('dashboard.html', posts=all_posts)
+    # Fetch Quotes (New!)
+    all_quotes = Quote.query.order_by(Quote.date_submitted.desc()).all()
+    
+    return render_template('dashboard.html', posts=all_posts, quotes=all_quotes)
 
 @app.route('/post/new', methods=['GET', 'POST'])
 @login_required
@@ -172,6 +204,15 @@ def new_post():
 def delete_post(post_id):
     post = BlogPost.query.get_or_404(post_id)
     db.session.delete(post)
+    db.session.commit()
+    return redirect(url_for('dashboard'))
+
+# New Route to delete a quote if needed
+@app.route('/quote/<int:quote_id>/delete')
+@login_required
+def delete_quote(quote_id):
+    quote = Quote.query.get_or_404(quote_id)
+    db.session.delete(quote)
     db.session.commit()
     return redirect(url_for('dashboard'))
 
