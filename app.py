@@ -199,29 +199,39 @@ def new_post():
                 print(e)
     return render_template('create_post.html')
 
-# --- EDIT BLOG POST (NEW!) ---
+# --- EDIT BLOG POST (FIXED & ROBUST VERSION) ---
 @app.route('/post/<int:post_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_post(post_id):
     post = BlogPost.query.get_or_404(post_id)
     
     if request.method == 'POST':
-        post.title = request.form.get('title')
-        post.content = request.form.get('content')
-        post.category = request.form.get('category')
-        
-        # Check if a new image was uploaded
-        file = request.files['image']
-        if file and file.filename != '':
-            try:
-                res = cloudinary.uploader.upload(file)
-                post.image_url = res['secure_url']
-            except Exception as e:
-                print(f"Error uploading image: {e}")
-                flash('Error uploading image', 'danger')
-        
-        db.session.commit()
-        return redirect(url_for('dashboard'))
+        try:
+            # 1. Update Text
+            post.title = request.form.get('title')
+            post.content = request.form.get('content')
+            post.category = request.form.get('category')
+            
+            # 2. Update Image (Safely)
+            file = request.files.get('image') # Use .get() to avoid crashing
+            if file and file.filename != '':
+                try:
+                    res = cloudinary.uploader.upload(file)
+                    post.image_url = res['secure_url']
+                except Exception as upload_err:
+                    print(f"Cloudinary Upload Error: {upload_err}")
+                    flash('Image update failed, but text was saved.', 'warning')
+            
+            # 3. Commit
+            db.session.commit()
+            return redirect(url_for('dashboard'))
+
+        except Exception as e:
+            # 4. Rollback to prevent DB lock
+            db.session.rollback()
+            print(f"DATABASE ERROR: {e}")
+            flash('Something went wrong updating the post.', 'danger')
+            return render_template('edit_post.html', post=post)
         
     return render_template('edit_post.html', post=post)
 
