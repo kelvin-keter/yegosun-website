@@ -14,12 +14,16 @@ app = Flask(__name__)
 # --- CONFIGURATION ---
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'yegosun-master-key-2026')
 
-# DATABASE: Using v2 to ensure fresh file
-database_url = os.environ.get('DATABASE_URL', 'sqlite:///yegosun_v2.db')
-if database_url.startswith("postgres://"):
-    database_url = database_url.replace("postgres://", "postgresql://", 1)
+# FIX: Use Absolute Path for Database to prevent "Missing Table" errors
+basedir = os.path.abspath(os.path.dirname(__file__))
+database_url = os.environ.get('DATABASE_URL')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+if database_url and database_url.startswith("postgres://"):
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url.replace("postgres://", "postgresql://", 1)
+else:
+    # Fallback to local SQLite with ABSOLUTE PATH
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'yegosun.db')
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # --- CLOUDINARY ---
@@ -52,7 +56,7 @@ class BlogPost(db.Model):
     content = db.Column(db.Text, nullable=False)
     category = db.Column(db.String(50), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    date_updated = db.Column(db.DateTime, nullable=True) # New Field
+    date_updated = db.Column(db.DateTime, nullable=True)
 
 class Quote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -68,8 +72,21 @@ class Quote(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+# --- AUTO-SETUP AT STARTUP ---
+# This block runs every time the server restarts to ensure DB exists
 with app.app_context():
-    db.create_all()
+    try:
+        db.create_all()
+        # Check if admin exists; if not, create it immediately
+        if not User.query.filter_by(username='admin').first():
+            print("Creating Admin User...")
+            user = User(username='admin')
+            user.set_password('admin123')
+            db.session.add(user)
+            db.session.commit()
+            print("Admin User Created Successfully!")
+    except Exception as e:
+        print(f"CRITICAL STARTUP ERROR: {e}")
 
 # --- ROUTES ---
 
@@ -80,22 +97,6 @@ def home():
     except:
         latest_blogs = []
     return render_template('index.html', blogs=latest_blogs)
-
-# --- EMERGENCY SETUP ROUTE ---
-@app.route('/setup')
-def setup():
-    try:
-        db.create_all()
-        # Check if admin exists
-        if not User.query.filter_by(username='admin').first():
-            user = User(username='admin')
-            user.set_password('admin123')
-            db.session.add(user)
-            db.session.commit()
-            return "SUCCESS: Database reset. Admin user created (admin / admin123). <a href='/login'>Go to Login</a>"
-        return "Admin user already exists. <a href='/login'>Go to Login</a>"
-    except Exception as e:
-        return f"SETUP ERROR: {str(e)}"
 
 @app.route('/about')
 def about():
@@ -152,7 +153,6 @@ def blog_detail(post_id):
     post = BlogPost.query.get_or_404(post_id)
     return render_template('blog_detail.html', post=post)
 
-# --- DEBUG LOGIN ROUTE ---
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -160,7 +160,7 @@ def login():
             username = request.form.get('username')
             password = request.form.get('password')
             
-            # This line will fail if DB tables don't exist
+            # This query will fail if DB tables are missing
             user = User.query.filter_by(username=username).first()
             
             if user and user.check_password(password):
@@ -169,9 +169,8 @@ def login():
             else:
                 flash('Invalid username or password', 'danger')
         except Exception as e:
-            # Prevent Server Crash and Show Error
-            print(f"LOGIN CRITICAL ERROR: {e}")
-            flash(f"System Error: {str(e)}", 'danger')
+            print(f"LOGIN ERROR: {e}")
+            flash(f"Login failed: {str(e)}", 'danger')
             
     return render_template('login.html')
 
