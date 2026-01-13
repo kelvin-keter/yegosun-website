@@ -16,7 +16,7 @@
             <small><i class="fa-solid fa-envelope me-2 text-warning"></i> info@yegosun.com</small>
             <div>
                 <a href="{{ url_for('login') }}" class="text-white small text-decoration-none me-4 hover-accent"><i class="fa-solid fa-lock me-1"></i> Staff Portal</a>
-                <a href="#" class="text-white small text-decoration-none hover-accent"><i class="fa-solid fa-phone me-1"></i> +254 727 113 141</a>
+                <a href="#" class="text-white small text-decoration-none hover-accent"><i class="fa-solid fa-phone me-1"></i> +254 020 200 0700</a>
             </div>
         </div>
     </div>
@@ -25,6 +25,10 @@
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{{ url_for('home') }}">
                 <span class="text-dark logo-text">YEGO</span><span class="text-warning logo-text">SUN</span>
+                <div class="ms-2 ps-2 border-start border-3 border-success lh-1">
+                    <span class="d-block text-success fw-bold" style="font-size: 0.7rem; letter-spacing: 2px;">GREEN</span>
+                    <span class="d-block text-secondary fw-bold" style="font-size: 0.7rem; letter-spacing: 2px;">ENERGY</span>
+                </div>
             </a>
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -34,7 +38,7 @@
                     <li class="nav-item"><a class="nav-link nav-link-custom" href="{{ url_for('home') }}">Home</a></li>
                     <li class="nav-item"><a class="nav-link nav-link-custom" href="{{ url_for('about') }}">About</a></li>
                     <li class="nav-item"><a class="nav-link nav-link-custom" href="{{ url_for('services') }}">Solutions</a></li>
-                    <li class="nav-item"><a class="nav-link nav-link-custom" href="{{ url_for('home') }}#projects">Projects</a></li>
+                    <li class="nav-item"><a class="nav-link nav-link-custom" href="{{ url_for('projects') }}">Projects</a></li>
                     <li class="nav-item"><a class="nav-link nav-link-custom" href="{{ url_for('home') }}#blogs">Blogs</a></li>
                     <li class="nav-item ms-lg-4">
                         <a href="{{ url_for('contact') }}" class="btn btn-primary px-4 py-2 fw-bold shadow-sm text-uppercase btn-cta">Get a Quote</a>
@@ -53,13 +57,21 @@
             <div class="row g-4 text-white">
                 <div class="col-md-4">
                      <h3 class="mb-3 fw-extrabold" style="font-family: 'Montserrat';">YEGO<span class="text-warning">SUN</span></h3>
-                     <p class="text-white-75 small">We are Kenya's premier renewable energy partner.</p>
+                     <p class="text-white-75 small">We are Kenya's premier renewable energy partner. Empowering schools, businesses, and homes with sustainable solar solutions.</p>
+                     
+                     <div class="mt-4">
+                        <a href="#" class="text-white me-3 hover-warning"><i class="fa-brands fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-white me-3 hover-warning"><i class="fa-brands fa-x-twitter fa-lg"></i></a>
+                        <a href="#" class="text-white me-3 hover-warning"><i class="fa-brands fa-linkedin fa-lg"></i></a>
+                        <a href="#" class="text-white hover-warning"><i class="fa-brands fa-instagram fa-lg"></i></a>
+                     </div>
                 </div>
                 <div class="col-md-2">
                     <h5 class="text-white mb-3 fw-bold text-uppercase small">Company</h5>
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="{{ url_for('about') }}" class="text-white-75 text-decoration-none">About Us</a></li>
                         <li class="mb-2"><a href="{{ url_for('services') }}" class="text-white-75 text-decoration-none">Solutions</a></li>
+                        <li class="mb-2"><a href="{{ url_for('projects') }}" class="text-white-75 text-decoration-none">Projects</a></li>
                     </ul>
                 </div>
                 <div class="col-md-3">
@@ -77,6 +89,9 @@
                         <button class="btn btn-warning fw-bold text-dark">GO</button>
                     </div>
                 </div>
+            </div>
+            <div class="text-center mt-5 pt-4 border-top border-secondary">
+                <p class="text-white-50 mb-0 small">&copy; 2026 Yegosun Energy Limited. Nairobi, Kenya. All Rights Reserved.</p>
             </div>
         </div>
     </footer>
