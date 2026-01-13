@@ -199,6 +199,32 @@ def new_post():
                 print(e)
     return render_template('create_post.html')
 
+# --- EDIT BLOG POST (NEW!) ---
+@app.route('/post/<int:post_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_post(post_id):
+    post = BlogPost.query.get_or_404(post_id)
+    
+    if request.method == 'POST':
+        post.title = request.form.get('title')
+        post.content = request.form.get('content')
+        post.category = request.form.get('category')
+        
+        # Check if a new image was uploaded
+        file = request.files['image']
+        if file and file.filename != '':
+            try:
+                res = cloudinary.uploader.upload(file)
+                post.image_url = res['secure_url']
+            except Exception as e:
+                print(f"Error uploading image: {e}")
+                flash('Error uploading image', 'danger')
+        
+        db.session.commit()
+        return redirect(url_for('dashboard'))
+        
+    return render_template('edit_post.html', post=post)
+
 @app.route('/post/<int:post_id>/delete')
 @login_required
 def delete_post(post_id):
@@ -221,21 +247,6 @@ def delete_quote(quote_id):
 def logout():
     logout_user()
     return redirect(url_for('home'))
-
-# --- TEMPORARY SETUP ROUTE ---
-@app.route('/create_admin')
-def create_admin():
-    # 1. Check if admin exists
-    existing_user = User.query.filter_by(username='admin').first()
-    if existing_user:
-        return "Admin user already exists! Go to /login"
-    
-    # 2. Create new admin
-    new_user = User(username='admin')
-    new_user.set_password('admin2026') # <--- YOUR PASSWORD
-    db.session.add(new_user)
-    db.session.commit()
-    return "SUCCESS: Admin user created. You can now go to /login"
 
 if __name__ == '__main__':
     app.run(debug=True)
