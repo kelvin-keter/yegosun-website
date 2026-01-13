@@ -3,170 +3,292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yegosun Admin Portal</title>
+    <title>Executive Dashboard | Yegosun</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .sidebar { min-height: 100vh; background-color: #1a252f; color: white; }
-        .nav-link { color: #b0b8c1; padding: 15px 20px; transition: 0.3s; }
-        .nav-link:hover, .nav-link.active { color: white; background-color: #2E7D32; border-left: 4px solid #FFA000; }
-        .stat-card { transition: transform 0.3s; border: none; }
+        :root {
+            --brand-green: #1b5e20;
+            --brand-dark: #0d2e1f;
+            --brand-gold: #FFA000;
+            --bg-light: #f3f4f6;
+        }
+        body { background-color: var(--bg-light); font-family: 'Inter', sans-serif; color: #344767; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Montserrat', sans-serif; }
+        
+        /* PREMIUM SIDEBAR */
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, var(--brand-green) 0%, var(--brand-dark) 100%);
+            box-shadow: 4px 0 10px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+        .sidebar-brand {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: white;
+            font-size: 1.5rem;
+        }
+        .nav-link {
+            color: rgba(255,255,255,0.7);
+            font-weight: 500;
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin: 4px 16px;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--brand-dark);
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+        .nav-link i { width: 24px; text-align: center; margin-right: 12px; }
+
+        /* STAT CARDS */
+        .stat-card {
+            border: none;
+            border-radius: 16px;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
         .stat-card:hover { transform: translateY(-5px); }
-        .table-custom th { background-color: #e9ecef; border-top: none; }
-        .avatar { width: 40px; height: 40px; border-radius: 50%; background-color: #2E7D32; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 6px; height: 100%;
+        }
+        .border-gold::before { background-color: var(--brand-gold); }
+        .border-green::before { background-color: var(--brand-green); }
+        .border-blue::before { background-color: #0d6efd; }
+
+        /* MODERN TABLES */
+        .card-header-clean {
+            background: white;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 24px;
+            border-radius: 16px 16px 0 0;
+        }
+        .table-custom thead th {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            color: #8898aa;
+            font-weight: 700;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 16px;
+        }
+        .table-custom td {
+            padding: 20px 10px;
+            border-bottom: 1px solid #f8f9fa;
+            vertical-align: middle;
+        }
+        .avatar-circle {
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, #FFD700, #FFA000);
+            color: #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(255, 160, 0, 0.3);
+        }
+        
+        /* BUTTONS & BADGES */
+        .btn-create {
+            background: linear-gradient(135deg, var(--brand-green), #2e7d32);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(27, 94, 32, 0.3);
+            transition: all 0.3s;
+        }
+        .btn-create:hover { background: var(--brand-dark); color: white; transform: translateY(-2px); }
+        
+        .badge-soft {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        .badge-soft-success { background-color: #e8f5e9; color: #2e7d32; }
+        .badge-soft-warning { background-color: #fff8e1; color: #ff8f00; }
+        .badge-soft-primary { background-color: #e3f2fd; color: #0d47a1; }
     </style>
 </head>
 <body>
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-2 sidebar p-0 d-none d-md-block">
-            <div class="p-4 text-center border-bottom border-secondary">
-                <h5 class="fw-bold mb-0">YEGO<span class="text-warning">SUN</span></h5>
-                <small class="text-white-50">Admin Console</small>
+        <div class="col-lg-2 sidebar p-0 d-none d-lg-block position-fixed">
+            <div class="p-4 mb-4 text-center">
+                <div class="sidebar-brand mt-3">YEGO<span style="color: var(--brand-gold);">SUN</span></div>
+                <small style="color: rgba(255,255,255,0.5); letter-spacing: 1px;">ADMIN CONSOLE</small>
             </div>
-            <nav class="nav flex-column mt-3">
-                <a class="nav-link active" href="#"><i class="fa-solid fa-gauge me-2"></i> Dashboard</a>
-                <a class="nav-link" href="{{ url_for('new_post') }}"><i class="fa-solid fa-pen-nib me-2"></i> Write Blog</a>
-                <a class="nav-link" href="{{ url_for('home') }}" target="_blank"><i class="fa-solid fa-external-link-alt me-2"></i> View Live Site</a>
-                <a class="nav-link text-danger mt-5" href="{{ url_for('logout') }}"><i class="fa-solid fa-sign-out-alt me-2"></i> Logout</a>
+            <nav class="nav flex-column">
+                <a class="nav-link active" href="#"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+                <a class="nav-link" href="{{ url_for('new_post') }}"><i class="fa-solid fa-pen-nib"></i> Write Blog</a>
+                <a class="nav-link" href="{{ url_for('home') }}" target="_blank"><i class="fa-solid fa-globe"></i> View Website</a>
+                
+                <div style="margin-top: auto; padding-top: 100px;">
+                    <a class="nav-link text-white bg-danger bg-opacity-25 mx-3 mt-5 text-center" href="{{ url_for('logout') }}" style="backdrop-filter: blur(5px);">
+                        <i class="fa-solid fa-arrow-right-from-bracket me-0"></i> Logout
+                    </a>
+                </div>
             </nav>
         </div>
 
-        <div class="col-md-10 p-4">
+        <div class="col-lg-10 offset-lg-2 p-4 p-lg-5">
             
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-5">
                 <div>
-                    <h2 class="fw-bold text-dark">Command Center</h2>
-                    <p class="text-muted">Welcome back, Nixon. Here is your business overview.</p>
+                    <h6 class="text-muted fw-bold text-uppercase mb-1">Welcome back, Nixon</h6>
+                    <h2 class="fw-bold mb-0">Executive Overview</h2>
                 </div>
-                <a href="{{ url_for('new_post') }}" class="btn btn-success shadow-sm"><i class="fa-solid fa-plus me-1"></i> New Article</a>
-            </div>
-
-            <div class="row g-3 mb-5">
-                <div class="col-md-4">
-                    <div class="card stat-card shadow-sm h-100">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
-                                <i class="fa-solid fa-file-invoice fa-2x text-primary"></i>
-                            </div>
-                            <div>
-                                <h6 class="text-muted fw-bold mb-1 text-uppercase">Total Leads</h6>
-                                <h3 class="fw-bold mb-0">{{ quotes|length }}</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card stat-card shadow-sm h-100">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="bg-warning bg-opacity-10 p-3 rounded-circle me-3">
-                                <i class="fa-solid fa-newspaper fa-2x text-warning"></i>
-                            </div>
-                            <div>
-                                <h6 class="text-muted fw-bold mb-1 text-uppercase">Published Blogs</h6>
-                                <h3 class="fw-bold mb-0">{{ posts|length }}</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card stat-card shadow-sm h-100">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="bg-success bg-opacity-10 p-3 rounded-circle me-3">
-                                <i class="fa-solid fa-server fa-2x text-success"></i>
-                            </div>
-                            <div>
-                                <h6 class="text-muted fw-bold mb-1 text-uppercase">System Status</h6>
-                                <h5 class="fw-bold mb-0 text-success">Online</h5>
-                            </div>
-                        </div>
-                    </div>
+                <div>
+                    <span class="text-muted small me-3"><i class="fa-regular fa-calendar me-2"></i>{{ now_date }}</span>
+                    <a href="{{ url_for('new_post') }}" class="btn btn-create"><i class="fa-solid fa-plus me-2"></i>New Article</a>
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm mb-5">
-                <div class="card-header bg-white py-3 border-bottom">
-                    <h5 class="fw-bold mb-0"><i class="fa-solid fa-users me-2 text-primary"></i> Recent Inquiries (Quotes Generated)</h5>
+            <div class="row g-4 mb-5">
+                <div class="col-md-4">
+                    <div class="card stat-card border-gold p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <p class="text-muted fw-bold text-uppercase small mb-2">Total Leads</p>
+                                <h2 class="fw-extrabold mb-0 text-dark">{{ quotes|length }}</h2>
+                                <small class="text-success fw-bold"><i class="fa-solid fa-arrow-up"></i> Generated quotes</small>
+                            </div>
+                            <div class="rounded-circle bg-warning bg-opacity-10 p-3 text-warning">
+                                <i class="fa-solid fa-file-invoice fa-xl"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover table-custom align-middle mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="ps-4">Client Name</th>
-                                    <th>Project Type</th>
-                                    <th>Location</th>
-                                    <th>Date</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for quote in quotes %}
-                                <tr>
-                                    <td class="ps-4">
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar me-3">{{ quote.full_name[0] }}</div>
-                                            <div>
-                                                <div class="fw-bold">{{ quote.full_name }}</div>
-                                                <small class="text-muted">{{ quote.phone }}</small>
-                                            </div>
+
+                <div class="col-md-4">
+                    <div class="card stat-card border-green p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <p class="text-muted fw-bold text-uppercase small mb-2">Active Blogs</p>
+                                <h2 class="fw-extrabold mb-0 text-dark">{{ posts|length }}</h2>
+                                <small class="text-muted">News & Updates</small>
+                            </div>
+                            <div class="rounded-circle bg-success bg-opacity-10 p-3 text-success">
+                                <i class="fa-solid fa-newspaper fa-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card stat-card border-blue p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <p class="text-muted fw-bold text-uppercase small mb-2">System Status</p>
+                                <h4 class="fw-bold mb-0 text-success">Online</h4>
+                                <small class="text-muted">v1.0.2 Stable</small>
+                            </div>
+                            <div class="rounded-circle bg-primary bg-opacity-10 p-3 text-primary">
+                                <i class="fa-solid fa-server fa-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 mb-5 overflow-hidden">
+                <div class="card-header-clean d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0 text-dark">Recent Inquiries</h5>
+                    <button class="btn btn-sm btn-outline-dark rounded-pill px-3">View All</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-custom mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4">Client</th>
+                                <th>Project Type</th>
+                                <th>Location</th>
+                                <th>Date</th>
+                                <th class="text-end pe-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for quote in quotes %}
+                            <tr class="bg-white">
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle me-3 shadow-sm">{{ quote.full_name[0] }}</div>
+                                        <div>
+                                            <div class="fw-bold text-dark">{{ quote.full_name }}</div>
+                                            <small class="text-muted">{{ quote.phone }}</small>
                                         </div>
-                                    </td>
-                                    <td><span class="badge bg-light text-dark border">{{ quote.project_type }}</span></td>
-                                    <td>{{ quote.location if quote.location else 'N/A' }}</td>
-                                    <td>{{ quote.date_submitted.strftime('%d %b, %Y') }}</td>
-                                    <td>
-                                        <a href="mailto:{{ quote.email }}" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-envelope"></i> Email</a>
-                                        <a href="{{ url_for('delete_quote', quote_id=quote.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this lead?')"><i class="fa-solid fa-trash"></i></a>
-                                    </td>
-                                </tr>
-                                {% else %}
-                                <tr>
-                                    <td colspan="5" class="text-center py-4 text-muted">No quotes generated yet.</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-soft badge-soft-primary">{{ quote.project_type }}</span></td>
+                                <td class="text-muted fw-bold"><i class="fa-solid fa-map-pin me-2 text-danger small"></i>{{ quote.location if quote.location else 'N/A' }}</td>
+                                <td class="text-muted small">{{ quote.date_submitted.strftime('%d %b, %Y') }}</td>
+                                <td class="text-end pe-4">
+                                    <a href="mailto:{{ quote.email }}" class="btn btn-sm btn-light text-primary rounded-circle"><i class="fa-solid fa-envelope"></i></a>
+                                    <a href="{{ url_for('delete_quote', quote_id=quote.id) }}" class="btn btn-sm btn-light text-danger rounded-circle" onclick="return confirm('Delete this lead?')"><i class="fa-solid fa-trash"></i></a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center py-5 text-muted">
+                                    <i class="fa-solid fa-inbox fa-3x mb-3 text-light"></i><br>
+                                    No quotes generated yet. Check back later!
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3 border-bottom">
-                    <h5 class="fw-bold mb-0"><i class="fa-solid fa-rss me-2 text-warning"></i> Blog Content Management</h5>
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header-clean">
+                    <h5 class="fw-bold mb-0 text-dark">Content Management</h5>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover table-custom align-middle mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="ps-4">Article Title</th>
-                                    <th>Category</th>
-                                    <th>Date Posted</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for post in posts %}
-                                <tr>
-                                    <td class="ps-4 fw-bold">{{ post.title }}</td>
-                                    <td><span class="badge bg-success bg-opacity-25 text-success">{{ post.category }}</span></td>
-                                    <td>{{ post.date_posted.strftime('%d %b, %Y') }}</td>
-                                    <td>
-                                        <a href="{{ url_for('blog_detail', post_id=post.id) }}" target="_blank" class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-eye"></i> View</a>
-                                        <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this post?')"><i class="fa-solid fa-trash"></i></a>
-                                    </td>
-                                </tr>
-                                {% else %}
-                                <tr>
-                                    <td colspan="4" class="text-center py-4 text-muted">No blogs posted yet.</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="table-responsive">
+                    <table class="table table-custom mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4">Article Title</th>
+                                <th>Category</th>
+                                <th>Posted On</th>
+                                <th class="text-end pe-4">Manage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for post in posts %}
+                            <tr class="bg-white">
+                                <td class="ps-4 fw-bold text-dark">{{ post.title }}</td>
+                                <td><span class="badge badge-soft badge-soft-success">{{ post.category }}</span></td>
+                                <td class="text-muted small">{{ post.date_posted.strftime('%d %b, %Y') }}</td>
+                                <td class="text-end pe-4">
+                                    <a href="{{ url_for('blog_detail', post_id=post.id) }}" target="_blank" class="btn btn-sm btn-light text-dark rounded-pill px-3 me-2 small fw-bold">View Live</a>
+                                    <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn btn-sm btn-light text-danger rounded-circle" onclick="return confirm('Delete this post?')"><i class="fa-solid fa-trash"></i></a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center py-5 text-muted">
+                                    No articles published. Start writing to improve SEO!
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
