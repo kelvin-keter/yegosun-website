@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        @page { size: A4; margin: 2cm; }
+        body { font-family: Helvetica, sans-serif; color: #333; line-height: 1.6; }
+        .header { text-align: right; margin-bottom: 40px; border-bottom: 3px solid #2E7D32; padding-bottom: 20px; }
+        .logo { font-size: 24px; font-weight: bold; color: #2E7D32; float: left; }
+        .invoice-title { font-size: 32px; font-weight: bold; color: #555; text-transform: uppercase; }
+        
+        .details-box { width: 100%; margin-bottom: 30px; }
+        .client-info { float: left; width: 50%; }
+        .company-info { float: right; width: 40%; text-align: right; font-size: 12px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        th { background-color: #2E7D32; color: white; padding: 10px; text-align: left; }
+        td { border-bottom: 1px solid #ddd; padding: 10px; }
+        .total-row td { border-top: 2px solid #333; font-weight: bold; font-size: 16px; }
+        
+        .footer { position: absolute; bottom: 0; width: 100%; text-align: center; font-size: 10px; color: #777; border-top: 1px solid #ddd; padding-top: 10px; }
+        .stamp { color: #d9534f; border: 2px solid #d9534f; display: inline-block; padding: 5px 10px; font-weight: bold; text-transform: uppercase; transform: rotate(-10deg); float: right; margin-top: 20px;}
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo">YEGO<span style="color:#FFA000">SUN</span></div>
+        <div class="invoice-title">Preliminary Quote</div>
+        <div style="clear: both;"></div>
+    </div>
+
+    <div class="details-box">
+        <div class="client-info">
+            <strong>PREPARED FOR:</strong><br>
+            {{ name }}<br>
+            {{ email }}<br>
+            {{ phone }}
+        </div>
+        <div class="company-info">
+            <strong>Yegosun Energy Limited</strong><br>
+            Garden City Business Park<br>
+            P.O Box 9765-00100, Nairobi<br>
+            +254 020 200 0700<br>
+            info@yegosun.com
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+
+    <p>Dear {{ name }},</p>
+    <p>Thank you for your interest in our <strong>{{ service }}</strong> solutions. Based on your inquiry, here is a preliminary estimate including our standard consultation and site survey fee.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th style="text-align: right;">Amount (KES)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Project Inquiry: {{ service }}</strong><br><small>Initial assessment and system sizing recommendation.</small></td>
+                <td style="text-align: right;">0.00</td>
+            </tr>
+            <tr>
+                <td><strong>Standard Site Survey & Energy Audit</strong><br><small>Required for accurate final quotation (Refundable on installation).</small></td>
+                <td style="text-align: right;">5,000.00</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="total-row">
+                <td>TOTAL ESTIMATE</td>
+                <td style="text-align: right;">KES 5,000.00</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="stamp">Proforma Only</div>
+
+    <div style="margin-top: 40px;">
+        <strong>Next Steps:</strong>
+        <ol>
+            <li>One of our engineers will call you within 24 hours to schedule the site visit.</li>
+            <li>Upon completion of the audit, a final binding invoice will be issued.</li>
+        </ol>
+    </div>
+
+    <div class="footer">
+        Generated automatically by Yegosun Smart Systems on {{ date }}. This is not a tax invoice.
+    </div>
+
+</body>
+</html>

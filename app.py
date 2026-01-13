@@ -1,11 +1,13 @@
 import os
+import io
 import cloudinary
 import cloudinary.uploader
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, make_response
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from xhtml2pdf import pisa # NEW LIBRARY for PDF
 
 app = Flask(__name__)
 
@@ -79,7 +81,6 @@ def services():
 def projects():
     return render_template('projects.html')
 
-# --- NEW CALCULATOR ROUTE (Added Here) ---
 @app.route('/calculator')
 def calculator():
     return render_template('calculator.html')
@@ -88,10 +89,38 @@ def calculator():
 def contact():
     return render_template('contact.html')
 
+# --- PDF GENERATION ROUTE ---
 @app.route('/submit_quote', methods=['POST'])
 def submit_quote():
-    flash('Thank you! We have received your message.', 'success')
-    return redirect(url_for('home'))
+    # 1. Get Data
+    full_name = request.form.get('fullName')
+    email = request.form.get('email')
+    phone = request.form.get('phone')
+    project_type = request.form.get('projectType')
+    
+    # 2. Render HTML for PDF
+    rendered_html = render_template('pdf_quote.html', 
+                                  name=full_name, 
+                                  email=email, 
+                                  phone=phone,
+                                  service=project_type,
+                                  date=datetime.now().strftime("%Y-%m-%d"))
+    
+    # 3. Create PDF in Memory
+    pdf_file = io.BytesIO()
+    pisa_status = pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf_file)
+    
+    if pisa_status.err:
+        return 'We had some errors creating the PDF', 500
+    
+    # 4. Return PDF as Download
+    pdf_file.seek(0)
+    response = make_response(pdf_file.read())
+    response.headers['Content-Type'] = 'application/pdf'
+    filename = f"Yegosun_Quote_{full_name.replace(' ', '_')}.pdf"
+    response.headers['Content-Disposition'] = f'attachment; filename={filename}'
+    
+    return response
 
 @app.route('/blog/<int:post_id>')
 def blog_detail(post_id):
