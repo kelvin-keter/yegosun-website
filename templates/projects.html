@@ -2,78 +2,196 @@
 {% block title %}Our Projects{% endblock %}
 
 {% block content %}
-<div class="position-relative py-5 bg-dark text-white" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('{{ url_for('static', filename='images/hero-1.jpg') }}'); background-size: cover; background-position: center;">
-    <div class="container py-5 text-center position-relative" style="z-index: 2;">
-        <h6 class="text-success fw-bold text-uppercase tracking-wide mb-3">Portfolio</h6>
-        <h1 class="display-3 fw-extrabold mb-0">Powering Kenya</h1>
-        <p class="lead text-white-50 mt-3">A showcase of our recent installations across the country.</p>
+<div class="position-relative py-5" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('{{ url_for('static', filename='images/hero-3.jpg') }}'); background-size: cover; background-position: center; padding-bottom: 6rem !important;">
+    <div class="container py-5 text-center text-white">
+        <h6 class="text-warning fw-bold text-uppercase tracking-wide mb-2">Our Portfolio</h6>
+        <h1 class="display-4 fw-extrabold mb-3">Engineering Excellence</h1>
+        <p class="lead text-white-50 mx-auto" style="max-width: 700px;">Explore our track record of delivering reliable solar infrastructure across East Africa.</p>
     </div>
 </div>
 
-<div class="container py-5">
-    <div class="text-center mb-5">
-        <button class="btn btn-dark rounded-pill px-4 me-2 mb-2">All Projects</button>
-        <button class="btn btn-outline-secondary rounded-pill px-4 me-2 mb-2">Education</button>
-        <button class="btn btn-outline-secondary rounded-pill px-4 me-2 mb-2">Commercial</button>
-        <button class="btn btn-outline-secondary rounded-pill px-4 mb-2">Community</button>
-    </div>
-
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm project-card hover-up">
-                <div class="position-relative">
-                    <img src="https://images.unsplash.com/photo-1596464716127-f2a82984de30?q=80&w=800&auto=format&fit=crop" class="card-img-top" alt="School Solar" style="height: 250px; object-fit: cover;">
-                    <div class="badge bg-warning text-dark position-absolute top-0 end-0 m-3 fw-bold">Education</div>
-                </div>
-                <div class="card-body p-4">
-                    <h5 class="fw-bold mb-1">Moi Girls High School</h5>
-                    <p class="text-success fw-bold small mb-3">50kW Grid-Tie System</p>
-                    <p class="text-muted small">We installed a comprehensive solar backup allowing the administration block and computer labs to operate off-grid during the day.</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm project-card hover-up">
-                <div class="position-relative">
-                    <img src="https://images.unsplash.com/photo-1621252179027-94459d27d3ee?q=80&w=800&auto=format&fit=crop" class="card-img-top" alt="Factory Solar" style="height: 250px; object-fit: cover;">
-                    <div class="badge bg-success text-white position-absolute top-0 end-0 m-3 fw-bold">Commercial</div>
-                </div>
-                <div class="card-body p-4">
-                    <h5 class="fw-bold mb-1">Ruai Industrial Park</h5>
-                    <p class="text-success fw-bold small mb-3">100kW Hybrid System</p>
-                    <p class="text-muted small">A heavy-duty installation designed to handle inductive loads from machinery while stabilizing voltage fluctuations.</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm project-card hover-up">
-                <div class="position-relative">
-                    <img src="https://images.unsplash.com/photo-1516937941344-00b4ec277ec3?q=80&w=800&auto=format&fit=crop" class="card-img-top" alt="Water Pump" style="height: 250px; object-fit: cover;">
-                    <div class="badge bg-primary text-white position-absolute top-0 end-0 m-3 fw-bold">Community</div>
-                </div>
-                <div class="card-body p-4">
-                    <h5 class="fw-bold mb-1">Juja Community Borehole</h5>
-                    <p class="text-success fw-bold small mb-3">Solar Water Pumping</p>
-                    <p class="text-muted small">Replaced an expensive diesel generator with a solar drive, pumping 50,000 liters daily at zero fuel cost.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm project-card hover-up">
-                <div class="position-relative">
-                    <img src="https://images.unsplash.com/photo-1613665813446-82a78c468a1d?q=80&w=800&auto=format&fit=crop" class="card-img-top" alt="Residential" style="height: 250px; object-fit: cover;">
-                    <div class="badge bg-info text-white position-absolute top-0 end-0 m-3 fw-bold">Residential</div>
-                </div>
-                <div class="card-body p-4">
-                    <h5 class="fw-bold mb-1">Karen Private Residence</h5>
-                    <p class="text-success fw-bold small mb-3">15kW Hybrid + Lithium Storage</p>
-                    <p class="text-muted small">A luxury off-grid setup ensuring the home remains powered 24/7 silently, without noisy generators.</p>
-                </div>
-            </div>
+<div class="container" style="margin-top: -40px; position: relative; z-index: 10;">
+    <div class="bg-white p-4 shadow rounded-4 text-center">
+        <div class="d-flex flex-wrap justify-content-center gap-3" id="portfolio-flters">
+            <button class="btn btn-outline-dark rounded-pill px-4 fw-bold active" onclick="filterProjects('all', this)">All Projects</button>
+            <button class="btn btn-outline-dark rounded-pill px-4 fw-bold" onclick="filterProjects('commercial', this)">Commercial</button>
+            <button class="btn btn-outline-dark rounded-pill px-4 fw-bold" onclick="filterProjects('education', this)">Education</button>
+            <button class="btn btn-outline-dark rounded-pill px-4 fw-bold" onclick="filterProjects('community', this)">Community</button>
         </div>
     </div>
 </div>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row g-4" id="project-grid">
+            
+            <div class="col-md-4 project-item education">
+                <div class="card h-100 border-0 shadow-sm hover-up">
+                    <div class="position-relative overflow-hidden">
+                        <img src="{{ url_for('static', filename='images/project-school.jpg') }}" class="card-img-top" alt="School Project" style="height: 250px; object-fit: cover;">
+                        <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-3">Education</span>
+                    </div>
+                    <div class="card-body p-4">
+                        <small class="text-muted fw-bold text-uppercase">Nairobi</small>
+                        <h5 class="fw-bold mt-1 mb-3">Leading National High School</h5>
+                        <p class="text-muted small">Full campus grid-tie integration powering computer labs and admin blocks.</p>
+                        <div class="d-flex justify-content-between border-top pt-3">
+                            <span class="text-success fw-bold small"><i class="fa-solid fa-bolt me-1"></i> 50kWp</span>
+                            <span class="text-dark fw-bold small"><i class="fa-solid fa-check-circle me-1"></i> Completed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 project-item commercial">
+                <div class="card h-100 border-0 shadow-sm hover-up">
+                    <div class="position-relative overflow-hidden">
+                        <img src="{{ url_for('static', filename='images/project-industry.jpg') }}" class="card-img-top" alt="Industry Project" style="height: 250px; object-fit: cover;">
+                        <span class="badge bg-success text-white position-absolute top-0 end-0 m-3">Commercial</span>
+                    </div>
+                    <div class="card-body p-4">
+                        <small class="text-muted fw-bold text-uppercase">Mombasa Road</small>
+                        <h5 class="fw-bold mt-1 mb-3">Ruai Industrial Park</h5>
+                        <p class="text-muted small">Hybrid system with battery storage for heavy machinery and backup.</p>
+                        <div class="d-flex justify-content-between border-top pt-3">
+                            <span class="text-success fw-bold small"><i class="fa-solid fa-bolt me-1"></i> 100kWp</span>
+                            <span class="text-dark fw-bold small"><i class="fa-solid fa-check-circle me-1"></i> Completed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 project-item community">
+                <div class="card h-100 border-0 shadow-sm hover-up">
+                    <div class="position-relative overflow-hidden">
+                        <img src="{{ url_for('static', filename='images/project-water.jpg') }}" class="card-img-top" alt="Water Project" style="height: 250px; object-fit: cover;">
+                        <span class="badge bg-primary text-white position-absolute top-0 end-0 m-3">Community</span>
+                    </div>
+                    <div class="card-body p-4">
+                        <small class="text-muted fw-bold text-uppercase">Juja</small>
+                        <h5 class="fw-bold mt-1 mb-3">Community Water Project</h5>
+                        <p class="text-muted small">Solar water pumping system serving 500+ households daily.</p>
+                        <div class="d-flex justify-content-between border-top pt-3">
+                            <span class="text-success fw-bold small"><i class="fa-solid fa-water me-1"></i> 50k Liters/Day</span>
+                            <span class="text-dark fw-bold small"><i class="fa-solid fa-check-circle me-1"></i> Completed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 project-item commercial">
+                <div class="card h-100 border-0 shadow-sm hover-up">
+                    <div class="position-relative overflow-hidden">
+                        <img src="{{ url_for('static', filename='images/hero-2.jpg') }}" class="card-img-top" alt="Mall Project" style="height: 250px; object-fit: cover;">
+                        <span class="badge bg-success text-white position-absolute top-0 end-0 m-3">Commercial</span>
+                    </div>
+                    <div class="card-body p-4">
+                        <small class="text-muted fw-bold text-uppercase">Thika</small>
+                        <h5 class="fw-bold mt-1 mb-3">Ananas Mall Carport</h5>
+                        <p class="text-muted small">Solar carport structure providing shade and power for the mall.</p>
+                        <div class="d-flex justify-content-between border-top pt-3">
+                            <span class="text-success fw-bold small"><i class="fa-solid fa-bolt me-1"></i> 75kWp</span>
+                            <span class="text-dark fw-bold small"><i class="fa-solid fa-spinner me-1"></i> Ongoing</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 project-item education">
+                <div class="card h-100 border-0 shadow-sm hover-up">
+                    <div class="position-relative overflow-hidden">
+                         <img src="{{ url_for('static', filename='images/hero-1.jpg') }}" class="card-img-top" alt="University Project" style="height: 250px; object-fit: cover;">
+                        <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-3">Education</span>
+                    </div>
+                    <div class="card-body p-4">
+                        <small class="text-muted fw-bold text-uppercase">Eldoret</small>
+                        <h5 class="fw-bold mt-1 mb-3">University Science Lab</h5>
+                        <p class="text-muted small">Backup power solution for sensitive laboratory equipment.</p>
+                        <div class="d-flex justify-content-between border-top pt-3">
+                            <span class="text-success fw-bold small"><i class="fa-solid fa-bolt me-1"></i> 20kWp</span>
+                            <span class="text-dark fw-bold small"><i class="fa-solid fa-check-circle me-1"></i> Completed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <div class="col-md-4 project-item residential">
+                <div class="card h-100 border-0 shadow-sm hover-up">
+                    <div class="position-relative overflow-hidden">
+                         <img src="https://images.unsplash.com/photo-1625301840055-7c1b7198cfc0?q=80&w=800&auto=format&fit=crop" class="card-img-top" alt="Home Project" style="height: 250px; object-fit: cover;">
+                        <span class="badge bg-info text-dark position-absolute top-0 end-0 m-3">Residential</span>
+                    </div>
+                    <div class="card-body p-4">
+                        <small class="text-muted fw-bold text-uppercase">Karen</small>
+                        <h5 class="fw-bold mt-1 mb-3">Luxury Home Off-Grid</h5>
+                        <p class="text-muted small">Total energy independence with a high-capacity Tesla Powerwall setup.</p>
+                        <div class="d-flex justify-content-between border-top pt-3">
+                            <span class="text-success fw-bold small"><i class="fa-solid fa-bolt me-1"></i> 12kWp</span>
+                            <span class="text-dark fw-bold small"><i class="fa-solid fa-check-circle me-1"></i> Completed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-dark text-white text-center">
+    <div class="container">
+        <h2 class="fw-extrabold mb-3">Ready to Start Your Project?</h2>
+        <p class="lead text-white-50 mb-4">From design to commissioning, we handle it all.</p>
+        <a href="{{ url_for('contact') }}" class="btn btn-warning btn-lg px-5 fw-bold rounded-pill">Request a Proposal</a>
+    </div>
+</section>
+
+<script>
+    function filterProjects(category, btnElement) {
+        // 1. Update Buttons
+        let buttons = document.querySelectorAll('#portfolio-flters button');
+        buttons.forEach(btn => {
+            btn.classList.remove('active');
+            btn.classList.remove('btn-dark');
+            btn.classList.add('btn-outline-dark');
+        });
+        
+        // Highlight clicked button
+        btnElement.classList.add('active');
+        btnElement.classList.remove('btn-outline-dark');
+        btnElement.classList.add('btn-dark');
+
+        // 2. Filter Grid
+        let items = document.querySelectorAll('.project-item');
+        
+        items.forEach(item => {
+            if (category === 'all' || item.classList.contains(category)) {
+                item.style.display = 'block';
+                // Add a small animation effect
+                item.classList.add('animate-fade-in');
+            } else {
+                item.style.display = 'none';
+                item.classList.remove('animate-fade-in');
+            }
+        });
+    }
+</script>
+
+<style>
+    /* Simple Animation for filtering */
+    .animate-fade-in {
+        animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    /* Hover Up Effect */
+    .hover-up {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hover-up:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+</style>
 {% endblock %}
