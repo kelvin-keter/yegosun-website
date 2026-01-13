@@ -75,10 +75,14 @@ def about():
 def services():
     return render_template('services.html')
 
-# --- NEW PROJECTS ROUTE ADDED HERE ---
 @app.route('/projects')
 def projects():
     return render_template('projects.html')
+
+# --- NEW CALCULATOR ROUTE (Added Here) ---
+@app.route('/calculator')
+def calculator():
+    return render_template('calculator.html')
 
 @app.route('/contact')
 def contact():
