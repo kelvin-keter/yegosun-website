@@ -2,39 +2,87 @@
 {% block title %}About Us{% endblock %}
 
 {% block content %}
-<div class="bg-dark text-white py-5" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('{{ url_for('static', filename='images/hero-2.jpg') }}') center/cover;">
-    <div class="container py-5 text-center">
-        <h1 class="display-4 fw-extrabold">Who We Are</h1>
-        <p class="lead text-white-50">Building a Sustainable Future for Kenya.</p>
+<div class="position-relative py-5 bg-dark text-white" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('{{ url_for('static', filename='images/hero-2.jpg') }}'); background-size: cover; background-position: center;">
+    <div class="container py-5 text-center position-relative" style="z-index: 2;">
+        <h6 class="text-warning fw-bold text-uppercase tracking-wide mb-3">Our Story</h6>
+        <h1 class="display-3 fw-extrabold mb-0">Powering Kenya Since 2018</h1>
+        <p class="lead text-white-50 mt-3">Building a Sustainable Future for Kenya.</p>
     </div>
 </div>
 
-<div class="container py-5">
-    <div class="row g-5 align-items-center">
-        <div class="col-lg-6">
-            <img src="{{ url_for('static', filename='images/hero-1.jpg') }}" class="img-fluid rounded-4 shadow" alt="About Yegosun">
-        </div>
-        <div class="col-lg-6">
-            <h6 class="text-success fw-bold text-uppercase">Our Story</h6>
-            <h2 class="fw-bold mb-4">Leading the Green Revolution</h2>
-            <p class="text-muted mb-4">Founded with a vision to make clean energy accessible, Yegosun Energy has grown into Kenya's most trusted solar partner. We specialize in engineering robust power systems for institutions that cannot afford downtime.</p>
+<section class="py-5">
+    <div class="container py-5">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-6">
+                 <img src="{{ url_for('static', filename='images/hero-1.jpg') }}" class="img-fluid rounded-4 shadow-lg" alt="About Yegosun">
+            </div>
             
-            <div class="row g-4 mb-4">
-                <div class="col-6">
-                    <div class="border-start border-4 border-warning ps-3">
-                        <h4 class="fw-bold mb-0">8+</h4>
-                        <small class="text-muted">Years Experience</small>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="border-start border-4 border-success ps-3">
-                        <h4 class="fw-bold mb-0">150+</h4>
-                        <small class="text-muted">Projects Completed</small>
+            <div class="col-lg-6">
+                <div class="ps-lg-4">
+                    <h6 class="text-success fw-bold text-uppercase">Who We Are</h6>
+                    <h2 class="fw-bold mb-4 text-dark">We don't just sell solar panels. <br>We engineer energy independence.</h2>
+                    <p class="text-muted lead mb-4">Yegosun Energy Limited was founded to bridge the gap between "expensive grid power" and "unreliable backup systems."</p>
+                    <p class="text-muted mb-4">Headquartered at <strong>Garden City, Nairobi</strong>, we have grown from a small consultancy to a premier EPRA-certified contractor. We specialize in engineering robust power systems for institutions that cannot afford downtime.</p>
+                    
+                    <div class="row g-4 mb-4">
+                        <div class="col-6">
+                            <div class="border-start border-4 border-warning ps-3">
+                                <h4 class="fw-bold mb-0">8+</h4>
+                                <small class="text-muted text-uppercase fw-bold">Years Experience</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border-start border-4 border-success ps-3">
+                                <h4 class="fw-bold mb-0">150+</h4>
+                                <small class="text-muted text-uppercase fw-bold">Projects Completed</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <a href="{{ url_for('contact') }}" class="btn btn-outline-dark rounded-pill px-4">Meet Our Team</a>
         </div>
     </div>
-</div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h6 class="text-success fw-bold text-uppercase">Why Choose Us</h6>
+            <h2 class="fw-extrabold">The Yegosun Standard</h2>
+            <div class="bg-warning mx-auto my-3" style="width: 60px; height: 4px;"></div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm p-4 hover-up">
+                    <div class="mb-3 text-primary"><i class="fa-solid fa-shield-halved fa-3x"></i></div>
+                    <h4 class="fw-bold">Safety First</h4>
+                    <p class="text-muted">We strictly adhere to EPRA and international safety regulations. We prioritize the safety of your property and our team above all else.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm p-4 hover-up">
+                    <div class="mb-3 text-warning"><i class="fa-solid fa-certificate fa-3x"></i></div>
+                    <h4 class="fw-bold">Quality Guarantee</h4>
+                    <p class="text-muted">We only use Tier-1 solar panels and inverters backed by manufacturer warranties of up to 25 years. No counterfeits.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm p-4 hover-up">
+                    <div class="mb-3 text-success"><i class="fa-solid fa-headset fa-3x"></i></div>
+                    <h4 class="fw-bold">Lifetime Support</h4>
+                    <p class="text-muted">Our relationship doesn't end at installation. We offer 24/7 monitoring, maintenance support, and system audits.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-success text-white text-center">
+    <div class="container py-4">
+        <h2 class="fw-bold mb-3">Meet the Team Behind the Power</h2>
+        <p class="lead mb-4 opacity-75">Expert engineers ready to tackle your energy challenges.</p>
+        <a href="{{ url_for('contact') }}" class="btn btn-warning btn-lg px-5 fw-bold shadow">Contact Our Engineers</a>
+    </div>
+</section>
 {% endblock %}
