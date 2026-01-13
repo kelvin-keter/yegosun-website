@@ -222,5 +222,20 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
+# --- TEMPORARY SETUP ROUTE ---
+@app.route('/create_admin')
+def create_admin():
+    # 1. Check if admin exists
+    existing_user = User.query.filter_by(username='admin').first()
+    if existing_user:
+        return "Admin user already exists! Go to /login"
+    
+    # 2. Create new admin
+    new_user = User(username='admin')
+    new_user.set_password('admin2026') # <--- YOUR PASSWORD
+    db.session.add(new_user)
+    db.session.commit()
+    return "SUCCESS: Admin user created. You can now go to /login"
+
 if __name__ == '__main__':
     app.run(debug=True)
