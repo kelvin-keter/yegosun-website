@@ -2,48 +2,123 @@
 {% block title %}Our Solutions{% endblock %}
 
 {% block content %}
-<div class="bg-primary text-white py-5" style="background: linear-gradient(45deg, #1b5e20 0%, #004d40 100%);">
-    <div class="container py-5 text-center">
-        <h1 class="display-4 fw-extrabold">Our Solutions</h1>
-        <p class="lead text-white-50">Comprehensive Energy Systems for Every Need.</p>
+<div class="position-relative py-5 bg-dark text-white" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('{{ url_for('static', filename='images/hero-3.jpg') }}'); background-size: cover; background-position: center;">
+    <div class="container py-5 text-center position-relative" style="z-index: 2;">
+        <h6 class="text-warning fw-bold text-uppercase tracking-wide mb-3">Technical Excellence</h6>
+        <h1 class="display-3 fw-extrabold mb-0">Engineered for Efficiency</h1>
+        <p class="lead text-white-50 mt-3">Comprehensive energy systems designed for the Kenyan landscape.</p>
     </div>
 </div>
 
-<div class="container py-5">
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm hover-up">
-                <div class="card-body p-4 text-center">
-                    <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                        <i class="fa-solid fa-school fa-2x text-success"></i>
+<section class="py-5">
+    <div class="container py-5">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="card h-100 border-0 shadow-lg overflow-hidden">
+                    <div class="bg-success p-4 text-white text-center">
+                        <i class="fa-solid fa-school fa-3x mb-3"></i>
+                        <h3 class="fw-bold">Institutional Solar</h3>
                     </div>
-                    <h4 class="fw-bold">Institutional Solar</h4>
-                    <p class="text-muted small">Grid-tie and hybrid systems designed for schools and hospitals to reduce overhead costs by up to 70%.</p>
+                    <div class="card-body p-4">
+                        <p class="text-muted">High-capacity Grid-Tie and Hybrid systems tailored for <strong>Schools, Universities, and Hospitals</strong>.</p>
+                        <ul class="list-unstyled text-muted small">
+                            <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i>Slash electricity bills by up to 70%</li>
+                            <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i>Backup power for computer labs</li>
+                            <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i>EPRA compliant designs</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm hover-up">
-                <div class="card-body p-4 text-center">
-                    <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                        <i class="fa-solid fa-industry fa-2x text-warning"></i>
+
+            <div class="col-lg-4">
+                <div class="card h-100 border-0 shadow-lg overflow-hidden">
+                    <div class="bg-warning p-4 text-dark text-center">
+                        <i class="fa-solid fa-industry fa-3x mb-3"></i>
+                        <h3 class="fw-bold">C&I Solutions</h3>
                     </div>
-                    <h4 class="fw-bold">Commercial & Industrial</h4>
-                    <p class="text-muted small">Heavy-duty power for factories and boreholes. Includes 3-phase pump inverters and industrial battery banks.</p>
+                    <div class="card-body p-4">
+                        <p class="text-muted">Robust 3-Phase systems for <strong>Factories, Malls, and Industrial Parks</strong>.</p>
+                        <ul class="list-unstyled text-muted small">
+                            <li class="mb-2"><i class="fa-solid fa-check text-warning me-2"></i>Supports heavy machinery</li>
+                            <li class="mb-2"><i class="fa-solid fa-check text-warning me-2"></i>Peak-shaving technology</li>
+                            <li class="mb-2"><i class="fa-solid fa-check text-warning me-2"></i>Voltage stabilization</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm hover-up">
-                <div class="card-body p-4 text-center">
-                    <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                        <i class="fa-solid fa-file-signature fa-2x text-primary"></i>
+
+            <div class="col-lg-4">
+                <div class="card h-100 border-0 shadow-lg overflow-hidden">
+                    <div class="bg-primary p-4 text-white text-center">
+                        <i class="fa-solid fa-faucet-drip fa-3x mb-3"></i>
+                        <h3 class="fw-bold">Solar Water</h3>
                     </div>
-                    <h4 class="fw-bold">Energy Audits</h4>
-                    <p class="text-muted small">Professional assessment of your current power usage to design the most efficient and cost-effective system.</p>
+                    <div class="card-body p-4">
+                        <p class="text-muted">Zero-cost pumping solutions for <strong>Communities, Farms, and Boreholes</strong>.</p>
+                        <ul class="list-unstyled text-muted small">
+                            <li class="mb-2"><i class="fa-solid fa-check text-primary me-2"></i>No batteries required (Direct Drive)</li>
+                            <li class="mb-2"><i class="fa-solid fa-check text-primary me-2"></i>Smart controller automation</li>
+                            <li class="mb-2"><i class="fa-solid fa-check text-primary me-2"></i>High-lift capability (300m+)</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h6 class="text-success fw-bold text-uppercase">The Workflow</h6>
+            <h2 class="fw-extrabold">How We Power Your Project</h2>
+        </div>
+
+        <div class="row text-center g-4">
+            <div class="col-md-3">
+                <div class="position-relative">
+                    <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 100px; height: 100px;">
+                        <span class="fw-bold fs-2 text-dark">01</span>
+                    </div>
+                    <h5 class="fw-bold">Energy Audit</h5>
+                    <p class="text-muted small">We analyze your current consumption to size the system correctly.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="position-relative">
+                    <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 100px; height: 100px;">
+                        <span class="fw-bold fs-2 text-dark">02</span>
+                    </div>
+                    <h5 class="fw-bold">Engineering</h5>
+                    <p class="text-muted small">Our engineers design a custom schematic tailored to your roof and load.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="position-relative">
+                    <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 100px; height: 100px;">
+                        <span class="fw-bold fs-2 text-dark">03</span>
+                    </div>
+                    <h5 class="fw-bold">Installation</h5>
+                    <p class="text-muted small">Our EPRA-certified technicians install the system with safety priority.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="position-relative">
+                    <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 100px; height: 100px;">
+                        <span class="fw-bold fs-2 text-dark">04</span>
+                    </div>
+                    <h5 class="fw-bold">Support</h5>
+                    <p class="text-muted small">We provide remote monitoring and annual maintenance checks.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-dark text-white text-center">
+    <div class="container">
+        <h2 class="fw-bold mb-3">Ready to lower your operating costs?</h2>
+        <a href="{{ url_for('contact') }}" class="btn btn-success btn-lg px-5 fw-bold shadow mt-3">Request An Audit</a>
+    </div>
+</section>
 {% endblock %}
