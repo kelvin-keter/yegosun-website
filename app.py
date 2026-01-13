@@ -14,7 +14,8 @@ app = Flask(__name__)
 # --- CONFIGURATION ---
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'yegosun-master-key-2026')
 
-database_url = os.environ.get('DATABASE_URL', 'sqlite:///yegosun.db')
+# FIX: We changed the filename to 'yegosun_v2.db' to force a fresh database creation
+database_url = os.environ.get('DATABASE_URL', 'sqlite:///yegosun_v2.db')
 if database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
 
@@ -51,17 +52,15 @@ class BlogPost(db.Model):
     content = db.Column(db.Text, nullable=False)
     category = db.Column(db.String(50), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    # NEW: Track when the post was last edited
-    date_updated = db.Column(db.DateTime, nullable=True)
+    date_updated = db.Column(db.DateTime, nullable=True) # New Field
 
-# NEW MODEL: To track Quotes/Leads
 class Quote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     full_name = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(100), nullable=False)
     project_type = db.Column(db.String(100), nullable=False)
-    location = db.Column(db.String(100), nullable=True) # New field
+    location = db.Column(db.String(100), nullable=True)
     message = db.Column(db.Text, nullable=True)
     date_submitted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
@@ -81,6 +80,19 @@ def home():
     except:
         latest_blogs = []
     return render_template('index.html', blogs=latest_blogs)
+
+# --- EMERGENCY SETUP ROUTE (Run this once to restore Admin) ---
+@app.route('/setup')
+def setup():
+    db.create_all()
+    # Check if admin exists
+    if not User.query.filter_by(username='admin').first():
+        user = User(username='admin')
+        user.set_password('admin123')
+        db.session.add(user)
+        db.session.commit()
+        return "SUCCESS: Database reset. Admin user created (admin / admin123). <a href='/login'>Go to Login</a>"
+    return "Admin user already exists. <a href='/login'>Go to Login</a>"
 
 @app.route('/about')
 def about():
@@ -102,62 +114,40 @@ def calculator():
 def contact():
     return render_template('contact.html')
 
-# --- SUBMIT QUOTE (Save to DB + Generate PDF) ---
 @app.route('/submit_quote', methods=['POST'])
 def submit_quote():
-    # 1. Get Data
     full_name = request.form.get('fullName')
     email = request.form.get('email')
     phone = request.form.get('phone')
     project_type = request.form.get('projectType')
-    location = request.form.get('location') # New field
+    location = request.form.get('location')
     message = request.form.get('message')
 
-    # 2. SAVE TO DATABASE (The "Lead Capture" Step)
     try:
         new_quote = Quote(
-            full_name=full_name,
-            email=email,
-            phone=phone,
-            project_type=project_type,
-            location=location,
-            message=message
+            full_name=full_name, email=email, phone=phone,
+            project_type=project_type, location=location, message=message
         )
         db.session.add(new_quote)
         db.session.commit()
     except Exception as e:
         print(f"Error saving quote: {e}")
 
-    # 3. Render HTML for PDF
-    rendered_html = render_template('pdf_quote.html', 
-                                  name=full_name, 
-                                  email=email, 
-                                  phone=phone,
-                                  service=project_type,
-                                  date=datetime.now().strftime("%Y-%m-%d"))
-    
-    # 4. Create PDF in Memory
+    rendered_html = render_template('pdf_quote.html', name=full_name, email=email, phone=phone, service=project_type, date=datetime.now().strftime("%Y-%m-%d"))
     pdf_file = io.BytesIO()
     pisa_status = pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf_file)
-    
-    if pisa_status.err:
-        return 'We had some errors creating the PDF', 500
-    
-    # 5. Return PDF
+    if pisa_status.err: return 'We had some errors creating the PDF', 500
     pdf_file.seek(0)
     response = make_response(pdf_file.read())
     response.headers['Content-Type'] = 'application/pdf'
     filename = f"Yegosun_Quote_{full_name.replace(' ', '_')}.pdf"
     response.headers['Content-Disposition'] = f'attachment; filename={filename}'
-    
     return response
 
 @app.route('/blog/<int:post_id>')
 def blog_detail(post_id):
     post = BlogPost.query.get_or_404(post_id)
     return render_template('blog_detail.html', post=post)
-
-# --- ADMIN DASHBOARD ---
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -175,72 +165,63 @@ def login():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    # Fetch Blogs
     all_posts = BlogPost.query.order_by(BlogPost.date_posted.desc()).all()
-    # Fetch Quotes (New!)
     all_quotes = Quote.query.order_by(Quote.date_submitted.desc()).all()
-    
     return render_template('dashboard.html', posts=all_posts, quotes=all_quotes)
 
 @app.route('/post/new', methods=['GET', 'POST'])
 @login_required
 def new_post():
     if request.method == 'POST':
-        title = request.form.get('title')
-        content = request.form.get('content')
-        category = request.form.get('category')
-        file = request.files['image']
-        if file:
-            try:
+        try:
+            title = request.form.get('title')
+            content = request.form.get('content')
+            category = request.form.get('category')
+            file = request.files.get('image')
+            
+            image_url = ""
+            if file and file.filename != '':
                 res = cloudinary.uploader.upload(file)
-                new_post = BlogPost(title=title, content=content, category=category, image_url=res['secure_url'])
-                db.session.add(new_post)
-                db.session.commit()
-                return redirect(url_for('dashboard'))
-            except Exception as e:
-                print(e)
+                image_url = res['secure_url']
+                
+            new_post = BlogPost(title=title, content=content, category=category, image_url=image_url)
+            db.session.add(new_post)
+            db.session.commit()
+            flash('Blog post created successfully!', 'success')
+            return redirect(url_for('dashboard'))
+        except Exception as e:
+            print(e)
+            flash(f'Error creating post: {str(e)}', 'danger')
     return render_template('create_post.html')
 
-# --- EDIT BLOG POST (UPDATED WITH DATE TRACKING) ---
 @app.route('/post/<int:post_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_post(post_id):
     post = BlogPost.query.get_or_404(post_id)
-    
     if request.method == 'POST':
         try:
-            # 1. Update Text
             post.title = request.form.get('title')
             post.content = request.form.get('content')
             post.category = request.form.get('category')
-            
-            # NEW: Update the timestamp
             post.date_updated = datetime.utcnow()
             
-            # 2. Update Image (Safely)
-            file = request.files.get('image') # Use .get() to avoid crashing
+            file = request.files.get('image')
             if file and file.filename != '':
                 try:
                     res = cloudinary.uploader.upload(file)
                     post.image_url = res['secure_url']
                 except Exception as upload_err:
-                    print(f"Cloudinary Upload Error: {upload_err}")
-                    flash('Image update failed, but text was saved.', 'warning')
+                    print(f"Cloudinary Error: {upload_err}")
+                    flash('Image upload failed, but text was saved.', 'warning')
             
-            # 3. Commit
             db.session.commit()
-            
-            # NEW: Success Message
             flash('Article updated successfully!', 'success')
             return redirect(url_for('dashboard'))
-
         except Exception as e:
-            # 4. Rollback to prevent DB lock
             db.session.rollback()
-            print(f"DATABASE ERROR: {e}")
-            flash('Something went wrong updating the post.', 'danger')
+            print(f"DB Error: {e}")
+            flash('Error updating post.', 'danger')
             return render_template('edit_post.html', post=post)
-        
     return render_template('edit_post.html', post=post)
 
 @app.route('/post/<int:post_id>/delete')
@@ -249,15 +230,16 @@ def delete_post(post_id):
     post = BlogPost.query.get_or_404(post_id)
     db.session.delete(post)
     db.session.commit()
+    flash('Post deleted.', 'success')
     return redirect(url_for('dashboard'))
 
-# New Route to delete a quote if needed
 @app.route('/quote/<int:quote_id>/delete')
 @login_required
 def delete_quote(quote_id):
     quote = Quote.query.get_or_404(quote_id)
     db.session.delete(quote)
     db.session.commit()
+    flash('Lead deleted.', 'success')
     return redirect(url_for('dashboard'))
 
 @app.route('/logout')

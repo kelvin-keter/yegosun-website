@@ -251,12 +251,23 @@
         </div>
     </section>
 
-    <section id="contact" class="py-5 bg-dark text-white position-relative overflow-hidden">
-        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, #1b5e20 0%, #004d40 100%); z-index: 0;"></div>
-        <div class="container py-5 text-center position-relative" style="z-index: 1;">
-            <h2 class="fw-extrabold mb-4 display-5 text-white">Let's Build Your Solar Future.</h2>
-            <p class="text-white-90 mb-5 lead">Our engineers are ready to design a custom solution for your school, business, or home.</p>
-            <a href="{{ url_for('contact') }}" class="btn btn-warning btn-lg px-5 fw-bold shadow-lg">Get a Free Quote</a>
+    <section id="contact" class="position-relative py-5" style="background-image: url('{{ url_for('static', filename='images/hero-2.jpg') }}'); background-attachment: fixed; background-size: cover; background-position: center; min-height: 500px; display: flex; align-items: center;">
+        
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 31, 18, 0.85); z-index: 1;"></div>
+        
+        <div class="container position-relative text-center" style="z-index: 2;">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <span class="text-warning fw-bold text-uppercase tracking-wide mb-2 d-block small">Start Your Journey</span>
+                    <h2 class="fw-extrabold mb-4 display-4 text-white">Let's Build Your Solar Future.</h2>
+                    <p class="text-white-50 mb-5 lead">Our engineers are ready to design a custom solution for your school, business, or home. Stop paying for power you can generate yourself.</p>
+                    
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="{{ url_for('contact') }}" class="btn btn-warning btn-lg px-5 fw-bold shadow-lg rounded-pill">Get a Free Quote</a>
+                        <a href="{{ url_for('projects') }}" class="btn btn-outline-light btn-lg px-5 fw-bold rounded-pill">View Our Work</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 {% endblock %}
