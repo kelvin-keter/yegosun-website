@@ -8,7 +8,14 @@
         <h1 class="display-4 fw-extrabold mb-4">{{ post.title }}</h1>
         
         <div class="d-flex justify-content-center align-items-center text-white-50 small">
-            <span class="me-4"><i class="fa-regular fa-calendar me-2 text-warning"></i>{{ post.date_posted.strftime('%B %d, %Y') }}</span>
+            <span class="me-4">
+                <i class="fa-regular fa-calendar me-2 text-warning"></i>
+                {{ post.date_posted.strftime('%B %d, %Y') }}
+                
+                {% if post.date_updated %}
+                    <span class="text-warning ms-2 fst-italic">(Updated: {{ post.date_updated.strftime('%b %d') }})</span>
+                {% endif %}
+            </span>
             <span><i class="fa-solid fa-user-pen me-2 text-warning"></i>By Yegosun Team</span>
         </div>
     </div>

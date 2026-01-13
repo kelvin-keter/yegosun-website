@@ -51,6 +51,8 @@ class BlogPost(db.Model):
     content = db.Column(db.Text, nullable=False)
     category = db.Column(db.String(50), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    # NEW: Track when the post was last edited
+    date_updated = db.Column(db.DateTime, nullable=True)
 
 # NEW MODEL: To track Quotes/Leads
 class Quote(db.Model):
@@ -199,7 +201,7 @@ def new_post():
                 print(e)
     return render_template('create_post.html')
 
-# --- EDIT BLOG POST (FIXED & ROBUST VERSION) ---
+# --- EDIT BLOG POST (UPDATED WITH DATE TRACKING) ---
 @app.route('/post/<int:post_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_post(post_id):
@@ -211,6 +213,9 @@ def edit_post(post_id):
             post.title = request.form.get('title')
             post.content = request.form.get('content')
             post.category = request.form.get('category')
+            
+            # NEW: Update the timestamp
+            post.date_updated = datetime.utcnow()
             
             # 2. Update Image (Safely)
             file = request.files.get('image') # Use .get() to avoid crashing
@@ -224,6 +229,9 @@ def edit_post(post_id):
             
             # 3. Commit
             db.session.commit()
+            
+            # NEW: Success Message
+            flash('Article updated successfully!', 'success')
             return redirect(url_for('dashboard'))
 
         except Exception as e:
