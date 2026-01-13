@@ -4,230 +4,243 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Executive Dashboard | Yegosun</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --brand-green: #1b5e20;
-            --brand-dark: #0d2e1f;
+            --brand-green: #2E7D32;
+            --brand-dark: #0a1f12; /* Deep Obsidian Green */
             --brand-gold: #FFA000;
-            --bg-light: #f3f4f6;
+            --bg-light: #f8fafc;   /* Cleaner White-Blue */
+            --text-dark: #1e293b;  /* Slate 800 */
+            --text-grey: #64748b;  /* Slate 500 */
         }
-        body { background-color: var(--bg-light); font-family: 'Inter', sans-serif; color: #344767; }
+        body { background-color: var(--bg-light); font-family: 'Inter', sans-serif; color: var(--text-dark); }
         h1, h2, h3, h4, h5, h6 { font-family: 'Montserrat', sans-serif; }
         
-        /* PREMIUM SIDEBAR */
+        /* --- 1. INTERNATIONAL STYLE SIDEBAR --- */
         .sidebar {
             min-height: 100vh;
-            background: linear-gradient(180deg, var(--brand-green) 0%, var(--brand-dark) 100%);
-            box-shadow: 4px 0 10px rgba(0,0,0,0.05);
-            z-index: 100;
+            background-color: var(--brand-dark);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
         }
+        
         .sidebar-brand {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            color: white;
-            font-size: 1.5rem;
+            padding: 2rem 1.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
+        
+        /* Navigation Links - sleek left-border style */
         .nav-link {
-            color: rgba(255,255,255,0.7);
+            color: #94a3b8; /* Muted Blue-Grey */
             font-weight: 500;
-            padding: 16px 24px;
-            border-radius: 12px;
-            margin: 4px 16px;
-            transition: all 0.3s ease;
+            padding: 14px 24px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            display: flex;
+            align-items: center;
         }
-        .nav-link:hover, .nav-link.active {
-            color: var(--brand-dark);
-            background-color: white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transform: translateX(5px);
+        
+        .nav-link i { width: 24px; margin-right: 12px; font-size: 1.1rem; }
+        
+        .nav-link:hover {
+            color: white;
+            background-color: rgba(255,255,255,0.03);
         }
-        .nav-link i { width: 24px; text-align: center; margin-right: 12px; }
+        
+        /* Active State - The "Premium" Look */
+        .nav-link.active {
+            color: white;
+            background: linear-gradient(90deg, rgba(46, 125, 50, 0.15) 0%, transparent 100%);
+            border-left-color: var(--brand-green); /* The Green Accent */
+        }
+        
+        .logout-btn {
+            margin-top: auto;
+            margin-bottom: 2rem;
+            margin-left: 1.5rem;
+            margin-right: 1.5rem;
+            padding: 12px;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            color: #fca5a5;
+            text-align: center;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            display: block;
+        }
+        .logout-btn:hover { background: rgba(239, 68, 68, 0.1); color: white; border-color: #ef4444; }
 
-        /* STAT CARDS */
+        /* --- 2. CARDS & STATS --- */
         .stat-card {
-            border: none;
-            border-radius: 16px;
             background: white;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-            transition: transform 0.3s ease;
-            position: relative;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        
+        /* --- 3. HIGH CONTRAST TABLES --- */
+        .table-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             overflow: hidden;
         }
-        .stat-card:hover { transform: translateY(-5px); }
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 6px; height: 100%;
-        }
-        .border-gold::before { background-color: var(--brand-gold); }
-        .border-green::before { background-color: var(--brand-green); }
-        .border-blue::before { background-color: #0d6efd; }
-
-        /* MODERN TABLES */
+        
         .card-header-clean {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e2e8f0;
             background: white;
-            border-bottom: 1px solid #f0f0f0;
-            padding: 24px;
-            border-radius: 16px 16px 0 0;
         }
+
+        /* The Fix for Grey Titles */
         .table-custom thead th {
             text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 1px;
-            color: #8898aa;
-            font-weight: 700;
-            border-bottom: 1px solid #f0f0f0;
-            padding-bottom: 16px;
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            color: #475569; /* Darker Slate - Much more readable */
+            font-weight: 700; /* Bolder */
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 24px;
         }
+        
         .table-custom td {
-            padding: 20px 10px;
-            border-bottom: 1px solid #f8f9fa;
+            padding: 16px 24px;
+            border-bottom: 1px solid #f1f5f9;
+            color: var(--text-dark);
             vertical-align: middle;
+            font-size: 0.95rem;
         }
+        
         .avatar-circle {
-            width: 48px; height: 48px;
-            background: linear-gradient(135deg, #FFD700, #FFA000);
-            color: #fff;
+            width: 40px; height: 40px;
+            background: #f1f5f9;
+            color: var(--brand-green);
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             font-weight: 700;
-            font-size: 1.2rem;
-            box-shadow: 0 4px 10px rgba(255, 160, 0, 0.3);
+            font-size: 1rem;
+            border: 1px solid #e2e8f0;
         }
         
-        /* BUTTONS & BADGES */
+        /* Buttons */
         .btn-create {
-            background: linear-gradient(135deg, var(--brand-green), #2e7d32);
+            background-color: var(--brand-dark);
             color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
             border: none;
-            padding: 12px 24px;
-            border-radius: 50px;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(27, 94, 32, 0.3);
-            transition: all 0.3s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        .btn-create:hover { background: var(--brand-dark); color: white; transform: translateY(-2px); }
-        
-        .badge-soft {
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.8rem;
-        }
-        .badge-soft-success { background-color: #e8f5e9; color: #2e7d32; }
-        .badge-soft-warning { background-color: #fff8e1; color: #ff8f00; }
-        .badge-soft-primary { background-color: #e3f2fd; color: #0d47a1; }
+        .btn-create:hover { background-color: black; color: white; }
+
+        /* Badges */
+        .badge-soft { padding: 6px 10px; border-radius: 6px; font-weight: 600; font-size: 0.75rem; }
+        .badge-soft-primary { background: #eff6ff; color: #1d4ed8; }
+        .badge-soft-success { background: #f0fdf4; color: #15803d; }
     </style>
 </head>
 <body>
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-lg-2 sidebar p-0 d-none d-lg-block position-fixed">
-            <div class="p-4 mb-4 text-center">
-                <div class="sidebar-brand mt-3">YEGO<span style="color: var(--brand-gold);">SUN</span></div>
-                <small style="color: rgba(255,255,255,0.5); letter-spacing: 1px;">ADMIN CONSOLE</small>
+        <div class="col-lg-2 sidebar p-0 d-none d-lg-flex position-fixed">
+            <div class="sidebar-brand">
+                <span class="text-white fw-extrabold fs-4" style="letter-spacing: -1px;">YEGO<span class="text-warning">SUN</span></span>
+                <div class="text-white-50 small mt-1" style="font-size: 0.7rem; letter-spacing: 1px;">ADMIN CONSOLE</div>
             </div>
-            <nav class="nav flex-column">
+            
+            <nav class="nav flex-column flex-grow-1">
                 <a class="nav-link active" href="#"><i class="fa-solid fa-chart-pie"></i> Overview</a>
                 <a class="nav-link" href="{{ url_for('new_post') }}"><i class="fa-solid fa-pen-nib"></i> Write Blog</a>
-                <a class="nav-link" href="{{ url_for('home') }}" target="_blank"><i class="fa-solid fa-globe"></i> View Website</a>
-                
-                <div style="margin-top: auto; padding-top: 100px;">
-                    <a class="nav-link text-white bg-danger bg-opacity-25 mx-3 mt-5 text-center" href="{{ url_for('logout') }}" style="backdrop-filter: blur(5px);">
-                        <i class="fa-solid fa-arrow-right-from-bracket me-0"></i> Logout
-                    </a>
-                </div>
+                <a class="nav-link" href="{{ url_for('home') }}" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> Live Website</a>
             </nav>
+
+            <a href="{{ url_for('logout') }}" class="logout-btn">
+                <i class="fa-solid fa-power-off me-2"></i> Sign Out
+            </a>
         </div>
 
-        <div class="col-lg-10 offset-lg-2 p-4 p-lg-5">
+        <div class="col-lg-10 offset-lg-2 p-4 p-xl-5">
             
-            <div class="d-flex justify-content-between align-items-center mb-5">
+            <div class="d-flex justify-content-between align-items-end mb-5">
                 <div>
-                    <h6 class="text-muted fw-bold text-uppercase mb-1">Welcome back, Nixon</h6>
-                    <h2 class="fw-bold mb-0">Executive Overview</h2>
+                    <h6 class="text-muted fw-bold text-uppercase small mb-1">Command Center</h6>
+                    <h2 class="fw-bold mb-0 text-dark">Dashboard Overview</h2>
                 </div>
                 <div>
-                    <span class="text-muted small me-3"><i class="fa-regular fa-calendar me-2"></i>{{ now_date }}</span>
+                    <span class="text-muted small me-4 fw-medium">{{ now_date }}</span>
                     <a href="{{ url_for('new_post') }}" class="btn btn-create"><i class="fa-solid fa-plus me-2"></i>New Article</a>
                 </div>
             </div>
 
             <div class="row g-4 mb-5">
                 <div class="col-md-4">
-                    <div class="card stat-card border-gold p-4 h-100">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <p class="text-muted fw-bold text-uppercase small mb-2">Total Leads</p>
-                                <h2 class="fw-extrabold mb-0 text-dark">{{ quotes|length }}</h2>
-                                <small class="text-success fw-bold"><i class="fa-solid fa-arrow-up"></i> Generated quotes</small>
-                            </div>
-                            <div class="rounded-circle bg-warning bg-opacity-10 p-3 text-warning">
-                                <i class="fa-solid fa-file-invoice fa-xl"></i>
-                            </div>
+                    <div class="stat-card">
+                        <div class="d-flex justify-content-between mb-2">
+                            <h6 class="text-muted text-uppercase small fw-bold">Total Leads</h6>
+                            <i class="fa-solid fa-user-group text-primary opacity-50"></i>
                         </div>
+                        <h2 class="fw-bold mb-0">{{ quotes|length }}</h2>
                     </div>
                 </div>
-
                 <div class="col-md-4">
-                    <div class="card stat-card border-green p-4 h-100">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <p class="text-muted fw-bold text-uppercase small mb-2">Active Blogs</p>
-                                <h2 class="fw-extrabold mb-0 text-dark">{{ posts|length }}</h2>
-                                <small class="text-muted">News & Updates</small>
-                            </div>
-                            <div class="rounded-circle bg-success bg-opacity-10 p-3 text-success">
-                                <i class="fa-solid fa-newspaper fa-xl"></i>
-                            </div>
+                    <div class="stat-card">
+                        <div class="d-flex justify-content-between mb-2">
+                            <h6 class="text-muted text-uppercase small fw-bold">Published Blogs</h6>
+                            <i class="fa-solid fa-newspaper text-warning opacity-50"></i>
                         </div>
+                        <h2 class="fw-bold mb-0">{{ posts|length }}</h2>
                     </div>
                 </div>
-
                 <div class="col-md-4">
-                    <div class="card stat-card border-blue p-4 h-100">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <p class="text-muted fw-bold text-uppercase small mb-2">System Status</p>
-                                <h4 class="fw-bold mb-0 text-success">Online</h4>
-                                <small class="text-muted">v1.0.2 Stable</small>
-                            </div>
-                            <div class="rounded-circle bg-primary bg-opacity-10 p-3 text-primary">
-                                <i class="fa-solid fa-server fa-xl"></i>
-                            </div>
+                    <div class="stat-card">
+                        <div class="d-flex justify-content-between mb-2">
+                            <h6 class="text-muted text-uppercase small fw-bold">System Status</h6>
+                            <i class="fa-solid fa-server text-success opacity-50"></i>
                         </div>
+                        <h4 class="fw-bold mb-0 text-success">Operational</h4>
                     </div>
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm rounded-4 mb-5 overflow-hidden">
+            <div class="table-card mb-5">
                 <div class="card-header-clean d-flex justify-content-between align-items-center">
-                    <h5 class="fw-bold mb-0 text-dark">Recent Inquiries</h5>
-                    <button class="btn btn-sm btn-outline-dark rounded-pill px-3">View All</button>
+                    <h5 class="fw-bold mb-0">Recent Inquiries</h5>
+                    <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" style="font-size: 0.8rem;">Export Data</button>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-custom mb-0">
-                        <thead class="bg-light">
+                        <thead>
                             <tr>
-                                <th class="ps-4">Client</th>
+                                <th>Client Name</th>
                                 <th>Project Type</th>
                                 <th>Location</th>
                                 <th>Date</th>
-                                <th class="text-end pe-4">Actions</th>
+                                <th class="text-end">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for quote in quotes %}
-                            <tr class="bg-white">
-                                <td class="ps-4">
+                            <tr>
+                                <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar-circle me-3 shadow-sm">{{ quote.full_name[0] }}</div>
+                                        <div class="avatar-circle me-3">{{ quote.full_name[0] }}</div>
                                         <div>
                                             <div class="fw-bold text-dark">{{ quote.full_name }}</div>
                                             <small class="text-muted">{{ quote.phone }}</small>
@@ -235,18 +248,18 @@
                                     </div>
                                 </td>
                                 <td><span class="badge badge-soft badge-soft-primary">{{ quote.project_type }}</span></td>
-                                <td class="text-muted fw-bold"><i class="fa-solid fa-map-pin me-2 text-danger small"></i>{{ quote.location if quote.location else 'N/A' }}</td>
-                                <td class="text-muted small">{{ quote.date_submitted.strftime('%d %b, %Y') }}</td>
-                                <td class="text-end pe-4">
-                                    <a href="mailto:{{ quote.email }}" class="btn btn-sm btn-light text-primary rounded-circle"><i class="fa-solid fa-envelope"></i></a>
-                                    <a href="{{ url_for('delete_quote', quote_id=quote.id) }}" class="btn btn-sm btn-light text-danger rounded-circle" onclick="return confirm('Delete this lead?')"><i class="fa-solid fa-trash"></i></a>
+                                <td class="fw-medium text-dark">{{ quote.location if quote.location else 'N/A' }}</td>
+                                <td class="text-muted">{{ quote.date_submitted.strftime('%d %b, %Y') }}</td>
+                                <td class="text-end">
+                                    <a href="mailto:{{ quote.email }}" class="btn btn-sm btn-light text-dark border"><i class="fa-regular fa-envelope"></i></a>
+                                    <a href="{{ url_for('delete_quote', quote_id=quote.id) }}" class="btn btn-sm btn-light text-danger border ms-1" onclick="return confirm('Delete this lead?')"><i class="fa-regular fa-trash-can"></i></a>
                                 </td>
                             </tr>
                             {% else %}
                             <tr>
-                                <td colspan="5" class="text-center py-5 text-muted">
-                                    <i class="fa-solid fa-inbox fa-3x mb-3 text-light"></i><br>
-                                    No quotes generated yet. Check back later!
+                                <td colspan="5" class="text-center py-5">
+                                    <div class="text-muted opacity-50 mb-2"><i class="fa-solid fa-inbox fa-2x"></i></div>
+                                    <span class="text-muted small">No inquiries received yet.</span>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -255,35 +268,35 @@
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="table-card">
                 <div class="card-header-clean">
-                    <h5 class="fw-bold mb-0 text-dark">Content Management</h5>
+                    <h5 class="fw-bold mb-0">Content Management</h5>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-custom mb-0">
-                        <thead class="bg-light">
+                        <thead>
                             <tr>
-                                <th class="ps-4">Article Title</th>
+                                <th>Article Title</th>
                                 <th>Category</th>
                                 <th>Posted On</th>
-                                <th class="text-end pe-4">Manage</th>
+                                <th class="text-end">Manage</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for post in posts %}
-                            <tr class="bg-white">
-                                <td class="ps-4 fw-bold text-dark">{{ post.title }}</td>
+                            <tr>
+                                <td class="fw-bold text-dark">{{ post.title }}</td>
                                 <td><span class="badge badge-soft badge-soft-success">{{ post.category }}</span></td>
-                                <td class="text-muted small">{{ post.date_posted.strftime('%d %b, %Y') }}</td>
-                                <td class="text-end pe-4">
-                                    <a href="{{ url_for('blog_detail', post_id=post.id) }}" target="_blank" class="btn btn-sm btn-light text-dark rounded-pill px-3 me-2 small fw-bold">View Live</a>
-                                    <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn btn-sm btn-light text-danger rounded-circle" onclick="return confirm('Delete this post?')"><i class="fa-solid fa-trash"></i></a>
+                                <td class="text-muted">{{ post.date_posted.strftime('%d %b, %Y') }}</td>
+                                <td class="text-end">
+                                    <a href="{{ url_for('blog_detail', post_id=post.id) }}" target="_blank" class="btn btn-sm btn-light text-dark border me-1 small">View</a>
+                                    <a href="{{ url_for('delete_post', post_id=post.id) }}" class="btn btn-sm btn-light text-danger border" onclick="return confirm('Delete this post?')"><i class="fa-regular fa-trash-can"></i></a>
                                 </td>
                             </tr>
                             {% else %}
                             <tr>
-                                <td colspan="4" class="text-center py-5 text-muted">
-                                    No articles published. Start writing to improve SEO!
+                                <td colspan="4" class="text-center py-5">
+                                    <span class="text-muted small">No articles published.</span>
                                 </td>
                             </tr>
                             {% endfor %}
