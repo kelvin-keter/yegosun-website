@@ -63,55 +63,64 @@
                 <h6 class="text-success fw-bold text-uppercase">Excellence In Action</h6>
                 <h2 class="fw-extrabold text-dark">Featured Projects</h2>
                 <div class="bg-warning mx-auto my-3" style="width: 60px; height: 4px;"></div>
-                <p class="text-muted">Transforming institutions with clean energy.</p>
+                <p class="text-muted">Delivering robust energy solutions across Kenya's key sectors.</p>
             </div>
 
             <div class="row g-4">
                 <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm project-card">
-                        <div class="project-img-wrapper">
-                            <img src="https://images.unsplash.com/photo-1596464716127-f2a82984de30?q=80&w=800&auto=format&fit=crop" class="card-img-top" alt="School Solar">
-                            <div class="category-badge bg-warning text-dark">Education</div>
+                    <div class="card h-100 border-0 shadow-sm project-card hover-up">
+                        <div class="project-img-wrapper position-relative">
+                            <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=800&auto=format&fit=crop" class="card-img-top" alt="School Solar Project" style="height: 250px; object-fit: cover;">
+                            <div class="category-badge bg-warning text-dark position-absolute top-0 end-0 m-3 px-3 py-1 fw-bold rounded-pill">Education</div>
                         </div>
                         <div class="card-body p-4">
-                            <h5 class="fw-bold mb-2">Moi Girls High School</h5>
-                            <p class="text-success fw-bold small mb-2">50kW Grid-Tie System</p>
-                            <p class="text-muted small">Complete solar integration allowing the school to run 90% of daytime operations on green energy.</p>
+                            <h5 class="fw-bold mb-2">Leading National High School</h5>
+                            <p class="text-success fw-bold small mb-3"><i class="fa-solid fa-bolt me-1"></i> 50kW Grid-Tie System</p>
+                            <p class="text-muted small mb-3">Complete solar integration allowing the administration block and computer labs to run on 100% green energy during daytime.</p>
+                            <div class="border-top pt-3">
+                                <span class="badge bg-light text-dark border"><i class="fa-solid fa-arrow-down me-1 text-success"></i> 60% Bill Reduction</span>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm project-card">
-                        <div class="project-img-wrapper">
-                            <img src="https://images.unsplash.com/photo-1621252179027-94459d27d3ee?q=80&w=800&auto=format&fit=crop" class="card-img-top" alt="Factory Solar">
-                            <div class="category-badge bg-success text-white">Commercial</div>
+                    <div class="card h-100 border-0 shadow-sm project-card hover-up">
+                        <div class="project-img-wrapper position-relative">
+                            <img src="https://images.unsplash.com/photo-1565128938229-450f61202861?q=80&w=800&auto=format&fit=crop" class="card-img-top" alt="Industrial Solar Project" style="height: 250px; object-fit: cover;">
+                            <div class="category-badge bg-success text-white position-absolute top-0 end-0 m-3 px-3 py-1 fw-bold rounded-pill">Industrial</div>
                         </div>
                         <div class="card-body p-4">
-                            <h5 class="fw-bold mb-2">Ruai Industrial Park</h5>
-                            <p class="text-success fw-bold small mb-2">100kW Hybrid System</p>
-                            <p class="text-muted small">Heavy-duty installation powering machinery and offering battery backup during outages.</p>
+                            <h5 class="fw-bold mb-2">Major Industrial Park</h5>
+                            <p class="text-success fw-bold small mb-3"><i class="fa-solid fa-bolt me-1"></i> 100kW Hybrid System</p>
+                            <p class="text-muted small mb-3">A heavy-duty installation designed to stabilize voltage for manufacturing machinery and provide critical backup.</p>
+                            <div class="border-top pt-3">
+                                <span class="badge bg-light text-dark border"><i class="fa-solid fa-check me-1 text-success"></i> Zero Downtime</span>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm project-card">
-                        <div class="project-img-wrapper">
-                            <img src="https://images.unsplash.com/photo-1516937941344-00b4ec277ec3?q=80&w=800&auto=format&fit=crop" class="card-img-top" alt="Water Pump">
-                            <div class="category-badge bg-primary text-white">Community</div>
+                    <div class="card h-100 border-0 shadow-sm project-card hover-up">
+                        <div class="project-img-wrapper position-relative">
+                            <img src="https://images.unsplash.com/photo-1581452906859-906cb87b8d78?q=80&w=800&auto=format&fit=crop" class="card-img-top" alt="Solar Water Project" style="height: 250px; object-fit: cover;">
+                            <div class="category-badge bg-primary text-white position-absolute top-0 end-0 m-3 px-3 py-1 fw-bold rounded-pill">Community</div>
                         </div>
                         <div class="card-body p-4">
-                            <h5 class="fw-bold mb-2">Juja Community Borehole</h5>
-                            <p class="text-success fw-bold small mb-2">Solar Water Pumping</p>
-                            <p class="text-muted small">A sustainable water solution pumping 50,000 liters daily using only solar power.</p>
+                            <h5 class="fw-bold mb-2">County Water Project</h5>
+                            <p class="text-success fw-bold small mb-3"><i class="fa-solid fa-water me-1"></i> Solar Water Pumping</p>
+                            <p class="text-muted small mb-3">Sustainable water solution pumping 50,000 liters daily to over 500 households without using a drop of diesel.</p>
+                            <div class="border-top pt-3">
+                                <span class="badge bg-light text-dark border"><i class="fa-solid fa-leaf me-1 text-success"></i> 100% Renewable</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             
             <div class="text-center mt-5">
-                <a href="{{ url_for('projects') }}" class="btn btn-outline-dark rounded-pill px-5 fw-bold">View All Projects</a>
+                <a href="{{ url_for('projects') }}" class="btn btn-outline-dark rounded-pill px-5 fw-bold">View Full Portfolio</a>
             </div>
         </div>
     </section>
@@ -134,7 +143,7 @@
                             <div class="bg-success rounded-circle d-flex align-items-center justify-content-center text-white fw-bold me-3" style="width: 45px; height: 45px;">P</div>
                             <div>
                                 <h6 class="fw-bold mb-0">Principal Kamau</h6>
-                                <small class="text-muted">Moi Girls High School</small>
+                                <small class="text-muted">High School Administrator</small>
                             </div>
                         </div>
                     </div>
@@ -150,7 +159,7 @@
                             <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white fw-bold me-3" style="width: 45px; height: 45px;">E</div>
                             <div>
                                 <h6 class="fw-bold mb-0">Eng. David Omondi</h6>
-                                <small class="text-muted">Ruai Industrial Park</small>
+                                <small class="text-muted">Industrial Park Manager</small>
                             </div>
                         </div>
                     </div>
