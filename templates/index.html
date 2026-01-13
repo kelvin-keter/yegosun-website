@@ -17,7 +17,7 @@
                         <h1 class="display-3 fw-extrabold text-white mb-3">Solar Energy for <br>Kenyan Schools</h1>
                         <p class="lead text-white-90 mb-5 d-none d-md-block hero-text">Reliable, renewable power to ensure learning never stops.<br> Lighting up classrooms across the country.</p>
                         <div class="d-flex gap-3">
-                            <a href="#projects" class="btn btn-warning btn-lg px-5 fw-bold shadow-lg text-uppercase">View Our Work</a>
+                            <a href="{{ url_for('projects') }}" class="btn btn-warning btn-lg px-5 fw-bold shadow-lg text-uppercase">View Our Work</a>
                             <a href="{{ url_for('contact') }}" class="btn btn-outline-light btn-lg px-5 fw-bold text-uppercase">Partner With Us</a>
                         </div>
                     </div>
@@ -109,17 +109,80 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="text-center mt-5">
+                <a href="{{ url_for('projects') }}" class="btn btn-outline-dark rounded-pill px-5 fw-bold">View All Projects</a>
+            </div>
         </div>
     </section>
 
-    <section id="blogs" class="py-5 bg-white">
+    <section class="py-5 bg-white border-top border-bottom">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h6 class="text-success fw-bold text-uppercase">Client Stories</h6>
+                <h2 class="fw-extrabold text-dark">What Our Partners Say</h2>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm p-4 bg-light">
+                        <div class="mb-3 text-warning">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-muted fst-italic mb-4">"Yegosun transformed how we manage power at our school. The installation was neat, professional, and the savings were immediate. Highly recommended."</p>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-success rounded-circle d-flex align-items-center justify-content-center text-white fw-bold me-3" style="width: 45px; height: 45px;">P</div>
+                            <div>
+                                <h6 class="fw-bold mb-0">Principal Kamau</h6>
+                                <small class="text-muted">Moi Girls High School</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm p-4 bg-light">
+                        <div class="mb-3 text-warning">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-muted fst-italic mb-4">"Reliability was our biggest issue in the industrial park. The hybrid system Yegosun engineered handles our heavy machinery perfectly."</p>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white fw-bold me-3" style="width: 45px; height: 45px;">E</div>
+                            <div>
+                                <h6 class="fw-bold mb-0">Eng. David Omondi</h6>
+                                <small class="text-muted">Ruai Industrial Park</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm p-4 bg-light">
+                        <div class="mb-3 text-warning">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-muted fst-italic mb-4">"Professional team and excellent after-sales support. It is rare to find a company in Kenya that actually picks up the phone after the job is done."</p>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-dark rounded-circle d-flex align-items-center justify-content-center text-white fw-bold me-3" style="width: 45px; height: 45px;">S</div>
+                            <div>
+                                <h6 class="fw-bold mb-0">Sarah Wanjiku</h6>
+                                <small class="text-muted">Homeowner, Karen</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="blogs" class="py-5" style="background-color: #f8f9fa;">
         <div class="container py-5">
             <div class="d-flex justify-content-between align-items-end mb-5">
                 <div>
                     <h6 class="text-success fw-bold text-uppercase">Latest Insights</h6>
                     <h2 class="fw-extrabold text-dark">Green Energy News</h2>
                 </div>
-                <a href="#" class="btn btn-outline-success fw-bold">View All Posts <i class="fa-solid fa-arrow-right ms-2"></i></a>
+                <button class="btn btn-outline-success fw-bold">View All Posts <i class="fa-solid fa-arrow-right ms-2"></i></button>
             </div>
 
             <div class="row g-4">
@@ -143,7 +206,7 @@
                     {% endfor %}
                 {% else %}
                     <div class="col-12 text-center py-5">
-                        <div class="bg-light p-5 rounded-3">
+                        <div class="bg-white p-5 rounded-3 shadow-sm">
                             <i class="fa-solid fa-newspaper text-muted fa-3x mb-3"></i>
                             <h5 class="text-muted">No blog posts available yet.</h5>
                             <p class="text-muted small">Login to the Staff Portal to create the first post.</p>

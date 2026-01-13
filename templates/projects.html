@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Our Projects{% endblock %}
+
+{% block content %}
+<div class="position-relative py-5 bg-dark text-white" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('{{ url_for('static', filename='images/hero-1.jpg') }}'); background-size: cover; background-position: center;">
+    <div class="container py-5 text-center position-relative" style="z-index: 2;">
+        <h6 class="text-success fw-bold text-uppercase tracking-wide mb-3">Portfolio</h6>
+        <h1 class="display-3 fw-extrabold mb-0">Powering Kenya</h1>
+        <p class="lead text-white-50 mt-3">A showcase of our recent installations across the country.</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <button class="btn btn-dark rounded-pill px-4 me-2 mb-2">All Projects</button>
+        <button class="btn btn-outline-secondary rounded-pill px-4 me-2 mb-2">Education</button>
+        <button class="btn btn-outline-secondary rounded-pill px-4 me-2 mb-2">Commercial</button>
+        <button class="btn btn-outline-secondary rounded-pill px-4 mb-2">Community</button>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm project-card hover-up">
+                <div class="position-relative">
+                    <img src="https://images.unsplash.com/photo-1596464716127-f2a82984de30?q=80&w=800&auto=format&fit=crop" class="card-img-top" alt="School Solar" style="height: 250px; object-fit: cover;">
+                    <div class="badge bg-warning text-dark position-absolute top-0 end-0 m-3 fw-bold">Education</div>
+                </div>
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-1">Moi Girls High School</h5>
+                    <p class="text-success fw-bold small mb-3">50kW Grid-Tie System</p>
+                    <p class="text-muted small">We installed a comprehensive solar backup allowing the administration block and computer labs to operate off-grid during the day.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm project-card hover-up">
+                <div class="position-relative">
+                    <img src="https://images.unsplash.com/photo-1621252179027-94459d27d3ee?q=80&w=800&auto=format&fit=crop" class="card-img-top" alt="Factory Solar" style="height: 250px; object-fit: cover;">
+                    <div class="badge bg-success text-white position-absolute top-0 end-0 m-3 fw-bold">Commercial</div>
+                </div>
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-1">Ruai Industrial Park</h5>
+                    <p class="text-success fw-bold small mb-3">100kW Hybrid System</p>
+                    <p class="text-muted small">A heavy-duty installation designed to handle inductive loads from machinery while stabilizing voltage fluctuations.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm project-card hover-up">
+                <div class="position-relative">
+                    <img src="https://images.unsplash.com/photo-1516937941344-00b4ec277ec3?q=80&w=800&auto=format&fit=crop" class="card-img-top" alt="Water Pump" style="height: 250px; object-fit: cover;">
+                    <div class="badge bg-primary text-white position-absolute top-0 end-0 m-3 fw-bold">Community</div>
+                </div>
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-1">Juja Community Borehole</h5>
+                    <p class="text-success fw-bold small mb-3">Solar Water Pumping</p>
+                    <p class="text-muted small">Replaced an expensive diesel generator with a solar drive, pumping 50,000 liters daily at zero fuel cost.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm project-card hover-up">
+                <div class="position-relative">
+                    <img src="https://images.unsplash.com/photo-1613665813446-82a78c468a1d?q=80&w=800&auto=format&fit=crop" class="card-img-top" alt="Residential" style="height: 250px; object-fit: cover;">
+                    <div class="badge bg-info text-white position-absolute top-0 end-0 m-3 fw-bold">Residential</div>
+                </div>
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-1">Karen Private Residence</h5>
+                    <p class="text-success fw-bold small mb-3">15kW Hybrid + Lithium Storage</p>
+                    <p class="text-muted small">A luxury off-grid setup ensuring the home remains powered 24/7 silently, without noisy generators.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
