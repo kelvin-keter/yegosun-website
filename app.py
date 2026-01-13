@@ -14,7 +14,7 @@ app = Flask(__name__)
 # --- CONFIGURATION ---
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'yegosun-master-key-2026')
 
-# FIX: We changed the filename to 'yegosun_v2.db' to force a fresh database creation
+# DATABASE: Using v2 to ensure fresh file
 database_url = os.environ.get('DATABASE_URL', 'sqlite:///yegosun_v2.db')
 if database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
@@ -81,18 +81,21 @@ def home():
         latest_blogs = []
     return render_template('index.html', blogs=latest_blogs)
 
-# --- EMERGENCY SETUP ROUTE (Run this once to restore Admin) ---
+# --- EMERGENCY SETUP ROUTE ---
 @app.route('/setup')
 def setup():
-    db.create_all()
-    # Check if admin exists
-    if not User.query.filter_by(username='admin').first():
-        user = User(username='admin')
-        user.set_password('admin123')
-        db.session.add(user)
-        db.session.commit()
-        return "SUCCESS: Database reset. Admin user created (admin / admin123). <a href='/login'>Go to Login</a>"
-    return "Admin user already exists. <a href='/login'>Go to Login</a>"
+    try:
+        db.create_all()
+        # Check if admin exists
+        if not User.query.filter_by(username='admin').first():
+            user = User(username='admin')
+            user.set_password('admin123')
+            db.session.add(user)
+            db.session.commit()
+            return "SUCCESS: Database reset. Admin user created (admin / admin123). <a href='/login'>Go to Login</a>"
+        return "Admin user already exists. <a href='/login'>Go to Login</a>"
+    except Exception as e:
+        return f"SETUP ERROR: {str(e)}"
 
 @app.route('/about')
 def about():
@@ -149,17 +152,27 @@ def blog_detail(post_id):
     post = BlogPost.query.get_or_404(post_id)
     return render_template('blog_detail.html', post=post)
 
+# --- DEBUG LOGIN ROUTE ---
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        user = User.query.filter_by(username=username).first()
-        if user and user.check_password(password):
-            login_user(user)
-            return redirect(url_for('dashboard'))
-        else:
-            flash('Invalid username or password', 'danger')
+        try:
+            username = request.form.get('username')
+            password = request.form.get('password')
+            
+            # This line will fail if DB tables don't exist
+            user = User.query.filter_by(username=username).first()
+            
+            if user and user.check_password(password):
+                login_user(user)
+                return redirect(url_for('dashboard'))
+            else:
+                flash('Invalid username or password', 'danger')
+        except Exception as e:
+            # Prevent Server Crash and Show Error
+            print(f"LOGIN CRITICAL ERROR: {e}")
+            flash(f"System Error: {str(e)}", 'danger')
+            
     return render_template('login.html')
 
 @app.route('/dashboard')
