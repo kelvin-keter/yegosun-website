@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Helvetica, sans-serif; color: #333; line-height: 1.6; }
+        .header { text-align: center; border-bottom: 2px solid #2E7D32; padding-bottom: 20px; margin-bottom: 30px; }
+        .logo { font-size: 24px; font-weight: bold; color: #2E7D32; }
+        .title { font-size: 20px; font-weight: bold; margin-bottom: 5px; }
+        .subtitle { font-size: 14px; color: #666; }
+        
+        .box { background: #f8f9fa; border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
+        .highlight { color: #2E7D32; font-weight: bold; font-size: 18px; }
+        .metric-label { font-size: 12px; text-transform: uppercase; color: #777; margin-top: 10px; }
+        .metric-value { font-size: 24px; font-weight: bold; color: #222; }
+        
+        .grid { width: 100%; margin-bottom: 20px; }
+        .grid td { vertical-align: top; width: 50%; padding: 10px; }
+        
+        .footer { margin-top: 50px; text-align: center; font-size: 12px; color: #888; border-top: 1px solid #eee; padding-top: 20px; }
+        .cta { background: #2E7D32; color: white; padding: 10px; text-align: center; border-radius: 5px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo">YEGO<span style="color:#FFA000">SUN</span> ENERGY</div>
+        <div class="subtitle">Custom Solar Analysis Report</div>
+    </div>
+
+    <div style="margin-bottom: 30px;">
+        <strong>Prepared For:</strong> {{ name }}<br>
+        <strong>Date:</strong> {{ date }}<br>
+        <strong>Current Monthly Bill:</strong> KES {{ bill }}
+    </div>
+
+    <div class="box">
+        <div class="title" style="color: #2E7D32;">Your Recommended System</div>
+        <p>Based on your current expenditure and appliance load, our engineers recommend:</p>
+        <div style="text-align: center; padding: 20px;">
+            <div style="font-size: 40px; font-weight: 800; color: #2E7D32;">{{ system_size }} kW</div>
+            <div style="font-size: 14px; color: #555;">Hybrid Solar System</div>
+        </div>
+    </div>
+
+    <table class="grid">
+        <tr>
+            <td>
+                <div class="box">
+                    <div class="metric-label">Estimated Investment</div>
+                    <div class="metric-value">KES {{ cost_min }} - {{ cost_max }}</div>
+                    <div style="font-size: 11px; color: #666;">Includes panels, inverter, battery & installation.</div>
+                </div>
+            </td>
+            <td>
+                <div class="box">
+                    <div class="metric-label">Projected Yearly Savings</div>
+                    <div class="metric-value" style="color: #FFA000;">KES {{ savings }}</div>
+                    <div style="font-size: 11px; color: #666;">Money that stays in your pocket.</div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="box">
+        <div class="title">Return on Investment (ROI)</div>
+        <p>Your solar system will pay for itself in approximately <strong>{{ roi }} years</strong>. After that, you are generating free electricity for the remaining 20+ years of the system's lifespan.</p>
+    </div>
+
+    <div style="margin-top: 30px;">
+        <div class="title">Next Steps</div>
+        <p>This is a preliminary estimate. To get a final, accurate quote, we need to visit your site to check roof orientation and wiring.</p>
+        <div class="cta">
+            A Yegosun engineer has been notified of your interest.<br>
+            We will call you shortly at the number you provided.
+        </div>
+    </div>
+
+    <div class="footer">
+        Yegosun Energy Limited | Garden City, Nairobi | +254 020 200 0700<br>
+        www.yegosun.com
+    </div>
+
+</body>
+</html>

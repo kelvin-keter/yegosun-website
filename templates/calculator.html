@@ -4,85 +4,109 @@
 {% block content %}
 <div class="bg-dark text-white py-5 position-relative" style="background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?q=80&w=1600&auto=format&fit=crop'); background-size: cover; background-position: center;">
     <div class="container text-center position-relative" style="z-index: 2;">
-        <h6 class="text-warning fw-bold text-uppercase tracking-wide mb-3">ROI Estimator</h6>
+        <h6 class="text-warning fw-bold text-uppercase tracking-wide mb-3">Free Energy Audit</h6>
         <h1 class="display-4 fw-extrabold">Calculate Your Savings</h1>
-        <p class="lead text-white-50">See how much money you are losing to the grid every year.</p>
+        <p class="lead text-white-50">Get a customized engineering report sent to your inbox in seconds.</p>
     </div>
 </div>
 
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
+        <div class="col-lg-7">
             <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header bg-white p-4 border-bottom">
+                    <h5 class="mb-0 fw-bold text-dark"><i class="fa-solid fa-calculator me-2 text-success"></i> Solar Estimator</h5>
+                </div>
                 <div class="card-body p-5">
                     
-                    <div id="calculatorInput">
-                        <h3 class="fw-bold text-center mb-4">Enter Your Monthly Bill</h3>
+                    <form action="/generate_report" method="POST" id="solarForm">
                         
                         <div class="mb-4">
-                            <label class="form-label text-muted fw-bold small">AVERAGE MONTHLY ELECTRICITY BILL (KES)</label>
+                            <label class="form-label fw-bold text-muted small text-uppercase">1. Average Monthly Bill</label>
                             <div class="input-group input-group-lg">
                                 <span class="input-group-text bg-light border-0 fw-bold">KES</span>
-                                <input type="number" id="billAmount" class="form-control bg-light border-0 fw-bold" placeholder="e.g. 15000">
+                                <input type="number" name="monthly_bill" id="monthlyBill" class="form-control bg-light border-0 fw-bold" placeholder="e.g. 5000" required>
                             </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label class="form-label text-muted fw-bold small">PROPERTY TYPE</label>
+                        <div class="mb-5">
+                            <label class="form-label fw-bold text-muted small text-uppercase mb-3">2. What heavy appliances do you run?</label>
                             <div class="row g-3">
                                 <div class="col-6">
-                                    <input type="radio" class="btn-check" name="propertyType" id="home" checked>
-                                    <label class="btn btn-outline-success w-100 py-3 fw-bold" for="home">
-                                        <i class="fa-solid fa-home me-2"></i> Home
-                                    </label>
+                                    <div class="form-check p-3 border rounded bg-light hover-shadow">
+                                        <input class="form-check-input" type="checkbox" name="appliances" value="Refrigerator" id="app1">
+                                        <label class="form-check-label fw-medium cursor-pointer" for="app1">Refrigerator</label>
+                                    </div>
                                 </div>
                                 <div class="col-6">
-                                    <input type="radio" class="btn-check" name="propertyType" id="business">
-                                    <label class="btn btn-outline-warning w-100 py-3 fw-bold" for="business">
-                                        <i class="fa-solid fa-building me-2"></i> Business
-                                    </label>
+                                    <div class="form-check p-3 border rounded bg-light hover-shadow">
+                                        <input class="form-check-input" type="checkbox" name="appliances" value="Instant Shower" id="app2">
+                                        <label class="form-check-label fw-medium cursor-pointer" for="app2">Instant Shower</label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-check p-3 border rounded bg-light hover-shadow">
+                                        <input class="form-check-input" type="checkbox" name="appliances" value="Washing Machine" id="app3">
+                                        <label class="form-check-label fw-medium cursor-pointer" for="app3">Washing Machine</label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-check p-3 border rounded bg-light hover-shadow">
+                                        <input class="form-check-input" type="checkbox" name="appliances" value="Water Pump" id="app4">
+                                        <label class="form-check-label fw-medium cursor-pointer" for="app4">Water Pump</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <button onclick="calculateSolar()" class="btn btn-dark w-100 btn-lg fw-bold py-3">CALCULATE SAVINGS</button>
-                    </div>
-
-                    <div id="calculatorResult" class="d-none text-center animate-fade-in">
-                        <div class="mb-4">
-                            <span class="badge bg-success text-white px-3 py-2 rounded-pill mb-3">ESTIMATED RESULTS</span>
-                            <h2 class="fw-extrabold mb-1">KES <span id="annualSavings" class="text-success">0</span></h2>
-                            <p class="text-muted small fw-bold text-uppercase">Your Estimated Annual Savings</p>
+                        <div id="initialBtnContainer">
+                            <button type="button" onclick="showLeadForm()" class="btn btn-warning w-100 btn-lg fw-bold shadow-sm py-3 text-uppercase">
+                                Calculate My Savings <i class="fa-solid fa-arrow-right ms-2"></i>
+                            </button>
                         </div>
 
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-6">
-                                <div class="p-3 bg-light rounded-3 border">
-                                    <h5 class="fw-bold mb-0 text-dark"><span id="systemSize">0</span> kW</h5>
-                                    <small class="text-muted">Recommended System Size</small>
+                        <div id="leadCapture" class="mt-4 pt-4 border-top" style="display:none; animation: fadeIn 0.6s;">
+                            
+                            <div class="alert alert-success border-0 d-flex align-items-center mb-4 shadow-sm">
+                                <div class="bg-success rounded-circle d-flex align-items-center justify-content-center text-white me-3" style="width: 40px; height: 40px;">
+                                    <i class="fa-solid fa-check"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-0 text-success">Analysis Complete!</h6>
+                                    <p class="mb-0 small text-muted">We have calculated a solar plan for your <strong id="billDisplay"></strong> bill.</p>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="p-3 bg-light rounded-3 border">
-                                    <h5 class="fw-bold mb-0 text-dark"><span id="panelsCount">0</span></h5>
-                                    <small class="text-muted">Approx. Panels Needed</small>
+                            
+                            <h5 class="fw-bold mb-4 text-center">Where should we send your report?</h5>
+                            
+                            <div class="mb-3">
+                                <div class="form-floating">
+                                    <input type="text" name="full_name" class="form-control bg-light border-0" id="floatingName" placeholder="John Doe" required>
+                                    <label for="floatingName">Full Name</label>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="alert alert-info border-0 d-flex align-items-center mb-4" role="alert">
-                            <i class="fa-solid fa-circle-info me-3 fa-lg"></i>
-                            <div class="text-start small">
-                                This is an estimate based on average Kenyan sun-hours (4.5h/day) and KPLC rates.
+                            <div class="mb-3">
+                                <div class="form-floating">
+                                    <input type="tel" name="phone" class="form-control bg-light border-0" id="floatingPhone" placeholder="07xx" required>
+                                    <label for="floatingPhone">Phone Number</label>
+                                </div>
                             </div>
+                            <div class="mb-4">
+                                <div class="form-floating">
+                                    <input type="email" name="email" class="form-control bg-light border-0" id="floatingEmail" placeholder="name@example.com" required>
+                                    <label for="floatingEmail">Email Address</label>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-dark w-100 btn-lg fw-bold shadow-lg py-3">
+                                <i class="fa-solid fa-file-pdf me-2 text-danger"></i> Download My Report
+                            </button>
+                            <p class="text-center text-muted small mt-3 mb-0">
+                                <i class="fa-solid fa-lock me-1"></i> Your data is secure. No spam, ever.
+                            </p>
                         </div>
 
-                        <div class="d-grid gap-2">
-                            <a href="{{ url_for('contact') }}" class="btn btn-warning btn-lg fw-bold shadow-sm">Get Official Quote</a>
-                            <button onclick="resetCalculator()" class="btn btn-outline-secondary fw-bold">Calculate Again</button>
-                        </div>
-                    </div>
-
+                    </form>
                 </div>
             </div>
         </div>
@@ -90,51 +114,34 @@
 </div>
 
 <script>
-    function calculateSolar() {
-        // 1. Get Input
-        let bill = document.getElementById('billAmount').value;
-        
-        // Validation
-        if (!bill || bill <= 0) {
-            alert("Please enter a valid bill amount.");
-            return;
+    function showLeadForm() {
+        var bill = document.getElementById('monthlyBill').value;
+        if (bill && bill > 0) {
+            // Hide the first button
+            document.getElementById('initialBtnContainer').style.display = 'none';
+            
+            // Show the form
+            var formDiv = document.getElementById('leadCapture');
+            formDiv.style.display = 'block';
+            
+            // Update the text
+            document.getElementById('billDisplay').innerText = "KES " + Number(bill).toLocaleString();
+            
+            // Smooth scroll to the form
+            formDiv.scrollIntoView({behavior: "smooth"});
+        } else {
+            alert("Please enter a valid monthly bill amount to continue.");
         }
-
-        // 2. Constants for Kenya Context
-        const costPerUnit = 28; // Avg KES per kWh (blended rate)
-        const peakSunHours = 4.5; // Conservative average for Nairobi/Juja
-        const panelWattage = 550; // Standard modern panel size
-        const efficiencyLoss = 1.3; // Factor for system losses
-
-        // 3. The Math
-        let monthlyUnits = bill / costPerUnit;
-        let dailyUnits = monthlyUnits / 30;
-        let requiredSizeKW = (dailyUnits * efficiencyLoss) / peakSunHours;
-        
-        // Rounding
-        let finalSize = Math.ceil(requiredSizeKW * 2) / 2; // Round to nearest 0.5
-        if (finalSize < 3) finalSize = 3; // Minimum viable hybrid system usually 3kW
-
-        let numPanels = Math.ceil((finalSize * 1000) / panelWattage);
-        
-        // Savings (Assuming 90% offset)
-        let monthlySavings = bill * 0.90;
-        let yearlySavings = monthlySavings * 12;
-
-        // 4. Update UI
-        document.getElementById('annualSavings').innerText = yearlySavings.toLocaleString();
-        document.getElementById('systemSize').innerText = finalSize;
-        document.getElementById('panelsCount').innerText = numPanels;
-
-        // 5. Show Results
-        document.getElementById('calculatorInput').classList.add('d-none');
-        document.getElementById('calculatorResult').classList.remove('d-none');
-    }
-
-    function resetCalculator() {
-        document.getElementById('calculatorInput').classList.remove('d-none');
-        document.getElementById('calculatorResult').classList.add('d-none');
-        document.getElementById('billAmount').value = '';
     }
 </script>
+
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .hover-shadow:hover { box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.2s; }
+    .form-check-input:checked { background-color: #2E7D32; border-color: #2E7D32; }
+    .cursor-pointer { cursor: pointer; }
+</style>
 {% endblock %}

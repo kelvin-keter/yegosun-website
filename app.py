@@ -148,6 +148,88 @@ def submit_quote():
     response.headers['Content-Disposition'] = f'attachment; filename={filename}'
     return response
 
+# --- NEW: LEAD MAGNET CALCULATOR ---
+@app.route('/generate_report', methods=['POST'])
+def generate_report():
+    # 1. Get User Data
+    full_name = request.form.get('full_name')
+    email = request.form.get('email')
+    phone = request.form.get('phone')
+    try:
+        monthly_bill = float(request.form.get('monthly_bill'))
+    except:
+        monthly_bill = 0.0
+    appliances = request.form.getlist('appliances') # List of checked items
+    
+    # 2. DO THE MATH (The "Engineering" Logic)
+    # Assumptions: Cost per unit = 28 KES. Peak Sun Hours = 4.5
+    monthly_units = monthly_bill / 28
+    daily_units = monthly_units / 30
+    required_system_size = daily_units / 4.5 
+    
+    # Round up to nearest 0.5kW (e.g., 3.2kW becomes 3.5kW)
+    recommended_kw = round(required_system_size * 2) / 2
+    if recommended_kw < 1: recommended_kw = 1 # Minimum 1kW
+    
+    # Estimated Cost (approx 150k per kW for hybrid)
+    est_cost_min = int(recommended_kw * 130000)
+    est_cost_max = int(recommended_kw * 160000)
+    
+    # Savings (Assume 90% bill reduction)
+    monthly_savings = int(monthly_bill * 0.9)
+    yearly_savings = monthly_savings * 12
+    
+    # ROI Calculation (Months to break even)
+    avg_cost = (est_cost_min + est_cost_max) / 2
+    if monthly_savings > 0:
+        roi_months = int(avg_cost / monthly_savings)
+        roi_years = round(roi_months / 12, 1)
+    else:
+        roi_years = 0
+
+    # 3. SAVE AS LEAD (So you can call them!)
+    lead_details = f"Solar Report Request. Bill: KES {monthly_bill}. System: {recommended_kw}kW. Appliances: {', '.join(appliances)}"
+    
+    try:
+        new_lead = Quote(
+            full_name=full_name,
+            email=email,
+            phone=phone,
+            project_type="Solar Report Request", 
+            location="Web Calculator",
+            message=lead_details
+        )
+        db.session.add(new_lead)
+        db.session.commit()
+    except Exception as e:
+        print(f"Error saving lead: {e}")
+
+    # 4. GENERATE THE PDF
+    rendered_html = render_template('pdf_solar_report.html', 
+                                  name=full_name, 
+                                  date=datetime.now().strftime("%d %b, %Y"),
+                                  bill=monthly_bill,
+                                  system_size=recommended_kw,
+                                  cost_min="{:,}".format(est_cost_min),
+                                  cost_max="{:,}".format(est_cost_max),
+                                  savings="{:,}".format(yearly_savings),
+                                  roi=roi_years,
+                                  appliances=appliances)
+    
+    pdf_file = io.BytesIO()
+    pisa_status = pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf_file)
+    
+    if pisa_status.err:
+        return 'Error creating PDF', 500
+    
+    pdf_file.seek(0)
+    response = make_response(pdf_file.read())
+    response.headers['Content-Type'] = 'application/pdf'
+    filename = f"Yegosun_Solar_Plan_{full_name.replace(' ', '_')}.pdf"
+    response.headers['Content-Disposition'] = f'attachment; filename={filename}'
+    
+    return response
+
 @app.route('/blog/<int:post_id>')
 def blog_detail(post_id):
     post = BlogPost.query.get_or_404(post_id)
