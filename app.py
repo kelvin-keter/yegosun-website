@@ -6,6 +6,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, mak
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_mail import Mail, Message # NEW IMPORT
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from xhtml2pdf import pisa
@@ -23,6 +24,18 @@ else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'yegosun.db')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# --- EMAIL CONFIGURATION (NEW) ---
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+# These will be set in Render Environment Variables
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME') 
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+# The email address that will receive the alerts
+app.config['ADMIN_EMAIL'] = os.environ.get('ADMIN_EMAIL') 
+
+mail = Mail(app)
 
 # --- CLOUDINARY ---
 cloudinary.config(
@@ -68,14 +81,13 @@ class Project(db.Model):
     status = db.Column(db.String(50), default='Completed')
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-# NEW: Testimonial Model
 class Testimonial(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     client_name = db.Column(db.String(100), nullable=False)
-    role = db.Column(db.String(100), nullable=False) # e.g. "School Principal"
+    role = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Integer, default=5)
-    image_url = db.Column(db.String(300), nullable=True) # Optional photo
+    image_url = db.Column(db.String(300), nullable=True)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 class Quote(db.Model):
@@ -92,24 +104,27 @@ class Quote(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# --- AUTO-SETUP ---
-with app.app_context():
+# --- HELPER: SEND EMAIL ---
+def send_admin_notification(subject, body):
     try:
-        db.create_all()
-        if not User.query.filter_by(username='admin').first():
-            user = User(username='admin')
-            user.set_password('admin123')
-            db.session.add(user)
-            db.session.commit()
+        admin_email = app.config['ADMIN_EMAIL']
+        # If no admin email is set, skip sending to avoid crashing
+        if not admin_email or not app.config['MAIL_USERNAME']:
+            print("Email config missing. Skipping notification.")
+            return
+
+        msg = Message(subject, sender=app.config['MAIL_USERNAME'], recipients=[admin_email])
+        msg.body = body
+        mail.send(msg)
+        print("Notification email sent successfully.")
     except Exception as e:
-        print(f"CRITICAL STARTUP ERROR: {e}")
+        print(f"Failed to send email: {e}")
 
 # --- ROUTES ---
 
 @app.route('/db-upgrade')
 def db_upgrade():
     try:
-        # Just ensures tables exist
         db.create_all()
         return "SUCCESS: Database checked/updated."
     except Exception as e:
@@ -120,7 +135,7 @@ def home():
     try:
         latest_blogs = BlogPost.query.order_by(BlogPost.date_posted.desc()).limit(3).all()
         featured_projects = Project.query.order_by(Project.date_posted.desc()).limit(3).all()
-        testimonials = Testimonial.query.order_by(Testimonial.date_posted.desc()).limit(3).all() # NEW
+        testimonials = Testimonial.query.order_by(Testimonial.date_posted.desc()).limit(3).all()
     except:
         latest_blogs = []
         featured_projects = []
@@ -148,80 +163,7 @@ def calculator():
 def contact():
     return render_template('contact.html')
 
-# --- PROJECT MANAGEMENT ROUTES ---
-@app.route('/project/new', methods=['GET', 'POST'])
-@login_required
-def new_project():
-    if request.method == 'POST':
-        try:
-            title = request.form.get('title')
-            category = request.form.get('category')
-            system_size = request.form.get('system_size')
-            location = request.form.get('location')
-            description = request.form.get('description')
-            impact = request.form.get('impact')
-            status = request.form.get('status')
-            file = request.files.get('image')
-            
-            image_url = ""
-            if file and file.filename != '':
-                res = cloudinary.uploader.upload(file)
-                image_url = res['secure_url']
-            
-            project = Project(title=title, category=category, system_size=system_size, location=location, description=description, impact=impact, status=status, image_url=image_url)
-            db.session.add(project)
-            db.session.commit()
-            flash('Project added!', 'success')
-            return redirect(url_for('dashboard'))
-        except Exception as e:
-            flash(f'Error: {str(e)}', 'danger')
-    return render_template('create_project.html')
-
-@app.route('/project/<int:project_id>/delete')
-@login_required
-def delete_project(project_id):
-    project = Project.query.get_or_404(project_id)
-    db.session.delete(project)
-    db.session.commit()
-    flash('Project deleted.', 'success')
-    return redirect(url_for('dashboard'))
-
-# --- NEW: TESTIMONIAL ROUTES ---
-@app.route('/testimonial/new', methods=['GET', 'POST'])
-@login_required
-def new_testimonial():
-    if request.method == 'POST':
-        try:
-            client_name = request.form.get('client_name')
-            role = request.form.get('role')
-            content = request.form.get('content')
-            rating = request.form.get('rating')
-            file = request.files.get('image') # Optional
-            
-            image_url = "" # Default to empty if no image
-            if file and file.filename != '':
-                res = cloudinary.uploader.upload(file)
-                image_url = res['secure_url']
-            
-            testimonial = Testimonial(client_name=client_name, role=role, content=content, rating=rating, image_url=image_url)
-            db.session.add(testimonial)
-            db.session.commit()
-            flash('Testimonial added!', 'success')
-            return redirect(url_for('dashboard'))
-        except Exception as e:
-            flash(f'Error: {str(e)}', 'danger')
-    return render_template('create_testimonial.html')
-
-@app.route('/testimonial/<int:id>/delete')
-@login_required
-def delete_testimonial(id):
-    t = Testimonial.query.get_or_404(id)
-    db.session.delete(t)
-    db.session.commit()
-    flash('Testimonial deleted.', 'success')
-    return redirect(url_for('dashboard'))
-
-# ... (Quote & Report Logic) ...
+# --- SUBMIT QUOTE (UPDATED WITH EMAIL) ---
 @app.route('/submit_quote', methods=['POST'])
 def submit_quote():
     full_name = request.form.get('fullName')
@@ -230,12 +172,31 @@ def submit_quote():
     project_type = request.form.get('projectType')
     location = request.form.get('location')
     message = request.form.get('message')
+    
+    # 1. Save to DB
     try:
         new_quote = Quote(full_name=full_name, email=email, phone=phone, project_type=project_type, location=location, message=message)
         db.session.add(new_quote)
         db.session.commit()
-    except Exception as e: pass
+        
+        # 2. Send Email Notification
+        email_body = f"""
+        New Lead Received!
+        ------------------
+        Name: {full_name}
+        Phone: {phone}
+        Type: {project_type}
+        Location: {location}
+        Message: {message}
+        
+        Log in to dashboard to view details.
+        """
+        send_admin_notification(f"New Lead: {full_name}", email_body)
+        
+    except Exception as e:
+        print(f"Error processing quote: {e}")
     
+    # 3. Generate PDF
     rendered_html = render_template('pdf_quote.html', name=full_name, email=email, phone=phone, service=project_type, date=datetime.now().strftime("%Y-%m-%d"))
     pdf_file = io.BytesIO()
     pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf_file)
@@ -245,6 +206,7 @@ def submit_quote():
     response.headers['Content-Disposition'] = f'attachment; filename=Yegosun_Quote.pdf'
     return response
 
+# --- GENERATE REPORT (UPDATED WITH EMAIL) ---
 @app.route('/generate_report', methods=['POST'])
 def generate_report():
     full_name = request.form.get('full_name')
@@ -254,6 +216,7 @@ def generate_report():
     except: monthly_bill = 0.0
     appliances = request.form.getlist('appliances')
     
+    # Calcs
     monthly_units = monthly_bill / 28
     daily_units = monthly_units / 30
     required_system_size = daily_units / 4.5 
@@ -267,12 +230,28 @@ def generate_report():
     roi_years = round((avg_cost / monthly_savings)/12, 1) if monthly_savings > 0 else 0
 
     lead_details = f"Solar Report. Bill: {monthly_bill}. Sys: {recommended_kw}kW. Apps: {', '.join(appliances)}"
+    
+    # 1. Save to DB & Email
     try:
         new_lead = Quote(full_name=full_name, email=email, phone=phone, project_type="Solar Report", location="Web Calc", message=lead_details)
         db.session.add(new_lead)
         db.session.commit()
+        
+        # 2. Send Email Notification
+        email_body = f"""
+        New Solar Calculator Lead!
+        --------------------------
+        Name: {full_name}
+        Phone: {phone}
+        Bill: KES {monthly_bill}
+        Recommended System: {recommended_kw}kW
+        Appliances: {', '.join(appliances)}
+        """
+        send_admin_notification(f"Calculator Lead: {full_name}", email_body)
+        
     except: pass
 
+    # 3. PDF
     rendered_html = render_template('pdf_solar_report.html', name=full_name, date=datetime.now().strftime("%d %b %Y"), bill=monthly_bill, system_size=recommended_kw, cost_min="{:,}".format(est_cost_min), cost_max="{:,}".format(est_cost_max), savings="{:,}".format(yearly_savings), roi=roi_years, appliances=appliances)
     pdf_file = io.BytesIO()
     pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf_file)
@@ -282,6 +261,7 @@ def generate_report():
     response.headers['Content-Disposition'] = f'attachment; filename=Solar_Report.pdf'
     return response
 
+# ... (Rest of routes: blog_detail, login, dashboard, etc. remain unchanged) ...
 @app.route('/blog/<int:post_id>')
 def blog_detail(post_id):
     post = BlogPost.query.get_or_404(post_id)
@@ -309,7 +289,7 @@ def dashboard():
     all_posts = BlogPost.query.order_by(BlogPost.date_posted.desc()).all()
     all_quotes = Quote.query.order_by(Quote.date_submitted.desc()).all()
     all_projects = Project.query.order_by(Project.date_posted.desc()).all()
-    testimonials = Testimonial.query.order_by(Testimonial.date_posted.desc()).all() # NEW
+    testimonials = Testimonial.query.order_by(Testimonial.date_posted.desc()).all()
     return render_template('dashboard.html', posts=all_posts, quotes=all_quotes, projects=all_projects, testimonials=testimonials)
 
 @app.route('/post/new', methods=['GET', 'POST'])
@@ -362,6 +342,75 @@ def delete_post(post_id):
     db.session.delete(post)
     db.session.commit()
     flash('Deleted.', 'success')
+    return redirect(url_for('dashboard'))
+
+@app.route('/project/new', methods=['GET', 'POST'])
+@login_required
+def new_project():
+    if request.method == 'POST':
+        try:
+            title = request.form.get('title')
+            category = request.form.get('category')
+            system_size = request.form.get('system_size')
+            location = request.form.get('location')
+            description = request.form.get('description')
+            impact = request.form.get('impact')
+            status = request.form.get('status')
+            file = request.files.get('image')
+            
+            image_url = ""
+            if file and file.filename != '':
+                res = cloudinary.uploader.upload(file)
+                image_url = res['secure_url']
+            
+            project = Project(title=title, category=category, system_size=system_size, location=location, description=description, impact=impact, status=status, image_url=image_url)
+            db.session.add(project)
+            db.session.commit()
+            flash('Project added!', 'success')
+            return redirect(url_for('dashboard'))
+        except Exception as e:
+            flash(f'Error: {str(e)}', 'danger')
+    return render_template('create_project.html')
+
+@app.route('/project/<int:project_id>/delete')
+@login_required
+def delete_project(project_id):
+    project = Project.query.get_or_404(project_id)
+    db.session.delete(project)
+    db.session.commit()
+    flash('Project deleted.', 'success')
+    return redirect(url_for('dashboard'))
+
+@app.route('/testimonial/new', methods=['GET', 'POST'])
+@login_required
+def new_testimonial():
+    if request.method == 'POST':
+        try:
+            client_name = request.form.get('client_name')
+            role = request.form.get('role')
+            content = request.form.get('content')
+            rating = request.form.get('rating')
+            file = request.files.get('image')
+            image_url = ""
+            if file and file.filename != '':
+                res = cloudinary.uploader.upload(file)
+                image_url = res['secure_url']
+            testimonial = Testimonial(client_name=client_name, role=role, content=content, rating=rating, image_url=image_url)
+            db.session.add(testimonial)
+            db.session.commit()
+            flash('Testimonial added!', 'success')
+            return redirect(url_for('dashboard'))
+        except Exception as e:
+            flash(f'Error: {str(e)}', 'danger')
+    return render_template('create_testimonial.html')
+
+@app.route('/testimonial/<int:id>/delete')
+@login_required
+def delete_testimonial(id):
+    t = Testimonial.query.get_or_404(id)
+    db.session.delete(t)
+    db.session.commit()
+    flash('Testimonial deleted.', 'success')
     return redirect(url_for('dashboard'))
 
 @app.route('/quote/<int:quote_id>/delete')
