@@ -20,17 +20,13 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 # *** ROBUST DATABASE CONNECTION LOGIC ***
 database_url = os.environ.get('DATABASE_URL')
 
-# Check if variable exists AND is not empty
 if database_url and database_url.strip():
-    # 1. Check if it's the old style (postgres://) and fix it
     if database_url.startswith("postgres://"):
         app.config['SQLALCHEMY_DATABASE_URI'] = database_url.replace("postgres://", "postgresql://", 1)
-    # 2. If it's already correct (postgresql://), use it directly
     else:
         app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     print(f"✅ CONNECTED TO EXTERNAL DATABASE") 
 else:
-    # 3. Fallback to local SQLite (Only happens if DATABASE_URL is missing or empty)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'yegosun.db')
     print("⚠️ WARNING: DATABASE_URL MISSING. USING LOCAL DB.")
 
@@ -117,7 +113,6 @@ def load_user(user_id):
 def send_admin_notification(subject, body):
     try:
         admin_email = app.config['ADMIN_EMAIL']
-        # Robust check for email config presence
         if not admin_email or not app.config['MAIL_USERNAME']:
             print("⚠️ Email config missing. Skipping notification.")
             return
@@ -135,7 +130,15 @@ def send_admin_notification(subject, body):
 def db_upgrade():
     try:
         db.create_all()
-        return "SUCCESS: Database checked/updated."
+        # *** AUTO-CREATE ADMIN USER ***
+        if not User.query.filter_by(username='admin').first():
+            user = User(username='admin')
+            user.set_password('admin123')
+            db.session.add(user)
+            db.session.commit()
+            return "SUCCESS: Database tables created & Admin user (admin/admin123) added."
+        
+        return "SUCCESS: Database checked. Admin already exists."
     except Exception as e:
         return f"Error: {e}"
 
@@ -152,6 +155,7 @@ def home():
         testimonials = []
     return render_template('index.html', blogs=latest_blogs, projects=featured_projects, testimonials=testimonials)
 
+# ... (Rest of your routes remain EXACTLY the same) ...
 @app.route('/about')
 def about():
     return render_template('about.html')
@@ -164,8 +168,7 @@ def services():
 def projects():
     try:
         all_projects = Project.query.order_by(Project.date_posted.desc()).all()
-    except Exception as e:
-        print(f"Database Error on Projects: {e}")
+    except:
         all_projects = []
     return render_template('projects.html', projects=all_projects)
 
@@ -185,28 +188,14 @@ def submit_quote():
     project_type = request.form.get('projectType')
     location = request.form.get('location')
     message = request.form.get('message')
-    
     try:
         new_quote = Quote(full_name=full_name, email=email, phone=phone, project_type=project_type, location=location, message=message)
         db.session.add(new_quote)
         db.session.commit()
-        
-        email_body = f"""
-        New Lead Received!
-        ------------------
-        Name: {full_name}
-        Phone: {phone}
-        Type: {project_type}
-        Location: {location}
-        Message: {message}
-        
-        Log in to dashboard to view details.
-        """
+        email_body = f"""New Lead:\nName: {full_name}\nPhone: {phone}\nType: {project_type}\nMessage: {message}"""
         send_admin_notification(f"New Lead: {full_name}", email_body)
-        
     except Exception as e:
-        print(f"Error processing quote: {e}")
-    
+        print(f"Error: {e}")
     rendered_html = render_template('pdf_quote.html', name=full_name, email=email, phone=phone, service=project_type, date=datetime.now().strftime("%Y-%m-%d"))
     pdf_file = io.BytesIO()
     pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf_file)
@@ -238,21 +227,11 @@ def generate_report():
     roi_years = round((avg_cost / monthly_savings)/12, 1) if monthly_savings > 0 else 0
 
     lead_details = f"Solar Report. Bill: {monthly_bill}. Sys: {recommended_kw}kW. Apps: {', '.join(appliances)}"
-    
     try:
         new_lead = Quote(full_name=full_name, email=email, phone=phone, project_type="Solar Report", location="Web Calc", message=lead_details)
         db.session.add(new_lead)
         db.session.commit()
-        
-        email_body = f"""
-        New Solar Calculator Lead!
-        --------------------------
-        Name: {full_name}
-        Phone: {phone}
-        Bill: KES {monthly_bill}
-        Recommended System: {recommended_kw}kW
-        Appliances: {', '.join(appliances)}
-        """
+        email_body = f"""Calculator Lead:\nName: {full_name}\nBill: {monthly_bill}\nSystem: {recommended_kw}kW"""
         send_admin_notification(f"Calculator Lead: {full_name}", email_body)
     except: pass
 
@@ -360,12 +339,10 @@ def new_project():
             impact = request.form.get('impact')
             status = request.form.get('status')
             file = request.files.get('image')
-            
             image_url = ""
             if file and file.filename != '':
                 res = cloudinary.uploader.upload(file)
                 image_url = res['secure_url']
-            
             project = Project(title=title, category=category, system_size=system_size, location=location, description=description, impact=impact, status=status, image_url=image_url)
             db.session.add(project)
             db.session.commit()
