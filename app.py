@@ -265,14 +265,32 @@ def login():
             flash(f"Login error: {str(e)}", 'danger')
     return render_template('login.html')
 
+# --- FIXED DASHBOARD ROUTE ---
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    all_posts = BlogPost.query.order_by(BlogPost.date_posted.desc()).all()
-    all_quotes = Quote.query.order_by(Quote.date_submitted.desc()).all()
-    all_projects = Project.query.order_by(Project.date_posted.desc()).all()
-    testimonials = Testimonial.query.order_by(Testimonial.date_posted.desc()).all()
-    return render_template('dashboard.html', posts=all_posts, quotes=all_quotes, projects=all_projects, testimonials=testimonials)
+    try:
+        # 1. DEFINE THE MISSING VARIABLE
+        now_date = datetime.now().strftime("%A, %d %B %Y")
+        
+        # 2. QUERY DATABASE
+        all_posts = BlogPost.query.order_by(BlogPost.date_posted.desc()).all()
+        all_quotes = Quote.query.order_by(Quote.date_submitted.desc()).all()
+        all_projects = Project.query.order_by(Project.date_posted.desc()).all()
+        testimonials = Testimonial.query.order_by(Testimonial.date_posted.desc()).all()
+        
+        # 3. PASS VARIABLE TO TEMPLATE
+        return render_template('dashboard.html', 
+                               posts=all_posts, 
+                               quotes=all_quotes, 
+                               projects=all_projects, 
+                               testimonials=testimonials,
+                               now_date=now_date) # <--- This prevents the crash!
+                               
+    except Exception as e:
+        print(f"CRITICAL DASHBOARD ERROR: {e}")
+        flash(f"Dashboard crashed: {str(e)}", "danger")
+        return redirect(url_for('home'))
 
 @app.route('/post/new', methods=['GET', 'POST'])
 @login_required
