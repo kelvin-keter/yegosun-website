@@ -24,13 +24,21 @@
 
 <section class="py-5 bg-light">
     <div class="container">
+        
+        {% if not projects %}
+        <div class="alert alert-warning text-center mb-5">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i> 
+            <strong>System Status:</strong> No dynamic projects found in the database yet. (Showing legacy projects below).
+        </div>
+        {% endif %}
+
         <div class="row g-4" id="project-grid">
             
             {% for project in projects %}
             <div class="col-md-4 project-item {{ project.category|lower }}">
                 <div class="card h-100 border-0 shadow-sm hover-up">
                     <div class="position-relative overflow-hidden">
-                        <img src="{{ project.image_url }}" class="card-img-top" alt="{{ project.title }}" style="height: 250px; object-fit: cover;">
+                        <img src="{{ project.image_url or url_for('static', filename='images/hero-1.jpg') }}" class="card-img-top" alt="{{ project.title }}" style="height: 250px; object-fit: cover;">
                         <span class="badge bg-dark position-absolute top-0 end-0 m-3">{{ project.category }}</span>
                     </div>
                     <div class="card-body p-4">
@@ -54,7 +62,7 @@
             <div class="col-md-4 project-item education">
                 <div class="card h-100 border-0 shadow-sm hover-up">
                     <div class="position-relative overflow-hidden">
-                        <img src="{{ url_for('static', filename='images/hero-1.jpg') }}" class="card-img-top" alt="School Project" style="height: 250px; object-fit: cover;">
+                        <img src="{{ url_for('static', filename='images/project-school.avif') }}" class="card-img-top" alt="School Project" style="height: 250px; object-fit: cover;">
                         <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-3">Education</span>
                     </div>
                     <div class="card-body p-4">
@@ -105,42 +113,6 @@
                 </div>
             </div>
 
-            <div class="col-md-4 project-item commercial">
-                <div class="card h-100 border-0 shadow-sm hover-up">
-                    <div class="position-relative overflow-hidden">
-                        <img src="{{ url_for('static', filename='images/hero-2.jpg') }}" class="card-img-top" alt="Mall Project" style="height: 250px; object-fit: cover;">
-                        <span class="badge bg-success text-white position-absolute top-0 end-0 m-3">Commercial</span>
-                    </div>
-                    <div class="card-body p-4">
-                        <small class="text-muted fw-bold text-uppercase">Urban Center</small>
-                        <h5 class="fw-bold mt-1 mb-3">Shopping Mall Carport</h5>
-                        <p class="text-muted small">Solar carport structure providing shade and power for retail outlets.</p>
-                        <div class="d-flex justify-content-between border-top pt-3">
-                            <span class="text-success fw-bold small"><i class="fa-solid fa-bolt me-1"></i> 75kWp</span>
-                            <span class="text-dark fw-bold small"><i class="fa-solid fa-spinner me-1"></i> Ongoing</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-             <div class="col-md-4 project-item residential">
-                <div class="card h-100 border-0 shadow-sm hover-up">
-                    <div class="position-relative overflow-hidden">
-                         <img src="https://images.unsplash.com/photo-1625301840055-7c1b7198cfc0?q=80&w=800&auto=format&fit=crop" class="card-img-top" alt="Home Project" style="height: 250px; object-fit: cover;">
-                        <span class="badge bg-info text-dark position-absolute top-0 end-0 m-3">Residential</span>
-                    </div>
-                    <div class="card-body p-4">
-                        <small class="text-muted fw-bold text-uppercase">Private Estate</small>
-                        <h5 class="fw-bold mt-1 mb-3">Off-Grid Residence</h5>
-                        <p class="text-muted small">Total energy independence with a high-capacity hybrid inverter setup.</p>
-                        <div class="d-flex justify-content-between border-top pt-3">
-                            <span class="text-success fw-bold small"><i class="fa-solid fa-bolt me-1"></i> 12kWp</span>
-                            <span class="text-dark fw-bold small"><i class="fa-solid fa-check-circle me-1"></i> Completed</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 </section>
@@ -174,7 +146,6 @@
         items.forEach(item => {
             if (category === 'all' || item.classList.contains(category)) {
                 item.style.display = 'block';
-                // Add a small animation effect
                 item.classList.add('animate-fade-in');
             } else {
                 item.style.display = 'none';
@@ -185,21 +156,12 @@
 </script>
 
 <style>
-    /* Simple Animation for filtering */
-    .animate-fade-in {
-        animation: fadeIn 0.5s ease-in;
-    }
+    .animate-fade-in { animation: fadeIn 0.5s ease-in; }
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
     }
-    /* Hover Up Effect */
-    .hover-up {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .hover-up:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-    }
+    .hover-up { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .hover-up:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
 </style>
 {% endblock %}
