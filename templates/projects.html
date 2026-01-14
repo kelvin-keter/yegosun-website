@@ -24,34 +24,35 @@
 
 <section class="py-5 bg-light">
     <div class="container">
-        
-        {% if not projects %}
-        <div class="alert alert-warning text-center mb-5">
-            <i class="fa-solid fa-triangle-exclamation me-2"></i> 
-            <strong>System Status:</strong> No dynamic projects found in the database yet. (Showing legacy projects below).
-        </div>
-        {% endif %}
-
         <div class="row g-4" id="project-grid">
             
             {% for project in projects %}
             <div class="col-md-4 project-item {{ project.category|lower }}">
                 <div class="card h-100 border-0 shadow-sm hover-up">
                     <div class="position-relative overflow-hidden">
-                        <img src="{{ project.image_url or url_for('static', filename='images/hero-1.jpg') }}" class="card-img-top" alt="{{ project.title }}" style="height: 250px; object-fit: cover;">
+                        <img src="{{ project.image_url }}" class="card-img-top" alt="{{ project.title }}" style="height: 250px; object-fit: cover;">
                         <span class="badge bg-dark position-absolute top-0 end-0 m-3">{{ project.category }}</span>
                     </div>
                     <div class="card-body p-4">
                         <small class="text-muted fw-bold text-uppercase">{{ project.location }}</small>
                         <h5 class="fw-bold mt-1 mb-3">{{ project.title }}</h5>
-                        <p class="text-muted small">{{ project.description[:100] }}...</p>
+                        <p class="text-muted small mb-3">{{ project.description[:100] }}...</p>
+                        
+                        {% if project.impact %}
+                        <div class="mb-3">
+                            <span class="badge bg-light text-success border border-success px-3 py-2 rounded-pill fw-bold">
+                                <i class="fa-solid fa-arrow-trend-up me-2"></i> {{ project.impact }}
+                            </span>
+                        </div>
+                        {% endif %}
                         
                         <div class="d-flex justify-content-between border-top pt-3">
-                            <span class="text-success fw-bold small"><i class="fa-solid fa-bolt me-1"></i> {{ project.system_size }}</span>
-                            {% if project.impact %}
-                            <span class="text-dark fw-bold small"><i class="fa-solid fa-check-circle me-1"></i> {{ project.impact }}</span>
+                            <span class="text-dark fw-bold small"><i class="fa-solid fa-bolt text-warning me-1"></i> {{ project.system_size }}</span>
+                            
+                            {% if project.status == 'Ongoing' %}
+                                <span class="text-warning fw-bold small"><i class="fa-solid fa-spinner fa-spin me-1"></i> Ongoing</span>
                             {% else %}
-                            <span class="text-dark fw-bold small"><i class="fa-solid fa-check-circle me-1"></i> Completed</span>
+                                <span class="text-dark fw-bold small"><i class="fa-solid fa-circle-check text-success me-1"></i> Completed</span>
                             {% endif %}
                         </div>
                     </div>
@@ -62,16 +63,21 @@
             <div class="col-md-4 project-item education">
                 <div class="card h-100 border-0 shadow-sm hover-up">
                     <div class="position-relative overflow-hidden">
-                        <img src="{{ url_for('static', filename='images/project-school.avif') }}" class="card-img-top" alt="School Project" style="height: 250px; object-fit: cover;">
+                        <img src="{{ url_for('static', filename='images/hero-1.jpg') }}" class="card-img-top" alt="School Project" style="height: 250px; object-fit: cover;">
                         <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-3">Education</span>
                     </div>
                     <div class="card-body p-4">
                         <small class="text-muted fw-bold text-uppercase">Nairobi Metro</small>
                         <h5 class="fw-bold mt-1 mb-3">National High School</h5>
-                        <p class="text-muted small">Full campus grid-tie integration powering computer labs and admin blocks.</p>
+                        <p class="text-muted small mb-3">Full campus grid-tie integration powering computer labs and admin blocks.</p>
+                        <div class="mb-3">
+                            <span class="badge bg-light text-success border border-success px-3 py-2 rounded-pill fw-bold">
+                                <i class="fa-solid fa-arrow-down me-2"></i> 60% Bill Reduction
+                            </span>
+                        </div>
                         <div class="d-flex justify-content-between border-top pt-3">
-                            <span class="text-success fw-bold small"><i class="fa-solid fa-bolt me-1"></i> 50kWp</span>
-                            <span class="text-dark fw-bold small"><i class="fa-solid fa-check-circle me-1"></i> Completed</span>
+                            <span class="text-dark fw-bold small"><i class="fa-solid fa-bolt text-warning me-1"></i> 50kWp</span>
+                            <span class="text-dark fw-bold small"><i class="fa-solid fa-circle-check text-success me-1"></i> Completed</span>
                         </div>
                     </div>
                 </div>
@@ -86,10 +92,15 @@
                     <div class="card-body p-4">
                         <small class="text-muted fw-bold text-uppercase">Industrial Zone</small>
                         <h5 class="fw-bold mt-1 mb-3">Manufacturing Plant</h5>
-                        <p class="text-muted small">Hybrid system with battery storage for heavy machinery and backup.</p>
+                        <p class="text-muted small mb-3">Hybrid system with battery storage for heavy machinery and backup.</p>
+                        <div class="mb-3">
+                            <span class="badge bg-light text-dark border px-3 py-2 rounded-pill fw-bold">
+                                <i class="fa-solid fa-shield-halved me-2"></i> Zero Downtime
+                            </span>
+                        </div>
                         <div class="d-flex justify-content-between border-top pt-3">
-                            <span class="text-success fw-bold small"><i class="fa-solid fa-bolt me-1"></i> 100kWp</span>
-                            <span class="text-dark fw-bold small"><i class="fa-solid fa-check-circle me-1"></i> Completed</span>
+                            <span class="text-dark fw-bold small"><i class="fa-solid fa-bolt text-warning me-1"></i> 100kWp</span>
+                            <span class="text-dark fw-bold small"><i class="fa-solid fa-circle-check text-success me-1"></i> Completed</span>
                         </div>
                     </div>
                 </div>
@@ -104,10 +115,15 @@
                     <div class="card-body p-4">
                         <small class="text-muted fw-bold text-uppercase">Rural County</small>
                         <h5 class="fw-bold mt-1 mb-3">Community Water Project</h5>
-                        <p class="text-muted small">Solar water pumping system serving 500+ households daily.</p>
+                        <p class="text-muted small mb-3">Solar water pumping system serving 500+ households daily.</p>
+                        <div class="mb-3">
+                            <span class="badge bg-light text-success border border-success px-3 py-2 rounded-pill fw-bold">
+                                <i class="fa-solid fa-leaf me-2"></i> 100% Renewable
+                            </span>
+                        </div>
                         <div class="d-flex justify-content-between border-top pt-3">
-                            <span class="text-success fw-bold small"><i class="fa-solid fa-water me-1"></i> 50k Liters/Day</span>
-                            <span class="text-dark fw-bold small"><i class="fa-solid fa-check-circle me-1"></i> Completed</span>
+                            <span class="text-dark fw-bold small"><i class="fa-solid fa-bolt text-warning me-1"></i> 50k Liters/Day</span>
+                            <span class="text-dark fw-bold small"><i class="fa-solid fa-circle-check text-success me-1"></i> Completed</span>
                         </div>
                     </div>
                 </div>
@@ -127,7 +143,6 @@
 
 <script>
     function filterProjects(category, btnElement) {
-        // 1. Update Buttons
         let buttons = document.querySelectorAll('#portfolio-flters button');
         buttons.forEach(btn => {
             btn.classList.remove('active');
@@ -135,12 +150,10 @@
             btn.classList.add('btn-outline-dark');
         });
         
-        // Highlight clicked button
         btnElement.classList.add('active');
         btnElement.classList.remove('btn-outline-dark');
         btnElement.classList.add('btn-dark');
 
-        // 2. Filter Grid
         let items = document.querySelectorAll('.project-item');
         
         items.forEach(item => {

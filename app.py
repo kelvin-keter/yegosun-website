@@ -4,6 +4,7 @@ import cloudinary
 import cloudinary.uploader
 from flask import Flask, render_template, request, redirect, url_for, flash, make_response
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text # NEW IMPORT
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -57,13 +58,14 @@ class BlogPost(db.Model):
 
 class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)       # e.g. "Juja Farm House"
-    category = db.Column(db.String(50), nullable=False)     # e.g. "Residential"
-    system_size = db.Column(db.String(50), nullable=False)  # e.g. "5kW Hybrid"
-    location = db.Column(db.String(100), nullable=False)    # e.g. "Juja, Kiambu"
-    image_url = db.Column(db.String(300), nullable=False)   # Photo
-    description = db.Column(db.Text, nullable=False)        # Details
-    impact = db.Column(db.String(100), nullable=True)       # e.g. "Saved 90% on bills"
+    title = db.Column(db.String(100), nullable=False)
+    category = db.Column(db.String(50), nullable=False)
+    system_size = db.Column(db.String(50), nullable=False)
+    location = db.Column(db.String(100), nullable=False)
+    image_url = db.Column(db.String(300), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    impact = db.Column(db.String(100), nullable=True)
+    status = db.Column(db.String(50), default='Completed') # NEW FIELD
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 class Quote(db.Model):
@@ -94,16 +96,26 @@ with app.app_context():
 
 # --- ROUTES ---
 
+# *** CRITICAL: ONE-TIME DATABASE UPGRADE ROUTE ***
+@app.route('/db-upgrade')
+def db_upgrade():
+    try:
+        # This adds the 'status' column to your existing PostgreSQL database
+        with db.engine.connect() as conn:
+            conn.execute(text("ALTER TABLE project ADD COLUMN status VARCHAR(50) DEFAULT 'Completed'"))
+            conn.commit()
+        return "SUCCESS: Database upgraded! 'Status' column added."
+    except Exception as e:
+        return f"Database update message (ignore if already exists): {e}"
+
 @app.route('/')
 def home():
     try:
         latest_blogs = BlogPost.query.order_by(BlogPost.date_posted.desc()).limit(3).all()
-        # Fetch latest 3 projects for homepage (Optional, for now we use hardcoded or dynamic later)
         featured_projects = Project.query.order_by(Project.date_posted.desc()).limit(3).all()
     except:
         latest_blogs = []
         featured_projects = []
-    # Pass projects to index.html if we decide to use them later
     return render_template('index.html', blogs=latest_blogs, projects=featured_projects)
 
 @app.route('/about')
@@ -116,7 +128,6 @@ def services():
 
 @app.route('/projects')
 def projects():
-    # Now fetching REAL projects from DB
     all_projects = Project.query.order_by(Project.date_posted.desc()).all()
     return render_template('projects.html', projects=all_projects)
 
@@ -128,7 +139,6 @@ def calculator():
 def contact():
     return render_template('contact.html')
 
-# --- PROJECT MANAGEMENT ROUTES ---
 @app.route('/project/new', methods=['GET', 'POST'])
 @login_required
 def new_project():
@@ -140,6 +150,7 @@ def new_project():
             location = request.form.get('location')
             description = request.form.get('description')
             impact = request.form.get('impact')
+            status = request.form.get('status') # NEW INPUT
             file = request.files.get('image')
             
             image_url = ""
@@ -150,7 +161,7 @@ def new_project():
             project = Project(
                 title=title, category=category, system_size=system_size,
                 location=location, description=description, impact=impact,
-                image_url=image_url
+                status=status, image_url=image_url
             )
             db.session.add(project)
             db.session.commit()
@@ -170,7 +181,7 @@ def delete_project(project_id):
     flash('Project deleted.', 'success')
     return redirect(url_for('dashboard'))
 
-# --- EXISTING ROUTES ---
+# ... (Previous Quote & Blog logic remains unchanged below) ...
 @app.route('/submit_quote', methods=['POST'])
 def submit_quote():
     full_name = request.form.get('fullName')
@@ -185,8 +196,6 @@ def submit_quote():
         db.session.commit()
     except Exception as e:
         print(f"Error saving quote: {e}")
-    
-    # PDF generation logic remains same...
     rendered_html = render_template('pdf_quote.html', name=full_name, email=email, phone=phone, service=project_type, date=datetime.now().strftime("%Y-%m-%d"))
     pdf_file = io.BytesIO()
     pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf_file)
@@ -198,42 +207,32 @@ def submit_quote():
 
 @app.route('/generate_report', methods=['POST'])
 def generate_report():
-    # ... (Keep previous Lead Magnet Logic exactly as is) ...
-    # Simplified here for brevity, but DO NOT delete your previous generate_report logic!
-    # Copy-paste the logic from the previous step if needed. 
-    # Since I'm providing the full file, I will include the full function below:
-    
     full_name = request.form.get('full_name')
     email = request.form.get('email')
     phone = request.form.get('phone')
     try: monthly_bill = float(request.form.get('monthly_bill'))
     except: monthly_bill = 0.0
     appliances = request.form.getlist('appliances')
-    
     monthly_units = monthly_bill / 28
     daily_units = monthly_units / 30
     required_system_size = daily_units / 4.5 
     recommended_kw = round(required_system_size * 2) / 2
     if recommended_kw < 1: recommended_kw = 1
-    
     est_cost_min = int(recommended_kw * 130000)
     est_cost_max = int(recommended_kw * 160000)
     monthly_savings = int(monthly_bill * 0.9)
     yearly_savings = monthly_savings * 12
     avg_cost = (est_cost_min + est_cost_max) / 2
     roi_years = round((avg_cost / monthly_savings)/12, 1) if monthly_savings > 0 else 0
-
     lead_details = f"Solar Report. Bill: {monthly_bill}. Sys: {recommended_kw}kW. Apps: {', '.join(appliances)}"
     try:
         new_lead = Quote(full_name=full_name, email=email, phone=phone, project_type="Solar Report", location="Web Calc", message=lead_details)
         db.session.add(new_lead)
         db.session.commit()
     except: pass
-
     rendered_html = render_template('pdf_solar_report.html', name=full_name, date=datetime.now().strftime("%d %b %Y"), bill=monthly_bill, system_size=recommended_kw, cost_min="{:,}".format(est_cost_min), cost_max="{:,}".format(est_cost_max), savings="{:,}".format(yearly_savings), roi=roi_years, appliances=appliances)
     pdf_file = io.BytesIO()
-    pisa_status = pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf_file)
-    if pisa_status.err: return 'Error', 500
+    pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf_file)
     pdf_file.seek(0)
     response = make_response(pdf_file.read())
     response.headers['Content-Type'] = 'application/pdf'
@@ -266,7 +265,7 @@ def login():
 def dashboard():
     all_posts = BlogPost.query.order_by(BlogPost.date_posted.desc()).all()
     all_quotes = Quote.query.order_by(Quote.date_submitted.desc()).all()
-    all_projects = Project.query.order_by(Project.date_posted.desc()).all() # NEW
+    all_projects = Project.query.order_by(Project.date_posted.desc()).all()
     return render_template('dashboard.html', posts=all_posts, quotes=all_quotes, projects=all_projects)
 
 @app.route('/post/new', methods=['GET', 'POST'])

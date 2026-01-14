@@ -39,9 +39,17 @@
                                 <input type="text" name="location" class="form-control bg-light" placeholder="e.g. Juja, Kiambu" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Impact Badge (Optional)</label>
-                                <input type="text" name="impact" class="form-control bg-light" placeholder="e.g. Saved 60% on Bills">
+                                <label class="form-label fw-bold">Project Status</label>
+                                <select name="status" class="form-select bg-light" required>
+                                    <option value="Completed" selected>Completed</option>
+                                    <option value="Ongoing">Ongoing (In Progress)</option>
+                                </select>
                             </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Impact Badge (e.g. Savings)</label>
+                            <input type="text" name="impact" class="form-control bg-light" placeholder="e.g. Saved 60% on Bills">
                         </div>
 
                         <div class="mb-4">
