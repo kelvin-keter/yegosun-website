@@ -6,7 +6,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, mak
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from flask_mail import Mail, Message # NEW IMPORT
+from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from xhtml2pdf import pisa
@@ -16,23 +16,31 @@ app = Flask(__name__)
 # --- CONFIGURATION ---
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'yegosun-master-key-2026')
 basedir = os.path.abspath(os.path.dirname(__file__))
+
+# *** FIXED DATABASE CONNECTION LOGIC ***
 database_url = os.environ.get('DATABASE_URL')
 
-if database_url and database_url.startswith("postgres://"):
-    app.config['SQLALCHEMY_DATABASE_URI'] = database_url.replace("postgres://", "postgresql://", 1)
+if database_url:
+    # 1. Check if it's the old style (postgres://) and fix it
+    if database_url.startswith("postgres://"):
+        app.config['SQLALCHEMY_DATABASE_URI'] = database_url.replace("postgres://", "postgresql://", 1)
+    # 2. If it's already correct (postgresql://), use it directly
+    else:
+        app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+    print(f"✅ CONNECTED TO EXTERNAL DATABASE") 
 else:
+    # 3. Fallback to local SQLite (Only happens if DATABASE_URL is missing)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'yegosun.db')
+    print("⚠️ WARNING: USING TEMPORARY LOCAL DB")
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# --- EMAIL CONFIGURATION (NEW) ---
+# --- EMAIL CONFIGURATION ---
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-# These will be set in Render Environment Variables
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME') 
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
-# The email address that will receive the alerts
 app.config['ADMIN_EMAIL'] = os.environ.get('ADMIN_EMAIL') 
 
 mail = Mail(app)
@@ -108,7 +116,6 @@ def load_user(user_id):
 def send_admin_notification(subject, body):
     try:
         admin_email = app.config['ADMIN_EMAIL']
-        # If no admin email is set, skip sending to avoid crashing
         if not admin_email or not app.config['MAIL_USERNAME']:
             print("Email config missing. Skipping notification.")
             return
@@ -163,7 +170,6 @@ def calculator():
 def contact():
     return render_template('contact.html')
 
-# --- SUBMIT QUOTE (UPDATED WITH EMAIL) ---
 @app.route('/submit_quote', methods=['POST'])
 def submit_quote():
     full_name = request.form.get('fullName')
@@ -173,13 +179,11 @@ def submit_quote():
     location = request.form.get('location')
     message = request.form.get('message')
     
-    # 1. Save to DB
     try:
         new_quote = Quote(full_name=full_name, email=email, phone=phone, project_type=project_type, location=location, message=message)
         db.session.add(new_quote)
         db.session.commit()
         
-        # 2. Send Email Notification
         email_body = f"""
         New Lead Received!
         ------------------
@@ -196,7 +200,6 @@ def submit_quote():
     except Exception as e:
         print(f"Error processing quote: {e}")
     
-    # 3. Generate PDF
     rendered_html = render_template('pdf_quote.html', name=full_name, email=email, phone=phone, service=project_type, date=datetime.now().strftime("%Y-%m-%d"))
     pdf_file = io.BytesIO()
     pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf_file)
@@ -206,7 +209,6 @@ def submit_quote():
     response.headers['Content-Disposition'] = f'attachment; filename=Yegosun_Quote.pdf'
     return response
 
-# --- GENERATE REPORT (UPDATED WITH EMAIL) ---
 @app.route('/generate_report', methods=['POST'])
 def generate_report():
     full_name = request.form.get('full_name')
@@ -216,7 +218,6 @@ def generate_report():
     except: monthly_bill = 0.0
     appliances = request.form.getlist('appliances')
     
-    # Calcs
     monthly_units = monthly_bill / 28
     daily_units = monthly_units / 30
     required_system_size = daily_units / 4.5 
@@ -231,13 +232,11 @@ def generate_report():
 
     lead_details = f"Solar Report. Bill: {monthly_bill}. Sys: {recommended_kw}kW. Apps: {', '.join(appliances)}"
     
-    # 1. Save to DB & Email
     try:
         new_lead = Quote(full_name=full_name, email=email, phone=phone, project_type="Solar Report", location="Web Calc", message=lead_details)
         db.session.add(new_lead)
         db.session.commit()
         
-        # 2. Send Email Notification
         email_body = f"""
         New Solar Calculator Lead!
         --------------------------
@@ -248,10 +247,8 @@ def generate_report():
         Appliances: {', '.join(appliances)}
         """
         send_admin_notification(f"Calculator Lead: {full_name}", email_body)
-        
     except: pass
 
-    # 3. PDF
     rendered_html = render_template('pdf_solar_report.html', name=full_name, date=datetime.now().strftime("%d %b %Y"), bill=monthly_bill, system_size=recommended_kw, cost_min="{:,}".format(est_cost_min), cost_max="{:,}".format(est_cost_max), savings="{:,}".format(yearly_savings), roi=roi_years, appliances=appliances)
     pdf_file = io.BytesIO()
     pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf_file)
@@ -261,7 +258,6 @@ def generate_report():
     response.headers['Content-Disposition'] = f'attachment; filename=Solar_Report.pdf'
     return response
 
-# ... (Rest of routes: blog_detail, login, dashboard, etc. remain unchanged) ...
 @app.route('/blog/<int:post_id>')
 def blog_detail(post_id):
     post = BlogPost.query.get_or_404(post_id)
