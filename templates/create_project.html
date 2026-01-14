@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg rounded-4">
+                <div class="card-header bg-dark text-white p-4 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">Add New Project</h5>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-sm btn-outline-light">Back to Dashboard</a>
+                </div>
+                <div class="card-body p-5">
+                    <form method="POST" enctype="multipart/form-data">
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Project Title</label>
+                            <input type="text" name="title" class="form-control form-control-lg bg-light" placeholder="e.g. Juja Farm Residential" required>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Category</label>
+                                <select name="category" class="form-select bg-light" required>
+                                    <option value="Residential">Residential</option>
+                                    <option value="Commercial">Commercial/Industrial</option>
+                                    <option value="Education">School/Institution</option>
+                                    <option value="Community">Community/Water</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">System Size</label>
+                                <input type="text" name="system_size" class="form-control bg-light" placeholder="e.g. 5kW Hybrid" required>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Location</label>
+                                <input type="text" name="location" class="form-control bg-light" placeholder="e.g. Juja, Kiambu" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Impact Badge (Optional)</label>
+                                <input type="text" name="impact" class="form-control bg-light" placeholder="e.g. Saved 60% on Bills">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Project Description</label>
+                            <textarea name="description" class="form-control bg-light" rows="5" placeholder="Describe the solution provided..." required></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Project Photo</label>
+                            <input type="file" name="image" class="form-control" accept="image/*" required>
+                            <div class="form-text">Upload a high-quality photo of the installation.</div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg fw-bold">Publish Project</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
