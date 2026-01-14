@@ -126,6 +126,19 @@ def send_admin_notification(subject, body):
 
 # --- ROUTES ---
 
+# 1. DATABASE REPAIR ROUTE (Run this to fix the missing column!)
+@app.route('/fix-db-column')
+def fix_db_column():
+    try:
+        with db.engine.connect() as conn:
+            # Force add the missing column
+            conn.execute(text("ALTER TABLE blog_post ADD COLUMN IF NOT EXISTS date_updated TIMESTAMP"))
+            conn.commit()
+        return "SUCCESS: 'date_updated' column added to blog_post table! You can now log in."
+    except Exception as e:
+        db.session.rollback()
+        return f"Error fixing DB: {e}"
+
 @app.route('/db-upgrade')
 def db_upgrade():
     try:
@@ -140,6 +153,7 @@ def db_upgrade():
         
         return "SUCCESS: Database checked. Admin already exists."
     except Exception as e:
+        db.session.rollback() # <--- SAFETY ROLLBACK
         return f"Error: {e}"
 
 @app.route('/')
@@ -149,6 +163,7 @@ def home():
         featured_projects = Project.query.order_by(Project.date_posted.desc()).limit(3).all()
         testimonials = Testimonial.query.order_by(Testimonial.date_posted.desc()).limit(3).all()
     except Exception as e:
+        db.session.rollback() # <--- SAFETY ROLLBACK
         print(f"Database Error on Home: {e}")
         latest_blogs = []
         featured_projects = []
@@ -169,6 +184,7 @@ def projects():
     try:
         all_projects = Project.query.order_by(Project.date_posted.desc()).all()
     except:
+        db.session.rollback()
         all_projects = []
     return render_template('projects.html', projects=all_projects)
 
@@ -195,6 +211,7 @@ def submit_quote():
         email_body = f"""New Lead:\nName: {full_name}\nPhone: {phone}\nType: {project_type}\nMessage: {message}"""
         send_admin_notification(f"New Lead: {full_name}", email_body)
     except Exception as e:
+        db.session.rollback() # <--- SAFETY ROLLBACK
         print(f"Error: {e}")
     rendered_html = render_template('pdf_quote.html', name=full_name, email=email, phone=phone, service=project_type, date=datetime.now().strftime("%Y-%m-%d"))
     pdf_file = io.BytesIO()
@@ -233,7 +250,9 @@ def generate_report():
         db.session.commit()
         email_body = f"""Calculator Lead:\nName: {full_name}\nBill: {monthly_bill}\nSystem: {recommended_kw}kW"""
         send_admin_notification(f"Calculator Lead: {full_name}", email_body)
-    except: pass
+    except: 
+        db.session.rollback()
+        pass
 
     rendered_html = render_template('pdf_solar_report.html', name=full_name, date=datetime.now().strftime("%d %b %Y"), bill=monthly_bill, system_size=recommended_kw, cost_min="{:,}".format(est_cost_min), cost_max="{:,}".format(est_cost_max), savings="{:,}".format(yearly_savings), roi=roi_years, appliances=appliances)
     pdf_file = io.BytesIO()
@@ -262,6 +281,7 @@ def login():
             else:
                 flash('Invalid credentials', 'danger')
         except Exception as e:
+            db.session.rollback() # <--- SAFETY ROLLBACK
             flash(f"Login error: {str(e)}", 'danger')
     return render_template('login.html')
 
@@ -285,9 +305,10 @@ def dashboard():
                                quotes=all_quotes, 
                                projects=all_projects, 
                                testimonials=testimonials,
-                               now_date=now_date) # <--- This prevents the crash!
+                               now_date=now_date)
                                
     except Exception as e:
+        db.session.rollback() # <--- SAFETY ROLLBACK
         print(f"CRITICAL DASHBOARD ERROR: {e}")
         flash(f"Dashboard crashed: {str(e)}", "danger")
         return redirect(url_for('home'))
@@ -311,6 +332,7 @@ def new_post():
             flash('Post created!', 'success')
             return redirect(url_for('dashboard'))
         except Exception as e:
+            db.session.rollback() # <--- SAFETY ROLLBACK
             flash(f'Error: {str(e)}', 'danger')
     return render_template('create_post.html')
 
@@ -332,6 +354,7 @@ def edit_post(post_id):
             flash('Updated!', 'success')
             return redirect(url_for('dashboard'))
         except:
+            db.session.rollback()
             flash('Error updating.', 'danger')
     return render_template('edit_post.html', post=post)
 
@@ -367,6 +390,7 @@ def new_project():
             flash('Project added!', 'success')
             return redirect(url_for('dashboard'))
         except Exception as e:
+            db.session.rollback() # <--- SAFETY ROLLBACK
             flash(f'Error: {str(e)}', 'danger')
     return render_template('create_project.html')
 
@@ -399,6 +423,7 @@ def new_testimonial():
             flash('Testimonial added!', 'success')
             return redirect(url_for('dashboard'))
         except Exception as e:
+            db.session.rollback() # <--- SAFETY ROLLBACK
             flash(f'Error: {str(e)}', 'danger')
     return render_template('create_testimonial.html')
 
@@ -445,6 +470,7 @@ def emergency_reset():
         
         return "SUCCESS! Admin user reset. Login with: admin / admin123"
     except Exception as e:
+        db.session.rollback() # <--- CRITICAL FIX: RESET THE DB IF THIS FAILS
         return f"Error resetting admin: {e}"
 
 if __name__ == '__main__':
