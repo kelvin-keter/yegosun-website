@@ -17,10 +17,11 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'yegosun-master-key-2026')
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-# *** FIXED DATABASE CONNECTION LOGIC ***
+# *** ROBUST DATABASE CONNECTION LOGIC ***
 database_url = os.environ.get('DATABASE_URL')
 
-if database_url:
+# Check if variable exists AND is not empty
+if database_url and database_url.strip():
     # 1. Check if it's the old style (postgres://) and fix it
     if database_url.startswith("postgres://"):
         app.config['SQLALCHEMY_DATABASE_URI'] = database_url.replace("postgres://", "postgresql://", 1)
@@ -29,9 +30,9 @@ if database_url:
         app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     print(f"✅ CONNECTED TO EXTERNAL DATABASE") 
 else:
-    # 3. Fallback to local SQLite (Only happens if DATABASE_URL is missing)
+    # 3. Fallback to local SQLite (Only happens if DATABASE_URL is missing or empty)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'yegosun.db')
-    print("⚠️ WARNING: USING TEMPORARY LOCAL DB")
+    print("⚠️ WARNING: DATABASE_URL MISSING. USING LOCAL DB.")
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -116,16 +117,17 @@ def load_user(user_id):
 def send_admin_notification(subject, body):
     try:
         admin_email = app.config['ADMIN_EMAIL']
+        # Robust check for email config presence
         if not admin_email or not app.config['MAIL_USERNAME']:
-            print("Email config missing. Skipping notification.")
+            print("⚠️ Email config missing. Skipping notification.")
             return
 
         msg = Message(subject, sender=app.config['MAIL_USERNAME'], recipients=[admin_email])
         msg.body = body
         mail.send(msg)
-        print("Notification email sent successfully.")
+        print("✅ Notification email sent successfully.")
     except Exception as e:
-        print(f"Failed to send email: {e}")
+        print(f"❌ Failed to send email: {e}")
 
 # --- ROUTES ---
 
@@ -143,7 +145,8 @@ def home():
         latest_blogs = BlogPost.query.order_by(BlogPost.date_posted.desc()).limit(3).all()
         featured_projects = Project.query.order_by(Project.date_posted.desc()).limit(3).all()
         testimonials = Testimonial.query.order_by(Testimonial.date_posted.desc()).limit(3).all()
-    except:
+    except Exception as e:
+        print(f"Database Error on Home: {e}")
         latest_blogs = []
         featured_projects = []
         testimonials = []
@@ -159,7 +162,11 @@ def services():
 
 @app.route('/projects')
 def projects():
-    all_projects = Project.query.order_by(Project.date_posted.desc()).all()
+    try:
+        all_projects = Project.query.order_by(Project.date_posted.desc()).all()
+    except Exception as e:
+        print(f"Database Error on Projects: {e}")
+        all_projects = []
     return render_template('projects.html', projects=all_projects)
 
 @app.route('/calculator')
