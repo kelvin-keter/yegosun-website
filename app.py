@@ -408,5 +408,26 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
+# --- EMERGENCY ADMIN RESET ROUTE ---
+@app.route('/emergency-reset')
+def emergency_reset():
+    try:
+        # 1. Delete any existing admin user (to clear bad passwords)
+        existing_admin = User.query.filter_by(username='admin').first()
+        if existing_admin:
+            db.session.delete(existing_admin)
+            db.session.commit()
+            print("Deleted old admin.")
+        
+        # 2. Create a fresh admin user
+        new_admin = User(username='admin')
+        new_admin.set_password('admin123')
+        db.session.add(new_admin)
+        db.session.commit()
+        
+        return "SUCCESS! Admin user reset. Login with: admin / admin123"
+    except Exception as e:
+        return f"Error resetting admin: {e}"
+
 if __name__ == '__main__':
     app.run(debug=True)
