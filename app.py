@@ -35,13 +35,11 @@ if os.environ.get('RENDER'):
     app.config['SESSION_COOKIE_SECURE'] = True
     app.config['REMEMBER_COOKIE_SECURE'] = True
 
-# --- EMAIL CONFIGURATION (BACK TO 587 + ASYNC) ---
-# Port 465 was "Unreachable", so we use 587. 
-# The Background Thread will handle the slowness.
+# --- EMAIL CONFIGURATION ---
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587              # UPDATED: Back to 587
-app.config['MAIL_USE_TLS'] = True          # UPDATED: TLS On
-app.config['MAIL_USE_SSL'] = False         # UPDATED: SSL Off
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME') 
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['ADMIN_EMAIL'] = os.environ.get('ADMIN_EMAIL') 
@@ -207,7 +205,7 @@ def calculator(): return render_template('calculator.html')
 @app.route('/contact')
 def contact(): return render_template('contact.html')
 
-# *** SUBMIT QUOTE ***
+# --- NEW: SUBMIT QUOTE (Step 1: Process & Redirect) ---
 @app.route('/submit_quote', methods=['POST'])
 def submit_quote():
     full_name = request.form.get('fullName')
@@ -222,36 +220,51 @@ def submit_quote():
         new_quote = Quote(full_name=full_name, email=email, phone=phone, project_type=project_type, location=location, message=message)
         db.session.add(new_quote)
         db.session.commit()
+        
+        # 2. Send Email (Background)
+        email_body = f"New Lead Received:\nName: {full_name}\nPhone: {phone}\nType: {project_type}\nMessage: {message}"
+        send_admin_notification(f"New Lead: {full_name}", email_body)
+        
+        # 3. Redirect to Success Page (Pass the ID so we know which PDF to generate)
+        return redirect(url_for('quote_success', quote_id=new_quote.id))
+        
     except Exception as e:
         db.session.rollback()
-        print(f"❌ Database Error: {e}")
-        flash("An error occurred saving your details, please contact us on WhatsApp.", "danger")
+        print(f"❌ Error: {e}")
+        flash("An error occurred. Please contact us on WhatsApp.", "danger")
         return redirect(url_for('contact'))
 
-    # 2. Send Email (Async)
-    email_body = f"""New Lead Received:
-Name: {full_name}
-Phone: {phone}
-Type: {project_type}
-Message: {message}
-"""
-    send_admin_notification(f"New Lead: {full_name}", email_body)
+# --- NEW: SUCCESS PAGE (Step 2: Show Message) ---
+@app.route('/quote-success/<int:quote_id>')
+def quote_success(quote_id):
+    # This page confirms success and triggers the download via JavaScript
+    quote = Quote.query.get_or_404(quote_id)
+    return render_template('quote_success.html', quote=quote)
 
-    # 3. Generate PDF
+# --- NEW: DOWNLOAD ROUTE (Step 3: Generate PDF) ---
+@app.route('/download-pdf/<int:quote_id>')
+def download_pdf(quote_id):
+    quote = Quote.query.get_or_404(quote_id)
+    
     try:
-        rendered_html = render_template('pdf_quote.html', name=full_name, email=email, phone=phone, service=project_type, date=datetime.now().strftime("%Y-%m-%d"))
+        rendered_html = render_template('pdf_quote.html', 
+                                      name=quote.full_name, 
+                                      email=quote.email, 
+                                      phone=quote.phone, 
+                                      service=quote.project_type, 
+                                      date=quote.date_submitted.strftime("%Y-%m-%d"))
+        
         pdf_file = io.BytesIO()
         pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf_file)
         pdf_file.seek(0)
         
         response = make_response(pdf_file.read())
         response.headers['Content-Type'] = 'application/pdf'
-        response.headers['Content-Disposition'] = f'attachment; filename=Yegosun_Quote.pdf'
+        response.headers['Content-Disposition'] = f'attachment; filename=Yegosun_Quote_{quote.id}.pdf'
         return response
     except Exception as e:
-        print(f"❌ PDF Generation Error: {e}")
-        flash("Quote submitted successfully! (PDF generation failed, but we received your details)", "success")
-        return redirect(url_for('home'))
+        print(f"PDF Error: {e}")
+        return "Error generating PDF", 500
 
 @app.route('/generate_report', methods=['POST'])
 def generate_report():
