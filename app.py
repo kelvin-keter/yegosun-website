@@ -13,7 +13,7 @@ from xhtml2pdf import pisa
 
 app = Flask(__name__)
 
-# --- PRODUCTION SECURITY CONFIGURATION ---
+# --- CONFIGURATION ---
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'yegosun-master-key-2026')
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -29,7 +29,7 @@ else:
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Cookie Security
+# Cookie Security (Temporarily relaxed for Debugging if needed, but keeping safe defaults)
 if os.environ.get('RENDER'):
     app.config['SESSION_COOKIE_SECURE'] = True
     app.config['REMEMBER_COOKIE_SECURE'] = True
@@ -129,15 +129,6 @@ def send_admin_notification(subject, body):
     except Exception as e:
         print(f"❌ Failed to send email: {e}")
 
-# --- CUSTOM ERROR HANDLERS ---
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('404.html'), 404
-
-@app.errorhandler(500)
-def internal_server_error(e):
-    return render_template('500.html'), 500
-
 # --- ROUTES ---
 @app.route('/db-upgrade')
 def db_upgrade():
@@ -190,7 +181,6 @@ def calculator(): return render_template('calculator.html')
 @app.route('/contact')
 def contact(): return render_template('contact.html')
 
-# *** FIXED: SUBMIT QUOTE WITH ERROR HANDLING ***
 @app.route('/submit_quote', methods=['POST'])
 def submit_quote():
     full_name = request.form.get('fullName')
@@ -200,7 +190,7 @@ def submit_quote():
     location = request.form.get('location')
     message = request.form.get('message')
     
-    # 1. Save to Database & Send Email (Existing Logic)
+    # 1. Save to Database & Send Email
     try:
         new_quote = Quote(full_name=full_name, email=email, phone=phone, project_type=project_type, location=location, message=message)
         db.session.add(new_quote)
@@ -219,7 +209,7 @@ Message: {message}
         flash("An error occurred saving your quote, but please contact us directly on WhatsApp.", "danger")
         return redirect(url_for('contact'))
 
-    # 2. Generate PDF (NEW SAFETY CATCH)
+    # 2. Generate PDF
     try:
         rendered_html = render_template('pdf_quote.html', name=full_name, email=email, phone=phone, service=project_type, date=datetime.now().strftime("%Y-%m-%d"))
         pdf_file = io.BytesIO()
@@ -233,7 +223,7 @@ Message: {message}
         
     except Exception as e:
         print(f"❌ PDF Generation Error: {e}")
-        # Graceful fallback: If PDF fails, still treat it as success since we got the lead
+        # If PDF fails, still treat it as success since we got the lead
         flash("Quote submitted successfully! (Note: PDF generation failed, but we received your details)", "success")
         return redirect(url_for('home'))
 
@@ -528,5 +518,5 @@ def robots():
     return response
 
 if __name__ == '__main__':
-    # Production Mode (Safety ON)
-    app.run(debug=False)
+    # *** DEBUG ON: This will show us the real error on the screen ***
+    app.run(debug=True)
