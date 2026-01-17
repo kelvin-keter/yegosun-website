@@ -87,6 +87,7 @@
             padding: 24px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             transition: transform 0.2s;
+            height: 100%; /* Ensure full height for charts */
         }
         .stat-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
         
@@ -229,6 +230,23 @@
                             <i class="fa-solid fa-server text-success opacity-50"></i>
                         </div>
                         <h4 class="fw-bold mb-0 text-success">Operational</h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <div class="col-lg-8">
+                    <div class="stat-card h-100">
+                        <h6 class="text-muted text-uppercase small fw-bold mb-4">Lead Velocity (Monthly)</h6>
+                        <canvas id="leadsChart" style="max-height: 300px;"></canvas>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="stat-card h-100">
+                        <h6 class="text-muted text-uppercase small fw-bold mb-4">Project Portfolio</h6>
+                        <div style="position: relative; height: 250px; width: 100%; display: flex; justify-content: center;">
+                            <canvas id="projectsChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -453,5 +471,65 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // 1. Process Data from Jinja to JS
+    const projects = [
+        {% for project in projects %}"{{ project.category }}",{% endfor %}
+    ];
+
+    // Count project categories
+    const categoryCounts = {};
+    projects.forEach(cat => { categoryCounts[cat] = (categoryCounts[cat] || 0) + 1; });
+
+    // Dummy data logic for leads (Placeholder for demonstration, can be connected to real dates later)
+    const totalLeads = {{ quotes|length }};
+    const leadData = [Math.floor(totalLeads * 0.1), Math.floor(totalLeads * 0.2), Math.floor(totalLeads * 0.1), Math.floor(totalLeads * 0.4), Math.floor(totalLeads * 0.2)];
+
+    // 2. Render Leads Chart (Line)
+    const ctx1 = document.getElementById('leadsChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan'],
+            datasets: [{
+                label: 'New Inquiries',
+                data: leadData.length > 0 ? leadData : [0, 0, 0, 0, 0],
+                borderColor: '#2E7D32',
+                backgroundColor: 'rgba(46, 125, 50, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } }
+        }
+    });
+
+    // 3. Render Projects Chart (Doughnut)
+    const ctx2 = document.getElementById('projectsChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(categoryCounts).length > 0 ? Object.keys(categoryCounts) : ['No Data'],
+            datasets: [{
+                data: Object.values(categoryCounts).length > 0 ? Object.values(categoryCounts) : [1],
+                backgroundColor: ['#2E7D32', '#FFA000', '#1a252f', '#4CAF50'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: { legend: { position: 'bottom', labels: { usePointStyle: true } } }
+        }
+    });
+</script>
+
 </body>
 </html>
