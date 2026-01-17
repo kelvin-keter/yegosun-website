@@ -13,7 +13,7 @@ from xhtml2pdf import pisa
 
 app = Flask(__name__)
 
-# --- CONFIGURATION ---
+# --- PRODUCTION SECURITY CONFIGURATION ---
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'yegosun-master-key-2026')
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -29,15 +29,16 @@ else:
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Cookie Security (Temporarily relaxed for Debugging if needed, but keeping safe defaults)
+# Cookie Security
 if os.environ.get('RENDER'):
     app.config['SESSION_COOKIE_SECURE'] = True
     app.config['REMEMBER_COOKIE_SECURE'] = True
 
-# --- EMAIL CONFIGURATION ---
+# --- EMAIL CONFIGURATION (FIXED FOR RENDER) ---
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_PORT'] = 465              # UPDATED: Use SSL Port
+app.config['MAIL_USE_TLS'] = False         # UPDATED: Disable TLS
+app.config['MAIL_USE_SSL'] = True          # UPDATED: Enable SSL
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME') 
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['ADMIN_EMAIL'] = os.environ.get('ADMIN_EMAIL') 
@@ -129,7 +130,33 @@ def send_admin_notification(subject, body):
     except Exception as e:
         print(f"❌ Failed to send email: {e}")
 
+# --- CUSTOM ERROR HANDLERS ---
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
+
 # --- ROUTES ---
+@app.route('/hard-reset-db')
+def hard_reset_db():
+    try:
+        # Warning: This deletes existing data to fix the structure
+        db.drop_all()
+        db.create_all()
+        
+        # Re-create the admin user
+        admin = User(username='admin')
+        admin.set_password('admin123')
+        db.session.add(admin)
+        db.session.commit()
+        
+        return "SUCCESS: Database has been wiped and rebuilt with the new columns."
+    except Exception as e:
+        return f"Error: {e}"
+
 @app.route('/db-upgrade')
 def db_upgrade():
     try:
@@ -181,6 +208,7 @@ def calculator(): return render_template('calculator.html')
 @app.route('/contact')
 def contact(): return render_template('contact.html')
 
+# *** FIXED: SUBMIT QUOTE WITH ERROR HANDLING ***
 @app.route('/submit_quote', methods=['POST'])
 def submit_quote():
     full_name = request.form.get('fullName')
@@ -518,5 +546,5 @@ def robots():
     return response
 
 if __name__ == '__main__':
-    # *** DEBUG ON: This will show us the real error on the screen ***
-    app.run(debug=True)
+    # *** PRODUCTION MODE: Use 465 SSL for emails, so debug is OFF ***
+    app.run(debug=False)
