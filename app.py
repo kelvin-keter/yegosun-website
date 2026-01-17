@@ -1,5 +1,6 @@
 import os
 import io
+import threading  # <--- NEW: Imported for background tasks
 import cloudinary
 import cloudinary.uploader
 from flask import Flask, render_template, request, redirect, url_for, flash, make_response
@@ -13,11 +14,11 @@ from xhtml2pdf import pisa
 
 app = Flask(__name__)
 
-# --- PRODUCTION SECURITY CONFIGURATION ---
+# --- CONFIGURATION ---
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'yegosun-master-key-2026')
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-# Database Connection
+# Database
 database_url = os.environ.get('DATABASE_URL')
 if database_url and database_url.strip():
     if database_url.startswith("postgres://"):
@@ -34,12 +35,12 @@ if os.environ.get('RENDER'):
     app.config['SESSION_COOKIE_SECURE'] = True
     app.config['REMEMBER_COOKIE_SECURE'] = True
 
-# --- EMAIL CONFIGURATION (FIXED FOR RENDER) ---
-# *** CRITICAL FIX: USING SSL PORT 465 TO PREVENT TIMEOUTS ***
+# --- EMAIL CONFIGURATION ---
+# We keep SSL/465 as it's generally more reliable
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 465              # UPDATED: Changed from 587 to 465
-app.config['MAIL_USE_TLS'] = False         # UPDATED: Turned OFF TLS
-app.config['MAIL_USE_SSL'] = True          # UPDATED: Turned ON SSL (Faster/Safer)
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME') 
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['ADMIN_EMAIL'] = os.environ.get('ADMIN_EMAIL') 
@@ -62,10 +63,8 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password_hash = db.Column(db.String(256))
-
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
-
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
@@ -120,25 +119,28 @@ class Quote(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+# --- ASYNC EMAIL LOGIC (Prevents Timeouts) ---
+def send_async_email(app_context, msg):
+    with app_context:
+        try:
+            mail.send(msg)
+            print("✅ Email sent successfully via background thread.")
+        except Exception as e:
+            print(f"❌ Background Email Failed: {e}")
+
 def send_admin_notification(subject, body):
     try:
         admin_email = app.config['ADMIN_EMAIL']
         if not admin_email or not app.config['MAIL_USERNAME']:
             return
+        
         msg = Message(subject, sender=app.config['MAIL_USERNAME'], recipients=[admin_email])
         msg.body = body
-        mail.send(msg)
+        
+        # Fire and forget: Start a new thread so the main website doesn't wait
+        threading.Thread(target=send_async_email, args=(app.app_context(), msg)).start()
     except Exception as e:
-        print(f"❌ Failed to send email: {e}")
-
-# --- CUSTOM ERROR HANDLERS ---
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('404.html'), 404
-
-@app.errorhandler(500)
-def internal_server_error(e):
-    return render_template('500.html'), 500
+        print(f"❌ Failed to initiate email thread: {e}")
 
 # --- ROUTES ---
 @app.route('/db-upgrade')
@@ -150,7 +152,6 @@ def db_upgrade():
             user.set_password('admin123')
             db.session.add(user)
             db.session.commit()
-            return "SUCCESS: DB Checked."
         return "SUCCESS: DB Ready."
     except Exception as e:
         db.session.rollback()
@@ -165,7 +166,7 @@ def hard_reset_db():
         admin.set_password('admin123')
         db.session.add(admin)
         db.session.commit()
-        return "SUCCESS: Database has been wiped and rebuilt."
+        return "SUCCESS: Database Reset."
     except Exception as e:
         return f"Error: {e}"
 
@@ -176,7 +177,7 @@ def home():
         featured_projects = Project.query.order_by(Project.date_posted.desc()).limit(3).all()
         testimonials = Testimonial.query.order_by(Testimonial.date_posted.desc()).limit(3).all()
         services = Service.query.order_by(Service.date_created.asc()).limit(4).all()
-    except Exception as e:
+    except:
         db.session.rollback()
         latest_blogs = []
         featured_projects = []
@@ -205,7 +206,7 @@ def calculator(): return render_template('calculator.html')
 @app.route('/contact')
 def contact(): return render_template('contact.html')
 
-# *** SUBMIT QUOTE WITH ERROR HANDLING ***
+# *** SUBMIT QUOTE (Robust Version) ***
 @app.route('/submit_quote', methods=['POST'])
 def submit_quote():
     full_name = request.form.get('fullName')
@@ -215,27 +216,27 @@ def submit_quote():
     location = request.form.get('location')
     message = request.form.get('message')
     
-    # 1. Save to Database & Send Email
+    # 1. Save to Database
     try:
         new_quote = Quote(full_name=full_name, email=email, phone=phone, project_type=project_type, location=location, message=message)
         db.session.add(new_quote)
         db.session.commit()
-        
-        email_body = f"""New Lead Received:
+    except Exception as e:
+        db.session.rollback()
+        print(f"❌ Database Error: {e}")
+        flash("An error occurred saving your details, please contact us on WhatsApp.", "danger")
+        return redirect(url_for('contact'))
+
+    # 2. Send Email (Async - Won't block/crash page)
+    email_body = f"""New Lead Received:
 Name: {full_name}
 Phone: {phone}
 Type: {project_type}
 Message: {message}
 """
-        send_admin_notification(f"New Lead: {full_name}", email_body)
-    except Exception as e:
-        db.session.rollback()
-        print(f"❌ Database/Email Error: {e}")
-        # Even if DB fails, don't crash.
-        flash("An error occurred saving your quote, but please contact us directly on WhatsApp.", "danger")
-        return redirect(url_for('contact'))
+    send_admin_notification(f"New Lead: {full_name}", email_body)
 
-    # 2. Generate PDF
+    # 3. Generate PDF (With Safety Catch)
     try:
         rendered_html = render_template('pdf_quote.html', name=full_name, email=email, phone=phone, service=project_type, date=datetime.now().strftime("%Y-%m-%d"))
         pdf_file = io.BytesIO()
@@ -246,11 +247,9 @@ Message: {message}
         response.headers['Content-Type'] = 'application/pdf'
         response.headers['Content-Disposition'] = f'attachment; filename=Yegosun_Quote.pdf'
         return response
-        
     except Exception as e:
         print(f"❌ PDF Generation Error: {e}")
-        # If PDF fails, still success for the user
-        flash("Quote submitted successfully! (Note: PDF generation failed, but we received your details)", "success")
+        flash("Quote submitted successfully! (PDF generation failed, but we received your details)", "success")
         return redirect(url_for('home'))
 
 @app.route('/generate_report', methods=['POST'])
@@ -275,16 +274,20 @@ def generate_report():
     roi_years = round((avg_cost / monthly_savings)/12, 1) if monthly_savings > 0 else 0
 
     lead_details = f"Solar Report. Bill: {monthly_bill}. Sys: {recommended_kw}kW. Apps: {', '.join(appliances)}"
+    
+    # DB Save
     try:
         new_lead = Quote(full_name=full_name, email=email, phone=phone, project_type="Solar Report", location="Web Calc", message=lead_details)
         db.session.add(new_lead)
         db.session.commit()
-        email_body = f"""Calculator Lead:\nName: {full_name}\nBill: {monthly_bill}\nSystem: {recommended_kw}kW"""
-        send_admin_notification(f"Calculator Lead: {full_name}", email_body)
-    except: 
+    except:
         db.session.rollback()
-        pass
 
+    # Async Email
+    email_body = f"""Calculator Lead:\nName: {full_name}\nBill: {monthly_bill}\nSystem: {recommended_kw}kW"""
+    send_admin_notification(f"Calculator Lead: {full_name}", email_body)
+
+    # PDF Generation
     rendered_html = render_template('pdf_solar_report.html', name=full_name, date=datetime.now().strftime("%d %b %Y"), bill=monthly_bill, system_size=recommended_kw, cost_min="{:,}".format(est_cost_min), cost_max="{:,}".format(est_cost_max), savings="{:,}".format(yearly_savings), roi=roi_years, appliances=appliances)
     pdf_file = io.BytesIO()
     pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf_file)
