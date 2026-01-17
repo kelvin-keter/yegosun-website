@@ -8,7 +8,7 @@ from sqlalchemy import text
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import datetime, timedelta
 from xhtml2pdf import pisa
 
 app = Flask(__name__)
@@ -95,7 +95,6 @@ class Testimonial(db.Model):
     image_url = db.Column(db.String(300), nullable=True)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-# *** NEW: SERVICE MODEL ***
 class Service(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -137,17 +136,13 @@ def send_admin_notification(subject, body):
 @app.route('/db-upgrade')
 def db_upgrade():
     try:
-        # This will create the new 'Service' table automatically
         db.create_all()
-        
-        # Ensure Admin Exists
         if not User.query.filter_by(username='admin').first():
             user = User(username='admin')
             user.set_password('admin123')
             db.session.add(user)
             db.session.commit()
             return "SUCCESS: Database tables (including Services) created & Admin checked."
-        
         return "SUCCESS: Database checked. All tables ready."
     except Exception as e:
         db.session.rollback()
@@ -159,7 +154,7 @@ def home():
         latest_blogs = BlogPost.query.order_by(BlogPost.date_posted.desc()).limit(3).all()
         featured_projects = Project.query.order_by(Project.date_posted.desc()).limit(3).all()
         testimonials = Testimonial.query.order_by(Testimonial.date_posted.desc()).limit(3).all()
-        services = Service.query.order_by(Service.date_created.asc()).limit(4).all() # Pass services to Home
+        services = Service.query.order_by(Service.date_created.asc()).limit(4).all()
     except Exception as e:
         db.session.rollback()
         print(f"Database Error on Home: {e}")
@@ -176,7 +171,7 @@ def about():
 @app.route('/services')
 def services():
     try:
-        all_services = Service.query.order_by(Service.date_created.asc()).all() # Pass services to Page
+        all_services = Service.query.order_by(Service.date_created.asc()).all()
     except:
         db.session.rollback()
         all_services = []
@@ -293,29 +288,18 @@ def login():
 def dashboard():
     try:
         now_date = datetime.now().strftime("%A, %d %B %Y")
-        
-        # Load ALL data for the dashboard (including Services)
         all_posts = BlogPost.query.order_by(BlogPost.date_posted.desc()).all()
         all_quotes = Quote.query.order_by(Quote.date_submitted.desc()).all()
         all_projects = Project.query.order_by(Project.date_posted.desc()).all()
         testimonials = Testimonial.query.order_by(Testimonial.date_posted.desc()).all()
         services = Service.query.order_by(Service.date_created.desc()).all() 
-        
-        return render_template('dashboard.html', 
-                               posts=all_posts, 
-                               quotes=all_quotes, 
-                               projects=all_projects, 
-                               testimonials=testimonials,
-                               services=services, # Pass services to template
-                               now_date=now_date)
-                               
+        return render_template('dashboard.html', posts=all_posts, quotes=all_quotes, projects=all_projects, testimonials=testimonials, services=services, now_date=now_date)
     except Exception as e:
         db.session.rollback()
         print(f"CRITICAL DASHBOARD ERROR: {e}")
         flash(f"Dashboard crashed: {str(e)}", "danger")
         return redirect(url_for('home'))
 
-# --- SERVICE MANAGEMENT ROUTES (NEW) ---
 @app.route('/service/new', methods=['GET', 'POST'])
 @login_required
 def new_service():
@@ -328,7 +312,6 @@ def new_service():
             if file and file.filename != '':
                 res = cloudinary.uploader.upload(file)
                 image_url = res['secure_url']
-            
             new_service = Service(title=title, description=description, image_url=image_url)
             db.session.add(new_service)
             db.session.commit()
@@ -347,8 +330,6 @@ def delete_service(id):
     db.session.commit()
     flash('Service deleted.', 'success')
     return redirect(url_for('dashboard'))
-
-# ... (Existing Creation/Edit Routes for Posts, Projects, Testimonials) ...
 
 @app.route('/post/new', methods=['GET', 'POST'])
 @login_required
@@ -488,7 +469,6 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
-# --- EMERGENCY ADMIN RESET ROUTE ---
 @app.route('/emergency-reset')
 def emergency_reset():
     try:
@@ -506,6 +486,52 @@ def emergency_reset():
     except Exception as e:
         db.session.rollback()
         return f"Error resetting admin: {e}"
+
+# *** NEW SEO ROUTES ***
+@app.route('/sitemap.xml')
+def sitemap():
+    # Automatically generates a list of all your pages for Google
+    base_url = "https://yegosun-website.onrender.com"
+    
+    # 1. Static Pages
+    pages = []
+    for rule in ['home', 'about', 'services', 'projects', 'contact', 'calculator']:
+        pages.append(f"{base_url}{url_for(rule)}")
+    
+    # 2. Dynamic Blog Posts
+    posts = BlogPost.query.all()
+    for post in posts:
+        pages.append(f"{base_url}{url_for('blog_detail', post_id=post.id)}")
+
+    # Generate XML
+    xml_content = """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">"""
+    
+    for page in pages:
+        xml_content += f"""
+    <url>
+        <loc>{page}</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>"""
+        
+    xml_content += "\n</urlset>"
+    
+    response = make_response(xml_content)
+    response.headers["Content-Type"] = "application/xml"
+    return response
+
+@app.route('/robots.txt')
+def robots():
+    # Tells search engines where to find the sitemap
+    txt = """User-agent: *
+Disallow:
+
+Sitemap: https://yegosun-website.onrender.com/sitemap.xml
+"""
+    response = make_response(txt)
+    response.headers["Content-Type"] = "text/plain"
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)
