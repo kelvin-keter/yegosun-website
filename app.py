@@ -1,6 +1,6 @@
 import os
 import io
-import threading  # <--- NEW: Imported for background tasks
+import threading
 import cloudinary
 import cloudinary.uploader
 from flask import Flask, render_template, request, redirect, url_for, flash, make_response
@@ -35,12 +35,13 @@ if os.environ.get('RENDER'):
     app.config['SESSION_COOKIE_SECURE'] = True
     app.config['REMEMBER_COOKIE_SECURE'] = True
 
-# --- EMAIL CONFIGURATION ---
-# We keep SSL/465 as it's generally more reliable
+# --- EMAIL CONFIGURATION (BACK TO 587 + ASYNC) ---
+# Port 465 was "Unreachable", so we use 587. 
+# The Background Thread will handle the slowness.
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_PORT'] = 587              # UPDATED: Back to 587
+app.config['MAIL_USE_TLS'] = True          # UPDATED: TLS On
+app.config['MAIL_USE_SSL'] = False         # UPDATED: SSL Off
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME') 
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['ADMIN_EMAIL'] = os.environ.get('ADMIN_EMAIL') 
@@ -119,7 +120,7 @@ class Quote(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# --- ASYNC EMAIL LOGIC (Prevents Timeouts) ---
+# --- ASYNC EMAIL LOGIC ---
 def send_async_email(app_context, msg):
     with app_context:
         try:
@@ -137,7 +138,7 @@ def send_admin_notification(subject, body):
         msg = Message(subject, sender=app.config['MAIL_USERNAME'], recipients=[admin_email])
         msg.body = body
         
-        # Fire and forget: Start a new thread so the main website doesn't wait
+        # Fire and forget: Start a new thread
         threading.Thread(target=send_async_email, args=(app.app_context(), msg)).start()
     except Exception as e:
         print(f"❌ Failed to initiate email thread: {e}")
@@ -206,7 +207,7 @@ def calculator(): return render_template('calculator.html')
 @app.route('/contact')
 def contact(): return render_template('contact.html')
 
-# *** SUBMIT QUOTE (Robust Version) ***
+# *** SUBMIT QUOTE ***
 @app.route('/submit_quote', methods=['POST'])
 def submit_quote():
     full_name = request.form.get('fullName')
@@ -227,7 +228,7 @@ def submit_quote():
         flash("An error occurred saving your details, please contact us on WhatsApp.", "danger")
         return redirect(url_for('contact'))
 
-    # 2. Send Email (Async - Won't block/crash page)
+    # 2. Send Email (Async)
     email_body = f"""New Lead Received:
 Name: {full_name}
 Phone: {phone}
@@ -236,7 +237,7 @@ Message: {message}
 """
     send_admin_notification(f"New Lead: {full_name}", email_body)
 
-    # 3. Generate PDF (With Safety Catch)
+    # 3. Generate PDF
     try:
         rendered_html = render_template('pdf_quote.html', name=full_name, email=email, phone=phone, service=project_type, date=datetime.now().strftime("%Y-%m-%d"))
         pdf_file = io.BytesIO()
