@@ -132,9 +132,9 @@
 
     <a href="https://wa.me/254727113141?text=Hello%20Yegosun,%20I%20am%20interested%20in%20a%20solar%20solution." 
        target="_blank" 
-       class="position-fixed bottom-0 end-0 m-4 shadow-lg d-flex align-items-center justify-content-center" 
-       style="width: 60px; height: 60px; background-color: #25D366; border-radius: 50%; z-index: 1000; text-decoration: none; transition: transform 0.3s;">
-        <i class="fa-brands fa-whatsapp fa-2x text-white"></i>
+       class="whatsapp-float">
+       <div class="whatsapp-pulse"></div>
+        <i class="fa-brands fa-whatsapp"></i>
     </a>
 
     <style>
@@ -145,6 +145,49 @@
         }
         .tracking-wide {
             letter-spacing: 2px;
+        }
+        
+        /* --- NEW WHATSAPP WIDGET STYLES --- */
+        .whatsapp-float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 40px;
+            right: 40px;
+            background-color: #25d366;
+            color: #FFF;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 2px 2px 3px #999;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .whatsapp-float:hover {
+            background-color: #128C7E;
+            transform: scale(1.1);
+            color: white;
+        }
+
+        .whatsapp-pulse {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #25d366;
+            opacity: 0.7;
+            z-index: -1;
+            animation: pulse-animation 2s infinite;
+        }
+
+        @keyframes pulse-animation {
+            0% { transform: scale(1); opacity: 0.7; }
+            100% { transform: scale(1.5); opacity: 0; }
         }
     </style>
 
