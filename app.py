@@ -95,6 +95,14 @@ class Testimonial(db.Model):
     image_url = db.Column(db.String(300), nullable=True)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
+# *** NEW: SERVICE MODEL ***
+class Service(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    image_url = db.Column(db.String(300), nullable=True)
+    date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
 class Quote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     full_name = db.Column(db.String(100), nullable=False)
@@ -126,34 +134,23 @@ def send_admin_notification(subject, body):
 
 # --- ROUTES ---
 
-# 1. DATABASE REPAIR ROUTE (Run this to fix the missing column!)
-@app.route('/fix-db-column')
-def fix_db_column():
-    try:
-        with db.engine.connect() as conn:
-            # Force add the missing column
-            conn.execute(text("ALTER TABLE blog_post ADD COLUMN IF NOT EXISTS date_updated TIMESTAMP"))
-            conn.commit()
-        return "SUCCESS: 'date_updated' column added to blog_post table! You can now log in."
-    except Exception as e:
-        db.session.rollback()
-        return f"Error fixing DB: {e}"
-
 @app.route('/db-upgrade')
 def db_upgrade():
     try:
+        # This will create the new 'Service' table automatically
         db.create_all()
-        # *** AUTO-CREATE ADMIN USER ***
+        
+        # Ensure Admin Exists
         if not User.query.filter_by(username='admin').first():
             user = User(username='admin')
             user.set_password('admin123')
             db.session.add(user)
             db.session.commit()
-            return "SUCCESS: Database tables created & Admin user (admin/admin123) added."
+            return "SUCCESS: Database tables (including Services) created & Admin checked."
         
-        return "SUCCESS: Database checked. Admin already exists."
+        return "SUCCESS: Database checked. All tables ready."
     except Exception as e:
-        db.session.rollback() # <--- SAFETY ROLLBACK
+        db.session.rollback()
         return f"Error: {e}"
 
 @app.route('/')
@@ -162,22 +159,28 @@ def home():
         latest_blogs = BlogPost.query.order_by(BlogPost.date_posted.desc()).limit(3).all()
         featured_projects = Project.query.order_by(Project.date_posted.desc()).limit(3).all()
         testimonials = Testimonial.query.order_by(Testimonial.date_posted.desc()).limit(3).all()
+        services = Service.query.order_by(Service.date_created.asc()).limit(4).all() # Pass services to Home
     except Exception as e:
-        db.session.rollback() # <--- SAFETY ROLLBACK
+        db.session.rollback()
         print(f"Database Error on Home: {e}")
         latest_blogs = []
         featured_projects = []
         testimonials = []
-    return render_template('index.html', blogs=latest_blogs, projects=featured_projects, testimonials=testimonials)
+        services = []
+    return render_template('index.html', blogs=latest_blogs, projects=featured_projects, testimonials=testimonials, services=services)
 
-# ... (Rest of your routes remain EXACTLY the same) ...
 @app.route('/about')
 def about():
     return render_template('about.html')
 
 @app.route('/services')
 def services():
-    return render_template('services.html')
+    try:
+        all_services = Service.query.order_by(Service.date_created.asc()).all() # Pass services to Page
+    except:
+        db.session.rollback()
+        all_services = []
+    return render_template('services.html', services=all_services)
 
 @app.route('/projects')
 def projects():
@@ -211,7 +214,7 @@ def submit_quote():
         email_body = f"""New Lead:\nName: {full_name}\nPhone: {phone}\nType: {project_type}\nMessage: {message}"""
         send_admin_notification(f"New Lead: {full_name}", email_body)
     except Exception as e:
-        db.session.rollback() # <--- SAFETY ROLLBACK
+        db.session.rollback()
         print(f"Error: {e}")
     rendered_html = render_template('pdf_quote.html', name=full_name, email=email, phone=phone, service=project_type, date=datetime.now().strftime("%Y-%m-%d"))
     pdf_file = io.BytesIO()
@@ -281,37 +284,71 @@ def login():
             else:
                 flash('Invalid credentials', 'danger')
         except Exception as e:
-            db.session.rollback() # <--- SAFETY ROLLBACK
+            db.session.rollback()
             flash(f"Login error: {str(e)}", 'danger')
     return render_template('login.html')
 
-# --- FIXED DASHBOARD ROUTE ---
 @app.route('/dashboard')
 @login_required
 def dashboard():
     try:
-        # 1. DEFINE THE MISSING VARIABLE
         now_date = datetime.now().strftime("%A, %d %B %Y")
         
-        # 2. QUERY DATABASE
+        # Load ALL data for the dashboard (including Services)
         all_posts = BlogPost.query.order_by(BlogPost.date_posted.desc()).all()
         all_quotes = Quote.query.order_by(Quote.date_submitted.desc()).all()
         all_projects = Project.query.order_by(Project.date_posted.desc()).all()
         testimonials = Testimonial.query.order_by(Testimonial.date_posted.desc()).all()
+        services = Service.query.order_by(Service.date_created.desc()).all() 
         
-        # 3. PASS VARIABLE TO TEMPLATE
         return render_template('dashboard.html', 
                                posts=all_posts, 
                                quotes=all_quotes, 
                                projects=all_projects, 
                                testimonials=testimonials,
+                               services=services, # Pass services to template
                                now_date=now_date)
                                
     except Exception as e:
-        db.session.rollback() # <--- SAFETY ROLLBACK
+        db.session.rollback()
         print(f"CRITICAL DASHBOARD ERROR: {e}")
         flash(f"Dashboard crashed: {str(e)}", "danger")
         return redirect(url_for('home'))
+
+# --- SERVICE MANAGEMENT ROUTES (NEW) ---
+@app.route('/service/new', methods=['GET', 'POST'])
+@login_required
+def new_service():
+    if request.method == 'POST':
+        try:
+            title = request.form.get('title')
+            description = request.form.get('description')
+            file = request.files.get('image')
+            image_url = ""
+            if file and file.filename != '':
+                res = cloudinary.uploader.upload(file)
+                image_url = res['secure_url']
+            
+            new_service = Service(title=title, description=description, image_url=image_url)
+            db.session.add(new_service)
+            db.session.commit()
+            flash('Service added!', 'success')
+            return redirect(url_for('dashboard'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error: {str(e)}', 'danger')
+    return render_template('create_service.html')
+
+@app.route('/service/<int:id>/delete')
+@login_required
+def delete_service(id):
+    service = Service.query.get_or_404(id)
+    db.session.delete(service)
+    db.session.commit()
+    flash('Service deleted.', 'success')
+    return redirect(url_for('dashboard'))
+
+# ... (Existing Creation/Edit Routes for Posts, Projects, Testimonials) ...
 
 @app.route('/post/new', methods=['GET', 'POST'])
 @login_required
@@ -332,7 +369,7 @@ def new_post():
             flash('Post created!', 'success')
             return redirect(url_for('dashboard'))
         except Exception as e:
-            db.session.rollback() # <--- SAFETY ROLLBACK
+            db.session.rollback()
             flash(f'Error: {str(e)}', 'danger')
     return render_template('create_post.html')
 
@@ -390,7 +427,7 @@ def new_project():
             flash('Project added!', 'success')
             return redirect(url_for('dashboard'))
         except Exception as e:
-            db.session.rollback() # <--- SAFETY ROLLBACK
+            db.session.rollback()
             flash(f'Error: {str(e)}', 'danger')
     return render_template('create_project.html')
 
@@ -423,7 +460,7 @@ def new_testimonial():
             flash('Testimonial added!', 'success')
             return redirect(url_for('dashboard'))
         except Exception as e:
-            db.session.rollback() # <--- SAFETY ROLLBACK
+            db.session.rollback()
             flash(f'Error: {str(e)}', 'danger')
     return render_template('create_testimonial.html')
 
@@ -455,14 +492,11 @@ def logout():
 @app.route('/emergency-reset')
 def emergency_reset():
     try:
-        # 1. Delete any existing admin user (to clear bad passwords)
         existing_admin = User.query.filter_by(username='admin').first()
         if existing_admin:
             db.session.delete(existing_admin)
             db.session.commit()
-            print("Deleted old admin.")
         
-        # 2. Create a fresh admin user
         new_admin = User(username='admin')
         new_admin.set_password('admin123')
         db.session.add(new_admin)
@@ -470,7 +504,7 @@ def emergency_reset():
         
         return "SUCCESS! Admin user reset. Login with: admin / admin123"
     except Exception as e:
-        db.session.rollback() # <--- CRITICAL FIX: RESET THE DB IF THIS FAILS
+        db.session.rollback()
         return f"Error resetting admin: {e}"
 
 if __name__ == '__main__':
