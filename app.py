@@ -14,11 +14,10 @@ from xhtml2pdf import pisa
 app = Flask(__name__)
 
 # --- PRODUCTION SECURITY CONFIGURATION ---
-# 1. Secret Key: Tries to get from Environment, falls back to a hardcoded one ONLY for local dev
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'yegosun-master-key-2026')
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-# 2. Database Connection
+# Database Connection
 database_url = os.environ.get('DATABASE_URL')
 if database_url and database_url.strip():
     if database_url.startswith("postgres://"):
@@ -30,8 +29,7 @@ else:
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# 3. Cookie Security (Crucial for Production)
-# Only send cookies over HTTPS if we are not running locally
+# Cookie Security
 if os.environ.get('RENDER'):
     app.config['SESSION_COOKIE_SECURE'] = True
     app.config['REMEMBER_COOKIE_SECURE'] = True
@@ -57,7 +55,7 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-# --- MODELS (Kept exactly as they were) ---
+# --- MODELS ---
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -131,15 +129,13 @@ def send_admin_notification(subject, body):
     except Exception as e:
         print(f"❌ Failed to send email: {e}")
 
-# --- CUSTOM ERROR HANDLERS (NEW) ---
+# --- CUSTOM ERROR HANDLERS ---
 @app.errorhandler(404)
 def page_not_found(e):
-    # Instead of a crash, show a nice page
     return render_template('404.html'), 404
 
 @app.errorhandler(500)
 def internal_server_error(e):
-    # Instead of showing code, show a polite error message
     return render_template('500.html'), 500
 
 # --- ROUTES ---
@@ -194,6 +190,7 @@ def calculator(): return render_template('calculator.html')
 @app.route('/contact')
 def contact(): return render_template('contact.html')
 
+# *** FIXED: SUBMIT QUOTE WITH ERROR HANDLING ***
 @app.route('/submit_quote', methods=['POST'])
 def submit_quote():
     full_name = request.form.get('fullName')
@@ -202,22 +199,43 @@ def submit_quote():
     project_type = request.form.get('projectType')
     location = request.form.get('location')
     message = request.form.get('message')
+    
+    # 1. Save to Database & Send Email (Existing Logic)
     try:
         new_quote = Quote(full_name=full_name, email=email, phone=phone, project_type=project_type, location=location, message=message)
         db.session.add(new_quote)
         db.session.commit()
-        email_body = f"""New Lead:\nName: {full_name}\nPhone: {phone}\nType: {project_type}\nMessage: {message}"""
+        
+        email_body = f"""New Lead Received:
+Name: {full_name}
+Phone: {phone}
+Type: {project_type}
+Message: {message}
+"""
         send_admin_notification(f"New Lead: {full_name}", email_body)
     except Exception as e:
         db.session.rollback()
-    rendered_html = render_template('pdf_quote.html', name=full_name, email=email, phone=phone, service=project_type, date=datetime.now().strftime("%Y-%m-%d"))
-    pdf_file = io.BytesIO()
-    pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf_file)
-    pdf_file.seek(0)
-    response = make_response(pdf_file.read())
-    response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = f'attachment; filename=Yegosun_Quote.pdf'
-    return response
+        print(f"❌ Database/Email Error: {e}")
+        flash("An error occurred saving your quote, but please contact us directly on WhatsApp.", "danger")
+        return redirect(url_for('contact'))
+
+    # 2. Generate PDF (NEW SAFETY CATCH)
+    try:
+        rendered_html = render_template('pdf_quote.html', name=full_name, email=email, phone=phone, service=project_type, date=datetime.now().strftime("%Y-%m-%d"))
+        pdf_file = io.BytesIO()
+        pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf_file)
+        pdf_file.seek(0)
+        
+        response = make_response(pdf_file.read())
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = f'attachment; filename=Yegosun_Quote.pdf'
+        return response
+        
+    except Exception as e:
+        print(f"❌ PDF Generation Error: {e}")
+        # Graceful fallback: If PDF fails, still treat it as success since we got the lead
+        flash("Quote submitted successfully! (Note: PDF generation failed, but we received your details)", "success")
+        return redirect(url_for('home'))
 
 @app.route('/generate_report', methods=['POST'])
 def generate_report():
@@ -510,5 +528,5 @@ def robots():
     return response
 
 if __name__ == '__main__':
-    # *** PRODUCTION CHANGE: Disable Debug Mode ***
+    # Production Mode (Safety ON)
     app.run(debug=False)
