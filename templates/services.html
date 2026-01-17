@@ -12,91 +12,67 @@
 
 <section class="py-5 bg-white">
     <div class="container py-5">
-        <div class="row align-items-center g-5">
-            <div class="col-lg-6 order-2 order-lg-1">
-                <div class="d-flex align-items-center mb-3">
-                    <span class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;"><i class="fa-solid fa-industry fa-lg"></i></span>
-                    <h6 class="text-success fw-bold text-uppercase mb-0 tracking-wide">Commercial & Industrial</h6>
-                </div>
-                <h2 class="fw-extrabold mb-4 display-6">Heavy-Duty Power for Factories & Malls</h2>
-                <p class="text-muted lead mb-4">Stabilize your voltage and slash operational costs. Our 3-phase hybrid systems are built to handle high-inductive loads like motors, cooling units, and heavy machinery.</p>
+        
+        {% if services %}
+            {% for service in services %}
+            <div class="row align-items-center g-5 mb-5 pb-5 border-bottom">
                 
-                <ul class="list-unstyled mb-5">
-                    <li class="mb-3 d-flex align-items-start"><i class="fa-solid fa-circle-check text-warning mt-1 me-3"></i> <span><strong>Peak Shaving:</strong> Automatically switch to battery during peak tariff hours to save costs.</span></li>
-                    <li class="mb-3 d-flex align-items-start"><i class="fa-solid fa-circle-check text-warning mt-1 me-3"></i> <span><strong>Voltage Stabilization:</strong> Protect expensive machinery from grid fluctuations.</span></li>
-                    <li class="mb-3 d-flex align-items-start"><i class="fa-solid fa-circle-check text-warning mt-1 me-3"></i> <span><strong>Scalable Design:</strong> Modular architecture allowing expansion from 50kW to 1MW+.</span></li>
-                </ul>
-                <a href="{{ url_for('contact') }}" class="btn btn-outline-dark rounded-pill px-4 fw-bold">Request Industrial Audit</a>
-            </div>
-            <div class="col-lg-6 order-1 order-lg-2">
-                <div class="position-relative">
-                    <div class="bg-warning position-absolute top-0 end-0 rounded-4" style="width: 100%; height: 100%; transform: translate(20px, -20px); z-index: 0;"></div>
-                    <img src="{{ url_for('static', filename='images/project-industry.jpg') }}" class="img-fluid rounded-4 shadow-lg position-relative" style="z-index: 1;" alt="Industrial Solar">
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="py-5" style="background-color: #f8f9fa;">
-    <div class="container py-5">
-        <div class="row align-items-center g-5">
-            <div class="col-lg-6">
-                <div class="position-relative">
-                    <div class="bg-success position-absolute bottom-0 start-0 rounded-4" style="width: 100%; height: 100%; transform: translate(-20px, 20px); z-index: 0;"></div>
-                    <img src="{{ url_for('static', filename='images/project-school.jpg') }}" class="img-fluid rounded-4 shadow-lg position-relative" style="z-index: 1;" alt="School Solar">
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="d-flex align-items-center mb-3">
-                    <span class="bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;"><i class="fa-solid fa-school fa-lg"></i></span>
-                    <h6 class="text-warning fw-bold text-uppercase mb-0 tracking-wide">Institutions & Schools</h6>
-                </div>
-                <h2 class="fw-extrabold mb-4 display-6">Uninterrupted Learning, Reduced Bills</h2>
-                <p class="text-muted lead mb-4">Schools and hospitals cannot afford power cuts. We design Grid-Tie systems that prioritize your essential loads (labs, admin blocks) while feeding excess power back to reduce bills.</p>
-                
-                <div class="row g-4 mb-5">
-                    <div class="col-6">
-                        <h3 class="fw-bold text-dark mb-0">60%</h3>
-                        <p class="text-muted small">Average Bill Reduction</p>
+                {% if loop.index is odd %}
+                    <div class="col-lg-6 order-2 order-lg-1">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                <i class="fa-solid fa-bolt fa-lg"></i>
+                            </span>
+                            <h6 class="text-success fw-bold text-uppercase mb-0 tracking-wide">Service {{ loop.index }}</h6>
+                        </div>
+                        <h2 class="fw-extrabold mb-4 display-6">{{ service.title }}</h2>
+                        <p class="text-muted lead mb-4">{{ service.description }}</p>
+                        <a href="{{ url_for('contact') }}" class="btn btn-outline-dark rounded-pill px-4 fw-bold">Request Quote</a>
                     </div>
-                    <div class="col-6">
-                        <h3 class="fw-bold text-dark mb-0">24/7</h3>
-                        <p class="text-muted small">Uptime Reliability</p>
+                    <div class="col-lg-6 order-1 order-lg-2">
+                        <div class="position-relative">
+                            <div class="bg-warning position-absolute top-0 end-0 rounded-4" style="width: 100%; height: 100%; transform: translate(20px, -20px); z-index: 0;"></div>
+                            {% if service.image_url %}
+                            <img src="{{ service.image_url }}" class="img-fluid rounded-4 shadow-lg position-relative" style="z-index: 1; width: 100%; height: 350px; object-fit: cover;" alt="{{ service.title }}">
+                            {% else %}
+                            <img src="{{ url_for('static', filename='images/project-industry.jpg') }}" class="img-fluid rounded-4 shadow-lg position-relative" style="z-index: 1;" alt="Placeholder">
+                            {% endif %}
+                        </div>
                     </div>
-                </div>
-                
-                <a href="{{ url_for('calculator') }}" class="btn btn-success rounded-pill px-4 fw-bold shadow-sm">Calculate Savings</a>
-            </div>
-        </div>
-    </div>
-</section>
 
-<section class="py-5 bg-white">
-    <div class="container py-5">
-        <div class="row align-items-center g-5">
-            <div class="col-lg-6 order-2 order-lg-1">
-                <div class="d-flex align-items-center mb-3">
-                    <span class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;"><i class="fa-solid fa-faucet-drip fa-lg"></i></span>
-                    <h6 class="text-primary fw-bold text-uppercase mb-0 tracking-wide">Water Pumping</h6>
-                </div>
-                <h2 class="fw-extrabold mb-4 display-6">Diesel-Free Water Supply</h2>
-                <p class="text-muted lead mb-4">The most cost-effective solution for communities and agriculture. Our Direct-Drive systems eliminate the need for batteries, pumping water whenever the sun shines.</p>
-                
-                <ul class="list-unstyled mb-5">
-                    <li class="mb-2"><i class="fa-solid fa-check text-primary me-2"></i> Zero fuel costs</li>
-                    <li class="mb-2"><i class="fa-solid fa-check text-primary me-2"></i> Heads up to 300 meters</li>
-                    <li class="mb-2"><i class="fa-solid fa-check text-primary me-2"></i> Smart float-switch automation</li>
-                </ul>
-                <a href="{{ url_for('contact') }}" class="btn btn-outline-primary rounded-pill px-4 fw-bold">Get Pumping Quote</a>
+                {% else %}
+                    <div class="col-lg-6 order-2 order-lg-2"> <div class="d-flex align-items-center mb-3">
+                            <span class="bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                <i class="fa-solid fa-solar-panel fa-lg"></i>
+                            </span>
+                            <h6 class="text-warning fw-bold text-uppercase mb-0 tracking-wide">Service {{ loop.index }}</h6>
+                        </div>
+                        <h2 class="fw-extrabold mb-4 display-6">{{ service.title }}</h2>
+                        <p class="text-muted lead mb-4">{{ service.description }}</p>
+                        <a href="{{ url_for('contact') }}" class="btn btn-outline-dark rounded-pill px-4 fw-bold">Request Quote</a>
+                    </div>
+                    <div class="col-lg-6 order-1 order-lg-1"> <div class="position-relative">
+                            <div class="bg-success position-absolute bottom-0 start-0 rounded-4" style="width: 100%; height: 100%; transform: translate(-20px, 20px); z-index: 0;"></div>
+                            {% if service.image_url %}
+                            <img src="{{ service.image_url }}" class="img-fluid rounded-4 shadow-lg position-relative" style="z-index: 1; width: 100%; height: 350px; object-fit: cover;" alt="{{ service.title }}">
+                            {% else %}
+                            <img src="{{ url_for('static', filename='images/project-school.jpg') }}" class="img-fluid rounded-4 shadow-lg position-relative" style="z-index: 1;" alt="Placeholder">
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+
             </div>
-            <div class="col-lg-6 order-1 order-lg-2">
-                <div class="position-relative">
-                    <div class="bg-primary position-absolute top-0 end-0 rounded-4" style="width: 100%; height: 100%; transform: translate(20px, -20px); z-index: 0; opacity: 0.2;"></div>
-                    <img src="{{ url_for('static', filename='images/project-water.jpg') }}" class="img-fluid rounded-4 shadow-lg position-relative" style="z-index: 1;" alt="Solar Water">
-                </div>
+            {% endfor %}
+
+        {% else %}
+            <div class="text-center py-5">
+                <div class="mb-4 text-muted opacity-25"><i class="fa-solid fa-server fa-4x"></i></div>
+                <h3 class="fw-bold">Services Loading...</h3>
+                <p class="text-muted">We are currently updating our service catalog. Please check back in a few minutes.</p>
+                <a href="{{ url_for('contact') }}" class="btn btn-success rounded-pill px-4">Contact Support</a>
             </div>
-        </div>
+        {% endif %}
     </div>
 </section>
 
