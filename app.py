@@ -35,10 +35,11 @@ if os.environ.get('RENDER'):
     app.config['REMEMBER_COOKIE_SECURE'] = True
 
 # --- EMAIL CONFIGURATION (FIXED FOR RENDER) ---
+# *** CRITICAL FIX: USING SSL PORT 465 TO PREVENT TIMEOUTS ***
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 465              # UPDATED: Use SSL Port
-app.config['MAIL_USE_TLS'] = False         # UPDATED: Disable TLS
-app.config['MAIL_USE_SSL'] = True          # UPDATED: Enable SSL
+app.config['MAIL_PORT'] = 465              # UPDATED: Changed from 587 to 465
+app.config['MAIL_USE_TLS'] = False         # UPDATED: Turned OFF TLS
+app.config['MAIL_USE_SSL'] = True          # UPDATED: Turned ON SSL (Faster/Safer)
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME') 
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['ADMIN_EMAIL'] = os.environ.get('ADMIN_EMAIL') 
@@ -140,23 +141,6 @@ def internal_server_error(e):
     return render_template('500.html'), 500
 
 # --- ROUTES ---
-@app.route('/hard-reset-db')
-def hard_reset_db():
-    try:
-        # Warning: This deletes existing data to fix the structure
-        db.drop_all()
-        db.create_all()
-        
-        # Re-create the admin user
-        admin = User(username='admin')
-        admin.set_password('admin123')
-        db.session.add(admin)
-        db.session.commit()
-        
-        return "SUCCESS: Database has been wiped and rebuilt with the new columns."
-    except Exception as e:
-        return f"Error: {e}"
-
 @app.route('/db-upgrade')
 def db_upgrade():
     try:
@@ -170,6 +154,19 @@ def db_upgrade():
         return "SUCCESS: DB Ready."
     except Exception as e:
         db.session.rollback()
+        return f"Error: {e}"
+
+@app.route('/hard-reset-db')
+def hard_reset_db():
+    try:
+        db.drop_all()
+        db.create_all()
+        admin = User(username='admin')
+        admin.set_password('admin123')
+        db.session.add(admin)
+        db.session.commit()
+        return "SUCCESS: Database has been wiped and rebuilt."
+    except Exception as e:
         return f"Error: {e}"
 
 @app.route('/')
@@ -208,7 +205,7 @@ def calculator(): return render_template('calculator.html')
 @app.route('/contact')
 def contact(): return render_template('contact.html')
 
-# *** FIXED: SUBMIT QUOTE WITH ERROR HANDLING ***
+# *** SUBMIT QUOTE WITH ERROR HANDLING ***
 @app.route('/submit_quote', methods=['POST'])
 def submit_quote():
     full_name = request.form.get('fullName')
@@ -234,6 +231,7 @@ Message: {message}
     except Exception as e:
         db.session.rollback()
         print(f"❌ Database/Email Error: {e}")
+        # Even if DB fails, don't crash.
         flash("An error occurred saving your quote, but please contact us directly on WhatsApp.", "danger")
         return redirect(url_for('contact'))
 
@@ -251,7 +249,7 @@ Message: {message}
         
     except Exception as e:
         print(f"❌ PDF Generation Error: {e}")
-        # If PDF fails, still treat it as success since we got the lead
+        # If PDF fails, still success for the user
         flash("Quote submitted successfully! (Note: PDF generation failed, but we received your details)", "success")
         return redirect(url_for('home'))
 
@@ -546,5 +544,4 @@ def robots():
     return response
 
 if __name__ == '__main__':
-    # *** PRODUCTION MODE: Use 465 SSL for emails, so debug is OFF ***
     app.run(debug=False)
