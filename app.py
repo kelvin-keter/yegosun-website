@@ -1,5 +1,6 @@
 import os
 import io
+import socket  # <--- NEW IMPORT
 import threading
 import cloudinary
 import cloudinary.uploader
@@ -11,6 +12,15 @@ from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from xhtml2pdf import pisa
+
+# --- NETWORK FIX: FORCE IPv4 ---
+# This fixes [Errno 101] Network is unreachable by ignoring IPv6
+old_getaddrinfo = socket.getaddrinfo
+def new_getaddrinfo(*args, **kwargs):
+    responses = old_getaddrinfo(*args, **kwargs)
+    return [response for response in responses if response[0] == socket.AF_INET]
+socket.getaddrinfo = new_getaddrinfo
+# -------------------------------
 
 app = Flask(__name__)
 
@@ -36,6 +46,7 @@ if os.environ.get('RENDER'):
     app.config['REMEMBER_COOKIE_SECURE'] = True
 
 # --- EMAIL CONFIGURATION ---
+# We use Port 587 (TLS) combined with the IPv4 patch above
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
@@ -122,6 +133,7 @@ def load_user(user_id):
 def send_async_email(app_context, msg):
     with app_context:
         try:
+            # Force reconnection inside the thread
             mail.send(msg)
             print("✅ Email sent successfully via background thread.")
         except Exception as e:
@@ -205,7 +217,7 @@ def calculator(): return render_template('calculator.html')
 @app.route('/contact')
 def contact(): return render_template('contact.html')
 
-# --- NEW: SUBMIT QUOTE (Step 1: Process & Redirect) ---
+# --- SUBMIT QUOTE (With Success Page Redirect) ---
 @app.route('/submit_quote', methods=['POST'])
 def submit_quote():
     full_name = request.form.get('fullName')
@@ -225,7 +237,7 @@ def submit_quote():
         email_body = f"New Lead Received:\nName: {full_name}\nPhone: {phone}\nType: {project_type}\nMessage: {message}"
         send_admin_notification(f"New Lead: {full_name}", email_body)
         
-        # 3. Redirect to Success Page (Pass the ID so we know which PDF to generate)
+        # 3. Redirect to Success Page
         return redirect(url_for('quote_success', quote_id=new_quote.id))
         
     except Exception as e:
@@ -234,18 +246,16 @@ def submit_quote():
         flash("An error occurred. Please contact us on WhatsApp.", "danger")
         return redirect(url_for('contact'))
 
-# --- NEW: SUCCESS PAGE (Step 2: Show Message) ---
+# --- SUCCESS PAGE ---
 @app.route('/quote-success/<int:quote_id>')
 def quote_success(quote_id):
-    # This page confirms success and triggers the download via JavaScript
     quote = Quote.query.get_or_404(quote_id)
     return render_template('quote_success.html', quote=quote)
 
-# --- NEW: DOWNLOAD ROUTE (Step 3: Generate PDF) ---
+# --- DOWNLOAD ROUTE ---
 @app.route('/download-pdf/<int:quote_id>')
 def download_pdf(quote_id):
     quote = Quote.query.get_or_404(quote_id)
-    
     try:
         rendered_html = render_template('pdf_quote.html', 
                                       name=quote.full_name, 
@@ -253,18 +263,15 @@ def download_pdf(quote_id):
                                       phone=quote.phone, 
                                       service=quote.project_type, 
                                       date=quote.date_submitted.strftime("%Y-%m-%d"))
-        
         pdf_file = io.BytesIO()
         pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf_file)
         pdf_file.seek(0)
-        
         response = make_response(pdf_file.read())
         response.headers['Content-Type'] = 'application/pdf'
         response.headers['Content-Disposition'] = f'attachment; filename=Yegosun_Quote_{quote.id}.pdf'
         return response
     except Exception as e:
-        print(f"PDF Error: {e}")
-        return "Error generating PDF", 500
+        return f"Error: {e}", 500
 
 @app.route('/generate_report', methods=['POST'])
 def generate_report():
