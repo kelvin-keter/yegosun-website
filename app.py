@@ -8,29 +8,33 @@ from sqlalchemy import text
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, timedelta
+from datetime import datetime
 from xhtml2pdf import pisa
 
 app = Flask(__name__)
 
-# --- CONFIGURATION ---
+# --- PRODUCTION SECURITY CONFIGURATION ---
+# 1. Secret Key: Tries to get from Environment, falls back to a hardcoded one ONLY for local dev
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'yegosun-master-key-2026')
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-# *** ROBUST DATABASE CONNECTION LOGIC ***
+# 2. Database Connection
 database_url = os.environ.get('DATABASE_URL')
-
 if database_url and database_url.strip():
     if database_url.startswith("postgres://"):
         app.config['SQLALCHEMY_DATABASE_URI'] = database_url.replace("postgres://", "postgresql://", 1)
     else:
         app.config['SQLALCHEMY_DATABASE_URI'] = database_url
-    print(f"✅ CONNECTED TO EXTERNAL DATABASE") 
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'yegosun.db')
-    print("⚠️ WARNING: DATABASE_URL MISSING. USING LOCAL DB.")
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# 3. Cookie Security (Crucial for Production)
+# Only send cookies over HTTPS if we are not running locally
+if os.environ.get('RENDER'):
+    app.config['SESSION_COOKIE_SECURE'] = True
+    app.config['REMEMBER_COOKIE_SECURE'] = True
 
 # --- EMAIL CONFIGURATION ---
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -53,7 +57,7 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-# --- MODELS ---
+# --- MODELS (Kept exactly as they were) ---
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -116,23 +120,29 @@ class Quote(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# --- HELPER: SEND EMAIL ---
 def send_admin_notification(subject, body):
     try:
         admin_email = app.config['ADMIN_EMAIL']
         if not admin_email or not app.config['MAIL_USERNAME']:
-            print("⚠️ Email config missing. Skipping notification.")
             return
-
         msg = Message(subject, sender=app.config['MAIL_USERNAME'], recipients=[admin_email])
         msg.body = body
         mail.send(msg)
-        print("✅ Notification email sent successfully.")
     except Exception as e:
         print(f"❌ Failed to send email: {e}")
 
-# --- ROUTES ---
+# --- CUSTOM ERROR HANDLERS (NEW) ---
+@app.errorhandler(404)
+def page_not_found(e):
+    # Instead of a crash, show a nice page
+    return render_template('404.html'), 404
 
+@app.errorhandler(500)
+def internal_server_error(e):
+    # Instead of showing code, show a polite error message
+    return render_template('500.html'), 500
+
+# --- ROUTES ---
 @app.route('/db-upgrade')
 def db_upgrade():
     try:
@@ -142,8 +152,8 @@ def db_upgrade():
             user.set_password('admin123')
             db.session.add(user)
             db.session.commit()
-            return "SUCCESS: Database tables (including Services) created & Admin checked."
-        return "SUCCESS: Database checked. All tables ready."
+            return "SUCCESS: DB Checked."
+        return "SUCCESS: DB Ready."
     except Exception as e:
         db.session.rollback()
         return f"Error: {e}"
@@ -157,7 +167,6 @@ def home():
         services = Service.query.order_by(Service.date_created.asc()).limit(4).all()
     except Exception as e:
         db.session.rollback()
-        print(f"Database Error on Home: {e}")
         latest_blogs = []
         featured_projects = []
         testimonials = []
@@ -165,34 +174,25 @@ def home():
     return render_template('index.html', blogs=latest_blogs, projects=featured_projects, testimonials=testimonials, services=services)
 
 @app.route('/about')
-def about():
-    return render_template('about.html')
+def about(): return render_template('about.html')
 
 @app.route('/services')
 def services():
-    try:
-        all_services = Service.query.order_by(Service.date_created.asc()).all()
-    except:
-        db.session.rollback()
-        all_services = []
+    try: all_services = Service.query.order_by(Service.date_created.asc()).all()
+    except: all_services = []
     return render_template('services.html', services=all_services)
 
 @app.route('/projects')
 def projects():
-    try:
-        all_projects = Project.query.order_by(Project.date_posted.desc()).all()
-    except:
-        db.session.rollback()
-        all_projects = []
+    try: all_projects = Project.query.order_by(Project.date_posted.desc()).all()
+    except: all_projects = []
     return render_template('projects.html', projects=all_projects)
 
 @app.route('/calculator')
-def calculator():
-    return render_template('calculator.html')
+def calculator(): return render_template('calculator.html')
 
 @app.route('/contact')
-def contact():
-    return render_template('contact.html')
+def contact(): return render_template('contact.html')
 
 @app.route('/submit_quote', methods=['POST'])
 def submit_quote():
@@ -210,7 +210,6 @@ def submit_quote():
         send_admin_notification(f"New Lead: {full_name}", email_body)
     except Exception as e:
         db.session.rollback()
-        print(f"Error: {e}")
     rendered_html = render_template('pdf_quote.html', name=full_name, email=email, phone=phone, service=project_type, date=datetime.now().strftime("%Y-%m-%d"))
     pdf_file = io.BytesIO()
     pisa.CreatePDF(io.StringIO(rendered_html), dest=pdf_file)
@@ -296,7 +295,6 @@ def dashboard():
         return render_template('dashboard.html', posts=all_posts, quotes=all_quotes, projects=all_projects, testimonials=testimonials, services=services, now_date=now_date)
     except Exception as e:
         db.session.rollback()
-        print(f"CRITICAL DASHBOARD ERROR: {e}")
         flash(f"Dashboard crashed: {str(e)}", "danger")
         return redirect(url_for('home'))
 
@@ -476,62 +474,41 @@ def emergency_reset():
         if existing_admin:
             db.session.delete(existing_admin)
             db.session.commit()
-        
         new_admin = User(username='admin')
         new_admin.set_password('admin123')
         db.session.add(new_admin)
         db.session.commit()
-        
-        return "SUCCESS! Admin user reset. Login with: admin / admin123"
+        return "SUCCESS! Admin user reset."
     except Exception as e:
         db.session.rollback()
         return f"Error resetting admin: {e}"
 
-# *** NEW SEO ROUTES ***
 @app.route('/sitemap.xml')
 def sitemap():
-    # Automatically generates a list of all your pages for Google
     base_url = "https://yegosun-website.onrender.com"
-    
-    # 1. Static Pages
     pages = []
     for rule in ['home', 'about', 'services', 'projects', 'contact', 'calculator']:
         pages.append(f"{base_url}{url_for(rule)}")
-    
-    # 2. Dynamic Blog Posts
     posts = BlogPost.query.all()
     for post in posts:
         pages.append(f"{base_url}{url_for('blog_detail', post_id=post.id)}")
-
-    # Generate XML
     xml_content = """<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">"""
-    
     for page in pages:
         xml_content += f"""
-    <url>
-        <loc>{page}</loc>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-    </url>"""
-        
+    <url><loc>{page}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>"""
     xml_content += "\n</urlset>"
-    
     response = make_response(xml_content)
     response.headers["Content-Type"] = "application/xml"
     return response
 
 @app.route('/robots.txt')
 def robots():
-    # Tells search engines where to find the sitemap
-    txt = """User-agent: *
-Disallow:
-
-Sitemap: https://yegosun-website.onrender.com/sitemap.xml
-"""
+    txt = """User-agent: *\nDisallow:\nSitemap: https://yegosun-website.onrender.com/sitemap.xml"""
     response = make_response(txt)
     response.headers["Content-Type"] = "text/plain"
     return response
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # *** PRODUCTION CHANGE: Disable Debug Mode ***
+    app.run(debug=False)
