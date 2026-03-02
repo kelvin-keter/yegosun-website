@@ -57,11 +57,12 @@ app.config['ADMIN_EMAIL'] = os.environ.get('ADMIN_EMAIL')
 
 mail = Mail(app)
 
-# --- CLOUDINARY ---
+# --- CLOUDINARY CONFIGURATION ---
+# Updated to use environment variables for security
 cloudinary.config(
-    cloud_name = 'dlwyo4bho', 
-    api_key = '547698432919746', 
-    api_secret = 'JcI3yNuHDxlAlXMbLG1uaXF3gYw' 
+    cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME'), 
+    api_key = os.environ.get('CLOUDINARY_API_KEY'), 
+    api_secret = os.environ.get('CLOUDINARY_API_SECRET') 
 )
 
 db = SQLAlchemy(app)
@@ -543,7 +544,7 @@ def emergency_reset():
 
 @app.route('/sitemap.xml')
 def sitemap():
-    base_url = "https://yegosun-website.onrender.com"
+    base_url = "https://www.yegosun.com"
     pages = []
     for rule in ['home', 'about', 'services', 'projects', 'contact', 'calculator']:
         pages.append(f"{base_url}{url_for(rule)}")
@@ -562,10 +563,11 @@ def sitemap():
 
 @app.route('/robots.txt')
 def robots():
-    txt = """User-agent: *\nDisallow:\nSitemap: https://yegosun-website.onrender.com/sitemap.xml"""
+    txt = """User-agent: *\nDisallow:\nSitemap: https://www.yegosun.com/sitemap.xml"""
     response = make_response(txt)
     response.headers["Content-Type"] = "text/plain"
     return response
 
 if __name__ == '__main__':
     app.run(debug=False)
+    
